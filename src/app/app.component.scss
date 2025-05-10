@@ -1,13 +1,327 @@
 :host {
   display: block;
-  padding: 20px;
 }
 
-h1 {
-  font-size: 24px;
-  margin-bottom: 10px;
+.transparent-toolbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: transparent !important;
+  box-shadow: none;
+  padding: 0;
+  margin: 0;
+
+  .left-section {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .logo {
+    font-size: 1.5em;
+    font-weight: 500;
+    margin-right: 8px;
+  }
+
+  button {
+    color: white;
+  }
+
+  .user-menu-container {
+    margin-right: 16px;
+  }
 }
 
-p {
-  font-size: 16px;
+.search-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  z-index: 2000;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 100px;
+
+  .search-modal-content {
+    width: 100%;
+    max-width: 800px;
+    padding: 0 20px;
+    position: relative;
+
+    .close-button {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      color: white;
+      z-index: 2001;
+    }
+
+    .search-container {
+      width: 100%;
+
+      .search-field {
+        width: 100%;
+
+        ::ng-deep {
+          .mat-mdc-form-field-subscript-wrapper {
+            display: none;
+          }
+
+          .mat-mdc-form-field-flex {
+            background-color: var(--gray-3);
+            border-radius: 8px;
+            padding: 0 16px;
+          }
+
+          .mat-mdc-form-field-infix {
+            padding: 12px 0;
+          }
+
+          .mat-mdc-text-field-wrapper {
+            padding: 0;
+            background-color: var(--gray-3);
+          }
+
+          .mat-mdc-form-field-label {
+            color: white;
+          }
+
+          .mat-mdc-form-field-icon-suffix {
+            color: white;
+          }
+
+          input {
+            font-size: 1.2em;
+            color: white;
+
+            &::placeholder {
+              color: rgba(255, 255, 255, 0.7);
+            }
+          }
+
+          .mat-mdc-form-field-icon-prefix {
+            color: white;
+            margin-right: 8px;
+          }
+        }
+      }
+    }
+  }
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+main {
+  padding: 0;
+  max-width: 100%;
+  margin: 0;
+}
+
+.featured-movie {
+  position: relative;
+  width: 100%;
+  height: 50vh;
+  margin: 0;
+  overflow: hidden;
+
+  .featured-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .featured-content {
+    position: absolute;
+    bottom: 40px;
+    left: 40px;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 20px;
+      font-weight: 500;
+    }
+
+    button {
+      font-size: 1.1em;
+      padding: 8px 24px;
+    }
+  }
+}
+
+.current-movies {
+  padding: 40px 20px;
+  background: white;
+
+  .cinema-search {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 30px;
+
+    .cinema-search-field {
+      width: 80%;
+      max-width: 800px;
+
+      ::ng-deep {
+        .mat-mdc-form-field-subscript-wrapper {
+          display: none;
+        }
+
+        .mat-mdc-form-field-flex {
+          background-color: white;
+        }
+
+        .mat-mdc-form-field-infix {
+          padding: 12px 0;
+        }
+
+        .mat-mdc-text-field-wrapper {
+          padding: 0 16px;
+        }
+      }
+    }
+  }
+
+  h2 {
+    margin-bottom: 20px;
+    font-size: 1.8em;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.87);
+  }
+
+  .movies-carousel {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+
+    .movies-container {
+      display: flex;
+      gap: 20px;
+      overflow-x: auto;
+      scroll-behavior: smooth;
+      padding: 10px 0;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
+    }
+
+    .movie-card {
+      flex: 0 0 200px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      border-radius: 8px;
+      overflow: hidden;
+
+      &:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      }
+
+      img {
+        height: 300px;
+        object-fit: cover;
+      }
+
+      mat-card-content {
+        padding: 16px;
+
+        h3 {
+          margin: 0;
+          font-size: 1.1em;
+          font-weight: 500;
+          color: rgba(0, 0, 0, 0.87);
+        }
+      }
+    }
+
+    .nav-button {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255, 255, 255, 0.9);
+      z-index: 1;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+      &:hover {
+        background: white;
+      }
+
+      &.prev {
+        left: -20px;
+      }
+
+      &.next {
+        right: -20px;
+      }
+    }
+  }
+}
+
+.user-menu-container {
+  position: relative;
+
+  .user-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    z-index: 1000;
+    background: white;
+    border-radius: 4px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    width: 35%;
+    min-width: 400px;
+    margin-top: 8px;
+    margin-right: 50px;
+
+    .user-menu-content {
+      padding: 24px;
+
+      .menu-section {
+        h3 {
+          font-weight: 600;
+          margin: 0 0 16px 0;
+          color: rgba(0, 0, 0, 0.87);
+          font-size: 1.1em;
+          text-align: center;
+          width: 100%;
+        }
+
+        .full-width {
+          display: block;
+          width: 100%;
+          text-align: center;
+          padding: 8px 16px;
+          margin: 4px 0;
+          color: rgba(0, 0, 0, 0.87);
+          border: none;
+          background-color: rgba(0, 0, 0, 0.03);
+          cursor: pointer;
+          font-size: 0.9em;
+          height: 36px;
+          line-height: 36px;
+          border-radius: 4px;
+          transition: background-color 0.2s ease;
+
+          &:hover {
+            background-color: rgba(0, 0, 0, 0.08);
+          }
+        }
+      }
+
+      mat-divider {
+        margin: 16px 0;
+      }
+    }
+  }
 }

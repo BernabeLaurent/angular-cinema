@@ -1,0 +1,31 @@
+<!-- Barre de navigation -->
+<mat-toolbar color="primary" class="transparent-toolbar">
+  <div class="left-section">
+    <span class="logo">Cinéma</span>
+    <button mat-icon-button (click)="openSearchModal()">
+      <mat-icon>search</mat-icon>
+    </button>
+    <button mat-button routerLink="/movies">Films</button>
+    <button mat-button routerLink="/cinemas">Cinémas</button>
+  </div>
+  <span class="spacer"></span>
+  <div class="user-menu-container">
+    <button #userMenuButton mat-icon-button (click)="toggleUserMenu()">
+      <mat-icon>account_circle</mat-icon>
+    </button>
+    <div class="user-menu" *ngIf="isUserMenuOpen">
+      <div class="user-menu-content">
+        <div class="menu-section">
+          <h3>Mon compte</h3>
+          <button mat-button class="full-width" routerLink="/login">Me connecter</button>
+          <button mat-button class="full-width" routerLink="/register">Créer mon compte</button>
+        </div>
+        <mat-divider></mat-divider>
+        <div class="menu-section">
+          <h3>Mes réservations</h3>
+          <button mat-button class="full-width" routerLink="/reservations">Mes réservations</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</mat-toolbar>
