@@ -1,5 +1,5 @@
 # Étape 1 : build de l'application Angular
-FROM node:23-alpine AS build
+FROM node:22-alpine AS build
 
 # Définir le répertoire de travail
 WORKDIR /app
@@ -20,10 +20,10 @@ RUN npm run build --prod
 FROM nginx:alpine
 
 # Copier le build Angular dans le dossier nginx
-COPY --from=build /app/dist/* /usr/share/nginx/html/
+COPY --from=build /app/dist/angular-cinema /usr/share/nginx/html/
 
-# Copier la configuration nginx personnalisée si nécessaire
-# COPY nginx.conf /etc/nginx/nginx.conf
+# Copier la configuration nginx personnalisée
+COPY docker/nginx.conf /etc/nginx/conf.d/default.conf
 
 # Exposer le port 80
 EXPOSE 80

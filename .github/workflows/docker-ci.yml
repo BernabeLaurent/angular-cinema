@@ -1,0 +1,48 @@
+name: Angular CI & Deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. 🔄 Récupérer le code source
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      # 2. 🟢 Installer Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22'
+
+      # 3. 📦 Installer les dépendances
+      - name: Install dependencies
+        run: npm install
+
+      # 4. 🧪 Lancer les tests Angular (optionnel)
+      - name: Run tests
+        run: npm run test -- --watch=false --browsers=ChromeHeadless
+        continue-on-error: true  # Enlève ça si tu veux échouer le job en cas d'erreur de test
+
+      # 5. 🛠️ Préparer SSH pour le déploiement
+      - name: Set up SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.GITHUBACTIONS }}" > ~/.ssh/github-actions
+          chmod 600 ~/.ssh/github-actions
+          ssh-keyscan -H 159.89.20.85 >> ~/.ssh/known_hosts
+
+      # 6. 🚀 Déployer sur le droplet
+      - name: Deploy to Angular Droplet
+        run: |
+          ssh -i ~/.ssh/github-actions root@159.89.20.85 << 'EOF'
+            cd /var/www/angular-cinema
+            git pull origin main
+            docker compose down
+            docker compose build
+            docker compose up -d
+          EOF
