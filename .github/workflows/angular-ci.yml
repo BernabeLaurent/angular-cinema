@@ -2,7 +2,7 @@ name: Angular CI & Deploy
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
 
 jobs:
   build:
@@ -28,6 +28,13 @@ jobs:
         run: npm run test -- --watch=false --browsers=ChromeHeadless
         continue-on-error: true  # on continue en cas d'erreur de test
 
+      # Étape de débogage pour vérifier que le secret est bien chargé
+      - name: Check GitHub Secret GITHUBACTIONS
+        run: |
+          echo "Checking if GITHUBACTIONS secret is loaded:"
+          echo "${{ secrets.GITHUBACTIONS }}" # Cela ne doit pas afficher la clé en entier pour des raisons de sécurité, mais vérifie que le secret est chargé
+
+
       # 5. 🛠️ Préparer SSH pour le déploiement
       - name: Set up SSH
         run: |
@@ -35,6 +42,20 @@ jobs:
           echo "${{ secrets.GITHUBACTIONS }}" > ~/.ssh/github-actions
           chmod 600 ~/.ssh/github-actions
           ssh-keyscan -H 159.89.20.85 >> ~/.ssh/known_hosts
+
+      - name: Test SSH connection
+        run: |
+          ssh -i ~/.ssh/github-actions root@159.89.20.85 "echo ✅ Connexion SSH réussie"
+
+      # Étapes de débogage pour vérifier si la clé SSH a bien été stockée et a les bonnes permissions
+      - name: Debug SSH Key
+        run: |
+          echo "Listing files in ~/.ssh"
+          ls -l ~/.ssh
+          echo "Permissions of the SSH key:"
+          ls -l ~/.ssh/github-actions
+          echo "SSH key content (first 5 lines):"
+          head -n 5 ~/.ssh/github-actions
 
       # 6. 🚀 Déployer sur le droplet
       - name: Deploy to Angular Droplet
