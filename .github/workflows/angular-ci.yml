@@ -23,10 +23,10 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      # 4. 🧪 Lancer les tests Angular (optionnel)
+      # 4. 🧪 Lancer les tests Angular
       - name: Run tests
         run: npm run test -- --watch=false --browsers=ChromeHeadless
-        continue-on-error: true  # Enlève ça si tu veux échouer le job en cas d'erreur de test
+        continue-on-error: true  # on continue en cas d'erreur de test
 
       # 5. 🛠️ Préparer SSH pour le déploiement
       - name: Set up SSH
