@@ -6,6 +6,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
 
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+
+import { LoginComponent } from '../../../auth/login/login.component';
+import { RegisterComponent } from '../../../auth/register/register.component';
+
 @Component({
   selector: 'app-navbar',
   standalone: true,
@@ -15,7 +20,8 @@ import { MatDividerModule } from '@angular/material/divider';
     MatToolbarModule,
     MatButtonModule,
     MatIconModule,
-    MatDividerModule
+    MatDividerModule,
+    MatDialogModule
   ],
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss']
@@ -26,6 +32,8 @@ export class NavbarComponent {
 
   @ViewChild('userMenuButton') userMenuButton!: ElementRef<HTMLButtonElement>;
 
+  constructor(private dialog: MatDialog) {}
+
   toggleUserMenu() {
     this.isUserMenuOpen = !this.isUserMenuOpen;
   }
@@ -35,7 +43,19 @@ export class NavbarComponent {
   }
 
   openSearchModal() {
-    // Émettre un événement pour ouvrir la modale de recherche
-    // À implémenter avec un service ou un EventEmitter
+  }
+
+  openLoginDialog() {
+    this.dialog.open(LoginComponent, {
+      width: '400px',
+      panelClass: 'custom-dialog-container'
+    });
+  }
+
+  openRegisterDialog() {
+    this.dialog.open(RegisterComponent, {
+      width: '450px',
+      panelClass: 'custom-dialog-container'
+    });
   }
 }

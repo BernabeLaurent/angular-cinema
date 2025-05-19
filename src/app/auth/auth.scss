@@ -1,0 +1,38 @@
+.auth-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 500px;
+  padding: 20px;
+
+  mat-form-field {
+    width: 100%;
+    margin-bottom: 16px;
+  }
+
+  .actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 16px;
+  }
+
+  mat-error {
+    color: red;
+    margin-top: 10px;
+  }
+}
+
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.close-button {
+  margin-left: auto;
+}

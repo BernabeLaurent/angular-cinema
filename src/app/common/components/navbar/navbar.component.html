@@ -17,8 +17,8 @@
       <div class="user-menu-content">
         <div class="menu-section">
           <h3>Mon compte</h3>
-          <button mat-button class="full-width" routerLink="/login">Me connecter</button>
-          <button mat-button class="full-width" routerLink="/register">Créer mon compte</button>
+          <button mat-button class="full-width" (click)="openLoginDialog()">Me connecter</button>
+          <button mat-button class="full-width" (click)="openRegisterDialog()">Créer mon compte</button>
         </div>
         <mat-divider></mat-divider>
         <div class="menu-section">
