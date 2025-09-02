@@ -8,6 +8,7 @@
     </button>
     <button mat-button routerLink="/movies">Films</button>
     <button mat-button routerLink="/cinemas">Cinémas</button>
+    <button mat-button routerLink="/booking">Réserver</button>
     
     <!-- Menu Administration pour les admins -->
     <ng-container *ngIf="isAdmin$ | async">
@@ -78,8 +79,8 @@
               <mat-icon>person</mat-icon>
               Mon profil
             </button>
-            <button mat-button class="full-width" routerLink="/bookings" (click)="closeUserMenu()">
-              <mat-icon>movie</mat-icon>
+            <button mat-button class="full-width" routerLink="/my-bookings" (click)="closeUserMenu()">
+              <mat-icon>event_seat</mat-icon>
               Mes réservations
             </button>
             

@@ -9,7 +9,6 @@ import { TheatersManagementComponent } from './admin/components/theaters-managem
 
 // Composants principaux
 import { HeroSectionComponent } from './components/hero-section/hero-section.component';
-import { UserProfileComponent } from './components/user-profile/user-profile.component';
 
 export const routes: Routes = [
   // Route par défaut - Page d'accueil
@@ -22,7 +21,8 @@ export const routes: Routes = [
   // Routes utilisateur
   {
     path: 'profile',
-    component: UserProfileComponent,
+    loadComponent: () => import('./components/user-profile/user-profile-new.component')
+      .then(c => c.UserProfileNewComponent),
     canActivate: [AuthGuard],
     title: 'Mon Profil - Pathé'
   },
@@ -52,18 +52,6 @@ export const routes: Routes = [
         component: TheatersManagementComponent,
         title: 'Gestion des cinémas - Administration Pathé'
       },
-      {
-        path: 'movies',
-        loadComponent: () => import('./admin/components/movies-management/movies-management.component')
-          .then(c => c.MoviesManagementComponent),
-        title: 'Gestion des films - Administration Pathé'
-      },
-      {
-        path: 'bookings',
-        loadComponent: () => import('./admin/components/bookings-management/bookings-management.component')
-          .then(c => c.BookingsManagementComponent),
-        title: 'Gestion des réservations - Administration Pathé'
-      }
     ]
   },
   
@@ -76,33 +64,53 @@ export const routes: Routes = [
   },
   
   {
-    path: 'cinemas',
-    loadComponent: () => import('./components/theaters-list/theaters-list.component')
-      .then(c => c.TheatersListComponent),
-    title: 'Nos Cinémas - Pathé'
+    path: 'movies/:id',
+    loadComponent: () => import('./movies/movie-details/movie-details.component')
+      .then(c => c.MovieDetailsComponent),
+    title: 'Détails du film - Pathé'
   },
   
   {
-    path: 'bookings',
+    path: 'cinemas',
+    redirectTo: '/booking',
+    pathMatch: 'full'
+  },
+  
+  // Routes de réservation
+  {
+    path: 'booking',
+    loadComponent: () => import('./booking/booking.component')
+      .then(c => c.BookingComponent),
+    title: 'Réserver une séance - Pathé'
+  },
+  
+  {
+    path: 'booking/session/:sessionId',
     canActivate: [AuthGuard],
-    loadComponent: () => import('./components/user-bookings/user-bookings.component')
-      .then(c => c.UserBookingsComponent),
+    loadComponent: () => import('./booking/seat-selection/seat-selection.component')
+      .then(c => c.SeatSelectionComponent),
+    title: 'Sélection des places - Pathé'
+  },
+  
+  {
+    path: 'my-bookings',
+    canActivate: [AuthGuard],
+    loadComponent: () => import('./booking/my-bookings/my-bookings.component')
+      .then(c => c.MyBookingsComponent),
     title: 'Mes Réservations - Pathé'
   },
   
   // Gestion d'erreurs
   {
     path: 'unauthorized',
-    loadComponent: () => import('./components/unauthorized/unauthorized.component')
-      .then(c => c.UnauthorizedComponent),
-    title: 'Accès non autorisé - Pathé'
+    redirectTo: '/',
+    pathMatch: 'full'
   },
   
   {
     path: '404',
-    loadComponent: () => import('./components/not-found/not-found.component')
-      .then(c => c.NotFoundComponent),
-    title: 'Page non trouvée - Pathé'
+    redirectTo: '/',
+    pathMatch: 'full'
   },
   
   // Redirection des routes inconnues

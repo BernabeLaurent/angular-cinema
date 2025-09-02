@@ -104,6 +104,14 @@ export class AuthService {
     return this.userSubject.value?.token ?? null;
   }
 
+  getCurrentUser(): User | null {
+    return this.userSubject.value;
+  }
+
+  updateCurrentUser(user: User): void {
+    this.userSubject.next(user);
+  }
+
   saveAccessToken(token: string): void {
     localStorage.setItem('accessToken', token);
     this.setUserFromToken(token);

@@ -132,6 +132,13 @@ export class AdminService {
   // ==================== GESTION DES CINÉMAS ====================
 
   /**
+   * Récupère tous les cinémas
+   */
+  getTheaters(): Observable<Theater[]> {
+    return this.http.get<Theater[]>(`${this.baseUrl}/theaters`);
+  }
+
+  /**
    * Récupère un cinéma par son ID
    */
   getTheaterById(id: number): Observable<Theater> {
