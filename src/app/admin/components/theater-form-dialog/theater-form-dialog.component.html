@@ -1,0 +1,128 @@
+<div class="theater-form-dialog">
+  <div class="dialog-header">
+    <h2 mat-dialog-title>
+      <mat-icon>{{ isEditMode ? 'edit' : 'add_business' }}</mat-icon>
+      {{ isEditMode ? 'Modifier le cinéma' : 'Nouveau cinéma' }}
+    </h2>
+    <button mat-icon-button (click)="onCancel()" class="close-button">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <mat-dialog-content>
+    <form [formGroup]="theaterForm" (ngSubmit)="onSubmit()">
+      <!-- Informations générales -->
+      <div class="form-section">
+        <h3>Informations générales</h3>
+        
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Nom du cinéma *</mat-label>
+          <input matInput formControlName="name" placeholder="Pathé République">
+          <mat-icon matSuffix>movie_filter</mat-icon>
+          <mat-error *ngIf="isFieldInvalid('name')">
+            {{ getFieldErrorMessage('name') }}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- Localisation -->
+      <div class="form-section">
+        <h3>Localisation</h3>
+        
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Adresse *</mat-label>
+          <input matInput formControlName="address" placeholder="2-8 Avenue de la République">
+          <mat-icon matSuffix>place</mat-icon>
+          <mat-error *ngIf="isFieldInvalid('address')">
+            {{ getFieldErrorMessage('address') }}
+          </mat-error>
+        </mat-form-field>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Ville *</mat-label>
+            <input matInput formControlName="city" placeholder="Paris">
+            <mat-error *ngIf="isFieldInvalid('city')">
+              {{ getFieldErrorMessage('city') }}
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Code postal *</mat-label>
+            <input matInput formControlName="zipCode" placeholder="75003" maxlength="5">
+            <mat-error *ngIf="isFieldInvalid('zipCode')">
+              {{ getFieldErrorMessage('zipCode') }}
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Pays *</mat-label>
+          <mat-select formControlName="codeCountry">
+            <mat-option *ngFor="let country of countries" [value]="country.value">
+              {{ country.label }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="isFieldInvalid('codeCountry')">
+            {{ getFieldErrorMessage('codeCountry') }}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- Informations de contact -->
+      <div class="form-section">
+        <h3>Contact</h3>
+        
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Numéro de téléphone *</mat-label>
+          <input matInput formControlName="phoneNumber" placeholder="+33 1 44 78 18 18">
+          <mat-icon matSuffix>phone</mat-icon>
+          <mat-error *ngIf="isFieldInvalid('phoneNumber')">
+            {{ getFieldErrorMessage('phoneNumber') }}
+          </mat-error>
+          <mat-hint>Format international recommandé (+33 pour la France)</mat-hint>
+        </mat-form-field>
+      </div>
+
+      <!-- Horaires -->
+      <div class="form-section">
+        <h3>Horaires</h3>
+        
+        <div class="form-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Heure d'ouverture *</mat-label>
+            <input matInput type="time" formControlName="openingTime" (change)="onTimeChange()">
+            <mat-icon matSuffix>schedule</mat-icon>
+            <mat-error *ngIf="isFieldInvalid('openingTime')">
+              {{ getFieldErrorMessage('openingTime') }}
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Heure de fermeture *</mat-label>
+            <input matInput type="time" formControlName="closingTime" (change)="onTimeChange()">
+            <mat-icon matSuffix>schedule</mat-icon>
+            <mat-error *ngIf="isFieldInvalid('closingTime')">
+              {{ getFieldErrorMessage('closingTime') }}
+            </mat-error>
+          </mat-form-field>
+        </div>
+        
+        <mat-hint class="hours-hint">
+          <mat-icon>info</mat-icon>
+          Les horaires s'appliquent du lundi au dimanche. L'heure de fermeture peut être le lendemain (ex: 01:00 pour 1h du matin).
+        </mat-hint>
+      </div>
+    </form>
+  </mat-dialog-content>
+
+  <mat-dialog-actions>
+    <button mat-button (click)="onCancel()" type="button">
+      Annuler
+    </button>
+    <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="theaterForm.invalid">
+      <mat-icon>{{ isEditMode ? 'save' : 'add_business' }}</mat-icon>
+      {{ isEditMode ? 'Modifier' : 'Créer' }}
+    </button>
+  </mat-dialog-actions>
+</div>

@@ -41,8 +41,12 @@ export class LoginComponent {
 
   onSubmit() {
     if (this.loginForm.valid) {
+      this.error = null;
       this.authService.login(this.loginForm.value).subscribe({
-        next: () => this.router.navigate(['/']),
+        next: () => {
+          this.dialogRef.close();
+          window.location.reload(); // Refresh to update navbar state
+        },
         error: err => (this.error = err.error?.message || 'Identifiants incorrects'),
       });
     }

@@ -1,72 +1,11 @@
 <app-navbar></app-navbar>
 
-<!-- Modal de recherche -->
-<div class="search-modal" *ngIf="isSearchModalOpen">
-  <div class="search-modal-content">
-    <button mat-icon-button class="close-button" (click)="closeSearchModal()">
-      <mat-icon>close</mat-icon>
-    </button>
-    <div class="search-container">
-      <mat-form-field appearance="outline" class="search-field">
-        <mat-icon matPrefix>search</mat-icon>
-        <mat-label>Rechercher un film, un acteur, un réalisateur...</mat-label>
-        <input matInput
-               [(ngModel)]="searchQuery"
-               placeholder="Rechercher un film, un acteur, un réalisateur...">
-      </mat-form-field>
-    </div>
-  </div>
-</div>
-
 <!-- Contenu principal -->
-<main>
-  <!-- Film en vedette -->
-  <section class="featured-movie">
-    <div class="featured-content">
-      <h1>{{featuredMovie.title}}</h1>
-      <button mat-raised-button color="accent">Réserver</button>
-    </div>
-    <img [src]="featuredMovie.image" alt="Film en vedette" class="featured-image">
-  </section>
-
-  <!-- Films au cinéma -->
-  <section class="current-movies">
-    <div class="cinema-search">
-      <mat-form-field appearance="outline" class="cinema-search-field">
-        <mat-label>Sélectionnez votre cinéma</mat-label>
-        <input matInput
-               [value]="selectedCinema"
-               (input)="filterCinemas($event)"
-               placeholder="Sélectionnez votre cinéma">
-        <mat-icon matSuffix>location_on</mat-icon>
-        <mat-autocomplete>
-          <mat-option *ngFor="let cinema of filteredCinemas" [value]="cinema" (click)="selectCinema(cinema)">
-            {{cinema}}
-          </mat-option>
-        </mat-autocomplete>
-      </mat-form-field>
-    </div>
-
-    <h2>Films au cinéma</h2>
-    <div class="movies-carousel">
-      <button mat-icon-button class="nav-button prev" (click)="scrollMovies('left')">
-        <mat-icon>chevron_left</mat-icon>
-      </button>
-      
-      <div class="movies-container" #moviesContainer>
-        <mat-card *ngFor="let movie of currentMovies" class="movie-card">
-          <img mat-card-image [src]="movie.poster" [alt]="movie.title">
-          <mat-card-content>
-            <h3>{{movie.title}}</h3>
-          </mat-card-content>
-        </mat-card>
-      </div>
-
-      <button mat-icon-button class="nav-button next" (click)="scrollMovies('right')">
-        <mat-icon>chevron_right</mat-icon>
-      </button>
-    </div>
-  </section>
+<main class="main-content">
+  <app-hero-section></app-hero-section>
+  <app-movies-section></app-movies-section>
 </main>
+
+<app-footer></app-footer>
 
 <router-outlet></router-outlet>

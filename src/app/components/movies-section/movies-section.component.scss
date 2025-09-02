@@ -1,0 +1,123 @@
+.movies-section {
+  background-color: #0a0a0a;
+  padding: 60px 0;
+
+  .section {
+    margin-bottom: 60px;
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 60px;
+      margin-bottom: 32px;
+
+      h2 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: white;
+        margin: 0;
+        letter-spacing: 1px;
+      }
+
+      .nav-buttons {
+        display: flex;
+        gap: 8px;
+
+        .nav-btn {
+          background-color: rgba(255, 255, 255, 0.1);
+          color: white;
+          border: 1px solid rgba(255, 255, 255, 0.3);
+          width: 48px;
+          height: 48px;
+          transition: all 0.3s ease;
+
+          &:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: scale(1.05);
+          }
+
+          mat-icon {
+            font-size: 24px;
+            width: 24px;
+            height: 24px;
+          }
+        }
+      }
+    }
+
+    .movies-container {
+      display: flex;
+      gap: 24px;
+      padding: 0 60px;
+      overflow-x: auto;
+      scroll-behavior: smooth;
+      scrollbar-width: none; /* Firefox */
+      -ms-overflow-style: none; /* Internet Explorer 10+ */
+
+      &::-webkit-scrollbar { /* WebKit */
+        display: none;
+      }
+
+      app-movie-card {
+        flex: 0 0 auto;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .movies-section {
+    padding: 40px 0;
+
+    .section {
+      .section-header {
+        padding: 0 24px;
+        margin-bottom: 24px;
+
+        h2 {
+          font-size: 1.5rem;
+        }
+
+        .nav-buttons {
+          .nav-btn {
+            width: 40px;
+            height: 40px;
+
+            mat-icon {
+              font-size: 20px;
+              width: 20px;
+              height: 20px;
+            }
+          }
+        }
+      }
+
+      .movies-container {
+        padding: 0 24px;
+        gap: 16px;
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .movies-section {
+    .section {
+      .section-header {
+        flex-direction: column;
+        gap: 16px;
+        align-items: flex-start;
+      }
+
+      .movies-container {
+        justify-content: center;
+        
+        app-movie-card {
+          flex: 0 0 280px;
+        }
+      }
+    }
+  }
+}

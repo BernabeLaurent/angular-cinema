@@ -1,0 +1,74 @@
+<footer class="footer">
+  <div class="footer-content">
+    <div class="footer-top">
+      <div class="footer-section">
+        <div class="logo-section">
+          <img src="assets/images/pathe-logo.svg" alt="Pathé" class="footer-logo" height="40">
+          <span class="logo-text">PATHÉ</span>
+          <p class="company-description">
+            Depuis plus d'un siècle, Pathé vous offre les meilleures expériences cinématographiques 
+            dans des salles équipées des technologies les plus avancées.
+          </p>
+        </div>
+      </div>
+
+      <div class="footer-section">
+        <h3>Liens rapides</h3>
+        <ul class="footer-links">
+          <li *ngFor="let link of quickLinks">
+            <a [routerLink]="link.route">{{ link.name }}</a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="footer-section">
+        <h3>Aide & Support</h3>
+        <ul class="footer-links">
+          <li *ngFor="let link of helpLinks">
+            <a [routerLink]="link.route">{{ link.name }}</a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="footer-section">
+        <h3>Suivez-nous</h3>
+        <div class="social-links">
+          <button 
+            mat-icon-button 
+            class="social-btn"
+            *ngFor="let social of socialLinks"
+            [attr.aria-label]="social.name">
+            <mat-icon [svgIcon]="social.icon">{{ social.icon }}</mat-icon>
+          </button>
+        </div>
+        
+        <div class="newsletter">
+          <h4>Newsletter</h4>
+          <p>Recevez nos dernières actualités et offres exclusives</p>
+          <div class="newsletter-form">
+            <input type="email" placeholder="Votre email" class="email-input">
+            <button mat-raised-button class="subscribe-btn">S'ABONNER</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <mat-divider class="footer-divider"></mat-divider>
+    
+    <div class="footer-bottom">
+      <div class="copyright">
+        <p>&copy; {{ currentYear }} Pathé. Tous droits réservés.</p>
+      </div>
+      
+      <div class="payment-methods">
+        <span>Moyens de paiement acceptés:</span>
+        <div class="payment-icons">
+          <img src="assets/images/visa.svg" alt="Visa" height="24">
+          <img src="assets/images/mastercard.svg" alt="Mastercard" height="24">
+          <img src="assets/images/paypal.svg" alt="PayPal" height="24">
+          <img src="assets/images/apple-pay.svg" alt="Apple Pay" height="24">
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>

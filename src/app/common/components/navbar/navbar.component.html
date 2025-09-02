@@ -1,31 +1,111 @@
 <!-- Barre de navigation -->
 <mat-toolbar color="primary" class="transparent-toolbar">
   <div class="left-section">
-    <span class="logo">Cinéma</span>
+    <img src="assets/images/pathe-logo.svg" alt="Pathé" class="logo" height="32">
+    <span class="logo-text">PATHÉ</span>
     <button mat-icon-button (click)="openSearchModal()">
       <mat-icon>search</mat-icon>
     </button>
     <button mat-button routerLink="/movies">Films</button>
     <button mat-button routerLink="/cinemas">Cinémas</button>
+    
+    <!-- Menu Administration pour les admins -->
+    <ng-container *ngIf="isAdmin$ | async">
+      <button mat-button [matMenuTriggerFor]="adminMenu" class="admin-menu-trigger">
+        <mat-icon>admin_panel_settings</mat-icon>
+        Administration
+        <mat-icon>arrow_drop_down</mat-icon>
+      </button>
+      <mat-menu #adminMenu="matMenu" class="admin-dropdown-menu">
+        <button mat-menu-item routerLink="/admin/dashboard">
+          <mat-icon>dashboard</mat-icon>
+          Tableau de bord
+        </button>
+        <button mat-menu-item routerLink="/admin/users">
+          <mat-icon>people</mat-icon>
+          Gestion des utilisateurs
+        </button>
+        <button mat-menu-item routerLink="/admin/theaters">
+          <mat-icon>location_city</mat-icon>
+          Gestion des cinémas
+        </button>
+        <button mat-menu-item routerLink="/admin/movies">
+          <mat-icon>movie</mat-icon>
+          Gestion des films
+        </button>
+        <button mat-menu-item routerLink="/admin/bookings">
+          <mat-icon>event_seat</mat-icon>
+          Gestion des réservations
+        </button>
+      </mat-menu>
+    </ng-container>
   </div>
   <span class="spacer"></span>
+  
+  <!-- Menu utilisateur -->
   <div class="user-menu-container">
-    <button #userMenuButton mat-icon-button (click)="toggleUserMenu()">
-      <mat-icon>account_circle</mat-icon>
-    </button>
-    <div class="user-menu" *ngIf="isUserMenuOpen">
-      <div class="user-menu-content">
-        <div class="menu-section">
-          <h3>Mon compte</h3>
-          <button mat-button class="full-width" (click)="openLoginDialog()">Me connecter</button>
-          <button mat-button class="full-width" (click)="openRegisterDialog()">Créer mon compte</button>
+    <!-- Si utilisateur non connecté -->
+    <ng-container *ngIf="!(isLoggedIn$ | async)">
+      <button mat-button (click)="openLoginDialog()" class="login-btn">
+        Se connecter
+      </button>
+      <button mat-raised-button (click)="openRegisterDialog()" class="register-btn">
+        S'inscrire
+      </button>
+    </ng-container>
+    
+    <!-- Si utilisateur connecté -->
+    <ng-container *ngIf="isLoggedIn$ | async">
+      <button #userMenuButton mat-icon-button (click)="toggleUserMenu()" class="user-avatar">
+        <div class="avatar-circle">
+          {{ userInitials$ | async }}
         </div>
-        <mat-divider></mat-divider>
-        <div class="menu-section">
-          <h3>Mes réservations</h3>
-          <button mat-button class="full-width" routerLink="/reservations">Mes réservations</button>
+      </button>
+      
+      <div class="user-menu" *ngIf="isUserMenuOpen" (clickOutside)="closeUserMenu()">
+        <div class="user-menu-content">
+          <div class="user-info" *ngIf="currentUser$ | async as user">
+            <div class="user-details">
+              <strong>{{ user.email }}</strong>
+              <span class="role-badge">{{ getRoleDisplayName(user.role) }}</span>
+            </div>
+          </div>
+          
+          <mat-divider></mat-divider>
+          
+          <div class="menu-section">
+            <button mat-button class="full-width" routerLink="/profile" (click)="closeUserMenu()">
+              <mat-icon>person</mat-icon>
+              Mon profil
+            </button>
+            <button mat-button class="full-width" routerLink="/bookings" (click)="closeUserMenu()">
+              <mat-icon>movie</mat-icon>
+              Mes réservations
+            </button>
+            
+            <!-- Liens spécifiques aux admins -->
+            <ng-container *ngIf="isAdmin$ | async">
+              <button mat-button class="full-width" routerLink="/admin/users" (click)="closeUserMenu()">
+                <mat-icon>people</mat-icon>
+                Gestion utilisateurs
+              </button>
+              <button mat-button class="full-width" routerLink="/admin/movies" (click)="closeUserMenu()">
+                <mat-icon>theaters</mat-icon>
+                Gestion films
+              </button>
+            </ng-container>
+          </div>
+          
+          <mat-divider></mat-divider>
+          
+          <div class="menu-section">
+            <button mat-button class="full-width logout-btn" (click)="logout()">
+              <mat-icon>logout</mat-icon>
+              Se déconnecter
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+    </ng-container>
   </div>
 </mat-toolbar>

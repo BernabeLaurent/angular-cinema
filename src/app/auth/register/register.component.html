@@ -52,17 +52,18 @@
         <mat-form-field appearance="outline">
           <mat-label>Pays</mat-label>
           <mat-select formControlName="codeCountry">
-            <mat-option value="FRANCE">France</mat-option>
-            <mat-option value="BELGIUM">Belgique</mat-option>
-            <mat-option value="CANADA">Canada</mat-option>
+            <mat-option *ngFor="let country of countries" [value]="country.value">
+              {{ country.label }}
+            </mat-option>
           </mat-select>
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>Rôle</mat-label>
+          <mat-label>Type de compte</mat-label>
           <mat-select formControlName="roleUser" required>
-            <mat-option value="CUSTOMER">Client</mat-option>
-            <mat-option value="ADMIN">Admin</mat-option>
+            <mat-option *ngFor="let role of roles" [value]="role.value">
+              {{ role.label }}
+            </mat-option>
           </mat-select>
         </mat-form-field>
 

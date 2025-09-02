@@ -1,0 +1,45 @@
+<div class="movies-section">
+  <!-- Section À l'affiche -->
+  <div class="section">
+    <div class="section-header">
+      <h2>À L'AFFICHE</h2>
+      <div class="nav-buttons">
+        <button mat-icon-button class="nav-btn" (click)="scrollMovies('now-showing', 'left')">
+          <mat-icon>chevron_left</mat-icon>
+        </button>
+        <button mat-icon-button class="nav-btn" (click)="scrollMovies('now-showing', 'right')">
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+      </div>
+    </div>
+    
+    <div class="movies-container" id="now-showing">
+      <app-movie-card 
+        *ngFor="let movie of nowShowingMovies" 
+        [movie]="movie">
+      </app-movie-card>
+    </div>
+  </div>
+
+  <!-- Section Prochainement -->
+  <div class="section">
+    <div class="section-header">
+      <h2>PROCHAINEMENT</h2>
+      <div class="nav-buttons">
+        <button mat-icon-button class="nav-btn" (click)="scrollMovies('coming-soon', 'left')">
+          <mat-icon>chevron_left</mat-icon>
+        </button>
+        <button mat-icon-button class="nav-btn" (click)="scrollMovies('coming-soon', 'right')">
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+      </div>
+    </div>
+    
+    <div class="movies-container" id="coming-soon">
+      <app-movie-card 
+        *ngFor="let movie of comingSoonMovies" 
+        [movie]="movie">
+      </app-movie-card>
+    </div>
+  </div>
+</div>

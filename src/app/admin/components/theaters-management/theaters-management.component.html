@@ -1,0 +1,181 @@
+<div class="theaters-management-container">
+  <mat-card class="header-card">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>location_city</mat-icon>
+        Gestion des cinémas
+      </mat-card-title>
+      <mat-card-subtitle>
+        Gérez les cinémas de votre réseau
+      </mat-card-subtitle>
+    </mat-card-header>
+    
+    <mat-card-content>
+      <div class="toolbar">
+        <div class="filters">
+          <mat-form-field appearance="outline">
+            <mat-label>Rechercher</mat-label>
+            <input matInput [(ngModel)]="searchTerm" (input)="applyFilters()" 
+                   placeholder="Nom, ville ou adresse">
+            <mat-icon matSuffix>search</mat-icon>
+          </mat-form-field>
+          
+          <mat-form-field appearance="outline">
+            <mat-label>Filtrer par pays</mat-label>
+            <mat-select [(ngModel)]="selectedCountry" (selectionChange)="applyFilters()">
+              <mat-option value="">Tous les pays</mat-option>
+              <mat-option *ngFor="let country of countries" [value]="country.value">
+                {{ country.label }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          
+          <button mat-button (click)="clearFilters()">
+            <mat-icon>clear</mat-icon>
+            Effacer
+          </button>
+        </div>
+        
+        <div class="actions">
+          <button mat-raised-button color="primary" (click)="openCreateTheaterDialog()">
+            <mat-icon>add_business</mat-icon>
+            Nouveau cinéma
+          </button>
+          
+          <button mat-button (click)="loadTheaters()">
+            <mat-icon>refresh</mat-icon>
+            Actualiser
+          </button>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="table-card">
+    <mat-card-content>
+      <div class="table-container" *ngIf="!loading; else loadingTemplate">
+        <table mat-table [dataSource]="filteredTheaters" class="theaters-table">
+          <!-- ID Column -->
+          <ng-container matColumnDef="id">
+            <th mat-header-cell *matHeaderCellDef class="id-column">ID</th>
+            <td mat-cell *matCellDef="let theater" class="id-column">#{{ theater.id }}</td>
+          </ng-container>
+
+          <!-- Name Column -->
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef>Nom du cinéma</th>
+            <td mat-cell *matCellDef="let theater">
+              <div class="theater-info">
+                <div class="theater-icon">
+                  <mat-icon>movie_filter</mat-icon>
+                </div>
+                <div class="theater-details">
+                  <div class="name">{{ theater.name }}</div>
+                  <div class="id-badge">#{{ theater.id }}</div>
+                </div>
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- Location Column -->
+          <ng-container matColumnDef="location">
+            <th mat-header-cell *matHeaderCellDef>Localisation</th>
+            <td mat-cell *matCellDef="let theater">
+              <div class="location-info">
+                <div class="address">{{ theater.address }}</div>
+                <div class="city-zip">{{ theater.zipCode }} {{ theater.city }}</div>
+                <div class="country">{{ theater.codeCountry === 'FR' ? '🇫🇷 France' : '🇺🇸 États-Unis' }}</div>
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- Contact Column -->
+          <ng-container matColumnDef="contact">
+            <th mat-header-cell *matHeaderCellDef>Contact</th>
+            <td mat-cell *matCellDef="let theater">
+              <div class="contact-info">
+                <div class="phone">
+                  <mat-icon>phone</mat-icon>
+                  {{ formatPhoneNumber(theater.phoneNumber) }}
+                </div>
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- Hours Column -->
+          <ng-container matColumnDef="hours">
+            <th mat-header-cell *matHeaderCellDef>Horaires</th>
+            <td mat-cell *matCellDef="let theater">
+              <div class="hours-info">
+                <div class="opening">
+                  <mat-icon>schedule</mat-icon>
+                  {{ formatTime(theater.openingTime) }} - {{ formatTime(theater.closingTime) }}
+                </div>
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- Create Date Column -->
+          <ng-container matColumnDef="createDate">
+            <th mat-header-cell *matHeaderCellDef>Date création</th>
+            <td mat-cell *matCellDef="let theater">
+              {{ formatDate(theater.createDate) }}
+            </td>
+          </ng-container>
+
+          <!-- Actions Column -->
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef class="actions-column">Actions</th>
+            <td mat-cell *matCellDef="let theater" class="actions-column">
+              <button mat-icon-button (click)="viewTheaterDetails(theater)" 
+                      matTooltip="Voir les détails">
+                <mat-icon>visibility</mat-icon>
+              </button>
+              
+              <button mat-icon-button (click)="openEditTheaterDialog(theater)" 
+                      matTooltip="Modifier le cinéma">
+                <mat-icon>edit</mat-icon>
+              </button>
+              
+              <button mat-icon-button color="warn" (click)="deleteTheater(theater)"
+                      matTooltip="Supprimer le cinéma">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="theater-row"></tr>
+        </table>
+
+        <!-- Empty state -->
+        <div class="empty-state" *ngIf="filteredTheaters.length === 0 && theaters.length === 0">
+          <mat-icon>location_city</mat-icon>
+          <h3>Aucun cinéma trouvé</h3>
+          <p>Il n'y a actuellement aucun cinéma enregistré dans le système.</p>
+          <button mat-raised-button color="primary" (click)="openCreateTheaterDialog()">
+            Créer le premier cinéma
+          </button>
+        </div>
+
+        <!-- No results state -->
+        <div class="empty-state" *ngIf="filteredTheaters.length === 0 && theaters.length > 0">
+          <mat-icon>search_off</mat-icon>
+          <h3>Aucun résultat</h3>
+          <p>Aucun cinéma ne correspond aux critères de recherche.</p>
+          <button mat-raised-button (click)="clearFilters()">
+            Effacer les filtres
+          </button>
+        </div>
+      </div>
+
+      <!-- Loading template -->
+      <ng-template #loadingTemplate>
+        <div class="loading-container">
+          <mat-icon class="loading-spinner">refresh</mat-icon>
+          <p>Chargement des cinémas...</p>
+        </div>
+      </ng-template>
+    </mat-card-content>
+  </mat-card>
+</div>

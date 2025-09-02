@@ -1,0 +1,145 @@
+<div class="user-form-dialog">
+  <div class="dialog-header">
+    <h2 mat-dialog-title>
+      <mat-icon>{{ isEditMode ? 'edit' : 'person_add' }}</mat-icon>
+      {{ isEditMode ? 'Modifier l\'utilisateur' : 'Nouvel utilisateur' }}
+    </h2>
+    <button mat-icon-button (click)="onCancel()" class="close-button">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <mat-dialog-content>
+    <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+      <!-- Informations personnelles -->
+      <div class="form-section">
+        <h3>Informations personnelles</h3>
+        <div class="form-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Prénom *</mat-label>
+            <input matInput formControlName="firstName" placeholder="Jean">
+            <mat-error *ngIf="isFieldInvalid('firstName')">
+              {{ getFieldErrorMessage('firstName') }}
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Nom *</mat-label>
+            <input matInput formControlName="lastName" placeholder="Dupont">
+            <mat-error *ngIf="isFieldInvalid('lastName')">
+              {{ getFieldErrorMessage('lastName') }}
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Email *</mat-label>
+          <input matInput type="email" formControlName="email" placeholder="jean.dupont@exemple.com">
+          <mat-icon matSuffix>email</mat-icon>
+          <mat-error *ngIf="isFieldInvalid('email')">
+            {{ getFieldErrorMessage('email') }}
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width" *ngIf="!isEditMode">
+          <mat-label>Mot de passe *</mat-label>
+          <input matInput type="password" formControlName="password" placeholder="Minimum 6 caractères">
+          <mat-icon matSuffix>lock</mat-icon>
+          <mat-error *ngIf="isFieldInvalid('password')">
+            {{ getFieldErrorMessage('password') }}
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width" *ngIf="isEditMode">
+          <mat-label>Nouveau mot de passe (optionnel)</mat-label>
+          <input matInput type="password" formControlName="password" placeholder="Laisser vide pour ne pas modifier">
+          <mat-icon matSuffix>lock</mat-icon>
+          <mat-hint>Laisser vide pour conserver le mot de passe actuel</mat-hint>
+        </mat-form-field>
+      </div>
+
+      <!-- Rôle et permissions -->
+      <div class="form-section">
+        <h3>Rôle et permissions</h3>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Rôle *</mat-label>
+          <mat-select formControlName="roleUser">
+            <mat-option *ngFor="let role of roles" [value]="role.value">
+              {{ role.label }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="isFieldInvalid('roleUser')">
+            {{ getFieldErrorMessage('roleUser') }}
+          </mat-error>
+        </mat-form-field>
+
+        <mat-checkbox formControlName="hasDisability" class="full-width">
+          Personne en situation de handicap
+        </mat-checkbox>
+      </div>
+
+      <!-- Informations de contact -->
+      <div class="form-section">
+        <h3>Informations de contact</h3>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Numéro de téléphone</mat-label>
+          <input matInput formControlName="phoneNumber" placeholder="+33 1 23 45 67 89">
+          <mat-icon matSuffix>phone</mat-icon>
+          <mat-error *ngIf="isFieldInvalid('phoneNumber')">
+            {{ getFieldErrorMessage('phoneNumber') }}
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Adresse</mat-label>
+          <input matInput formControlName="address" placeholder="123 rue de la République">
+          <mat-icon matSuffix>home</mat-icon>
+        </mat-form-field>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Ville</mat-label>
+            <input matInput formControlName="city" placeholder="Paris">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Code postal</mat-label>
+            <input matInput formControlName="zipCode" placeholder="75001">
+            <mat-error *ngIf="isFieldInvalid('zipCode')">
+              {{ getFieldErrorMessage('zipCode') }}
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Pays</mat-label>
+          <mat-select formControlName="codeCountry">
+            <mat-option *ngFor="let country of countries" [value]="country.value">
+              {{ country.label }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <!-- Informations supplémentaires -->
+      <div class="form-section" *ngIf="isEditMode">
+        <h3>Informations supplémentaires</h3>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>ID Google (optionnel)</mat-label>
+          <input matInput formControlName="googleId" placeholder="ID de connexion Google">
+          <mat-icon matSuffix>account_circle</mat-icon>
+        </mat-form-field>
+      </div>
+    </form>
+  </mat-dialog-content>
+
+  <mat-dialog-actions>
+    <button mat-button (click)="onCancel()" type="button">
+      Annuler
+    </button>
+    <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="userForm.invalid">
+      <mat-icon>{{ isEditMode ? 'save' : 'person_add' }}</mat-icon>
+      {{ isEditMode ? 'Modifier' : 'Créer' }}
+    </button>
+  </mat-dialog-actions>
+</div>

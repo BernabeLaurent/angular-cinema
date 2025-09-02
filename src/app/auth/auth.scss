@@ -1,38 +1,134 @@
 .auth-container {
   display: flex;
   justify-content: center;
-  margin-top: 40px;
+  align-items: center;
+  min-height: 90vh;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.5);
 }
 
 .auth-card {
   width: 100%;
-  max-width: 500px;
-  padding: 20px;
+  max-width: 480px;
+  padding: 0;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  background: white;
 
-  mat-form-field {
-    width: 100%;
-    margin-bottom: 16px;
-  }
-
-  .actions {
+  .dialog-header {
+    background: linear-gradient(135deg, #FF6B35, #e55a2b);
+    color: white;
+    padding: 24px 28px 20px 28px;
     display: flex;
-    justify-content: flex-end;
-    margin-top: 16px;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0;
+
+    mat-card-title {
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .close-button {
+      color: white;
+      margin: 0;
+      
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+    }
   }
 
-  mat-error {
-    color: red;
-    margin-top: 10px;
+  mat-card-content {
+    padding: 32px 28px !important;
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+
+      mat-form-field {
+        width: 100%;
+        margin-bottom: 0;
+
+        &.mat-mdc-form-field {
+          font-size: 14px;
+        }
+      }
+
+      mat-checkbox {
+        margin: 8px 0 16px 0;
+        font-size: 14px;
+      }
+
+      .error {
+        background-color: #ffebee;
+        color: #c62828;
+        padding: 12px 16px;
+        border-radius: 6px;
+        font-size: 14px;
+        border-left: 4px solid #c62828;
+        margin: 8px 0;
+      }
+
+      .actions {
+        display: flex;
+        justify-content: center;
+        margin-top: 8px;
+
+        button {
+          min-width: 140px;
+          height: 44px;
+          font-weight: 600;
+          border-radius: 8px;
+          font-size: 15px;
+
+          &.mat-mdc-raised-button.mat-primary {
+            background-color: #FF6B35;
+            color: white;
+
+            &:hover {
+              background-color: #e55a2b;
+            }
+
+            &:disabled {
+              background-color: rgba(0, 0, 0, 0.12);
+              color: rgba(0, 0, 0, 0.26);
+            }
+          }
+        }
+      }
+    }
+
+    mat-error {
+      color: #c62828;
+      font-size: 13px;
+      margin-top: 8px;
+    }
   }
 }
 
-.dialog-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-}
+@media (max-width: 768px) {
+  .auth-container {
+    padding: 16px;
+    min-height: 100vh;
+  }
 
-.close-button {
-  margin-left: auto;
+  .auth-card {
+    max-width: 100%;
+
+    .dialog-header {
+      padding: 20px 20px 16px 20px;
+
+      mat-card-title {
+        font-size: 1.2rem;
+      }
+    }
+
+    mat-card-content {
+      padding: 24px 20px !important;
+    }
+  }
 }

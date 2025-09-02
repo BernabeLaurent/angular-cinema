@@ -1,0 +1,86 @@
+<div class="profile-container" *ngIf="currentUser$ | async as user">
+  <mat-card class="profile-card">
+    <mat-card-header>
+      <div mat-card-avatar class="profile-avatar">
+        {{ userInitials$ | async }}
+      </div>
+      <mat-card-title>Profil utilisateur</mat-card-title>
+      <mat-card-subtitle>Gérez vos informations personnelles</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div class="user-info-section">
+        <h3>Informations du compte</h3>
+        <div class="info-grid">
+          <div class="info-item">
+            <mat-icon>email</mat-icon>
+            <div class="info-content">
+              <label>Email</label>
+              <span>{{ user.email }}</span>
+            </div>
+          </div>
+          
+          <div class="info-item">
+            <mat-icon>badge</mat-icon>
+            <div class="info-content">
+              <label>Type de compte</label>
+              <span class="role-badge" [class]="'role-' + user.role.toLowerCase()">
+                {{ getRoleDisplayName(user.role) }}
+              </span>
+            </div>
+          </div>
+          
+          <div class="info-item">
+            <mat-icon>fingerprint</mat-icon>
+            <div class="info-content">
+              <label>ID utilisateur</label>
+              <span>#{{ user.id }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <div class="actions-section">
+        <h3>Actions</h3>
+        <div class="action-buttons">
+          <button mat-raised-button color="primary">
+            <mat-icon>edit</mat-icon>
+            Modifier le profil
+          </button>
+          
+          <button mat-raised-button>
+            <mat-icon>lock</mat-icon>
+            Changer mot de passe
+          </button>
+          
+          <button mat-raised-button>
+            <mat-icon>movie</mat-icon>
+            Mes réservations
+          </button>
+          
+          <button mat-raised-button color="warn" (click)="logout()">
+            <mat-icon>logout</mat-icon>
+            Se déconnecter
+          </button>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<div class="profile-container" *ngIf="!(currentUser$ | async)">
+  <mat-card class="profile-card">
+    <mat-card-content>
+      <div class="not-logged-in">
+        <mat-icon>account_circle</mat-icon>
+        <h2>Vous n'êtes pas connecté</h2>
+        <p>Veuillez vous connecter pour accéder à votre profil.</p>
+        <button mat-raised-button color="primary">
+          Se connecter
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

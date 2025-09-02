@@ -1,0 +1,181 @@
+<div class="admin-dashboard">
+  <div class="dashboard-header">
+    <div class="welcome-section" *ngIf="currentUser$ | async as user">
+      <h1>{{ getGreeting() }}, {{ user.email }}</h1>
+      <p>Bienvenue dans votre espace d'administration Pathé</p>
+    </div>
+    
+    <div class="header-actions">
+      <button mat-raised-button color="primary" (click)="refreshStats()">
+        <mat-icon>refresh</mat-icon>
+        Actualiser
+      </button>
+    </div>
+  </div>
+
+  <!-- Statistiques -->
+  <div class="stats-section" *ngIf="!loading; else loadingStats">
+    <div class="stats-grid" *ngIf="stats$ | async as stats">
+      <mat-card class="stat-card users">
+        <mat-card-content>
+          <div class="stat-icon">
+            <mat-icon>people</mat-icon>
+          </div>
+          <div class="stat-info">
+            <h2>{{ stats.totalUsers }}</h2>
+            <p>Utilisateurs</p>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card theaters">
+        <mat-card-content>
+          <div class="stat-icon">
+            <mat-icon>location_city</mat-icon>
+          </div>
+          <div class="stat-info">
+            <h2>{{ stats.totalTheaters }}</h2>
+            <p>Cinémas</p>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card bookings">
+        <mat-card-content>
+          <div class="stat-icon">
+            <mat-icon>event_seat</mat-icon>
+          </div>
+          <div class="stat-info">
+            <h2>{{ stats.totalBookings }}</h2>
+            <p>Réservations</p>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card pending">
+        <mat-card-content>
+          <div class="stat-icon">
+            <mat-icon>hourglass_empty</mat-icon>
+          </div>
+          <div class="stat-info">
+            <h2>{{ stats.pendingBookings }}</h2>
+            <p>En attente</p>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+
+  <ng-template #loadingStats>
+    <div class="stats-loading">
+      <mat-card class="loading-card" *ngFor="let i of [1,2,3,4]">
+        <mat-card-content>
+          <div class="loading-content">
+            <div class="loading-icon"></div>
+            <div class="loading-text">
+              <div class="loading-line"></div>
+              <div class="loading-line short"></div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </ng-template>
+
+  <!-- Actions rapides -->
+  <div class="quick-actions-section">
+    <h2>Actions rapides</h2>
+    <div class="actions-grid">
+      <mat-card class="action-card" *ngFor="let action of quickActions">
+        <mat-card-content>
+          <div class="action-icon" [class]="'icon-' + action.color">
+            <mat-icon>{{ action.icon }}</mat-icon>
+          </div>
+          <div class="action-content">
+            <h3>{{ action.title }}</h3>
+            <p>{{ action.description }}</p>
+          </div>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-raised-button [color]="action.color" [routerLink]="action.route">
+            Accéder
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+  </div>
+
+  <!-- Activité récente -->
+  <div class="recent-activity-section">
+    <mat-card class="activity-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>history</mat-icon>
+          Activité récente
+        </mat-card-title>
+      </mat-card-header>
+      
+      <mat-card-content>
+        <div class="activity-list">
+          <div class="activity-item" *ngFor="let activity of recentActivities; trackBy: trackActivity">
+            <div class="activity-icon" [class]="'activity-' + activity.type">
+              <mat-icon>{{ getActivityIcon(activity) }}</mat-icon>
+            </div>
+            <div class="activity-content">
+              <div class="activity-message">{{ activity.message }}</div>
+              <div class="activity-detail">{{ activity.detail }}</div>
+            </div>
+            <div class="activity-time">{{ activity.time }}</div>
+          </div>
+        </div>
+        
+        <mat-divider></mat-divider>
+        
+        <div class="activity-footer">
+          <button mat-button routerLink="/admin/logs">
+            Voir tous les logs
+            <mat-icon>arrow_forward</mat-icon>
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Liens rapides -->
+    <mat-card class="quick-links-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>link</mat-icon>
+          Liens utiles
+        </mat-card-title>
+      </mat-card-header>
+      
+      <mat-card-content>
+        <div class="links-list">
+          <button mat-button routerLink="/admin/users" class="link-item">
+            <mat-icon>people</mat-icon>
+            <span>Tous les utilisateurs</span>
+            <mat-icon class="arrow">chevron_right</mat-icon>
+          </button>
+          
+          <button mat-button routerLink="/admin/theaters" class="link-item">
+            <mat-icon>location_city</mat-icon>
+            <span>Tous les cinémas</span>
+            <mat-icon class="arrow">chevron_right</mat-icon>
+          </button>
+          
+          <button mat-button routerLink="/admin/bookings" class="link-item">
+            <mat-icon>event_seat</mat-icon>
+            <span>Toutes les réservations</span>
+            <mat-icon class="arrow">chevron_right</mat-icon>
+          </button>
+          
+          <button mat-button routerLink="/admin/movies" class="link-item">
+            <mat-icon>movie</mat-icon>
+            <span>Catalogue des films</span>
+            <mat-icon class="arrow">chevron_right</mat-icon>
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
