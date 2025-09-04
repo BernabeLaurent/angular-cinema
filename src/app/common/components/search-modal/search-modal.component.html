@@ -1,0 +1,72 @@
+<div class="search-modal-container">
+  <div class="search-header">
+    <h2>Rechercher un film</h2>
+    <button mat-icon-button (click)="closeModal()" class="close-btn">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <div class="search-input-container">
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>Rechercher parmi les films disponibles...</mat-label>
+      <input matInput 
+             [(ngModel)]="searchQuery" 
+             (input)="onSearchChange()" 
+             placeholder="Titre, description..." 
+             autocomplete="off">
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+  </div>
+
+  <div class="search-results">
+    <div *ngIf="isLoading" class="loading-container">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>Chargement des films disponibles...</p>
+    </div>
+
+    <div *ngIf="!isLoading && filteredMovies.length === 0 && searchQuery" class="no-results">
+      <mat-icon>search_off</mat-icon>
+      <p>Aucun film trouvé pour "{{ searchQuery }}"</p>
+      <small>Essayez avec un autre terme de recherche</small>
+    </div>
+
+    <div *ngIf="!isLoading && filteredMovies.length === 0 && !searchQuery" class="no-movies">
+      <mat-icon>movie</mat-icon>
+      <p>Aucun film disponible actuellement</p>
+      <small>Revenez plus tard pour voir les nouveaux films</small>
+    </div>
+
+    <div class="movies-grid" *ngIf="!isLoading && filteredMovies.length > 0">
+      <mat-card class="movie-card" 
+                *ngFor="let movie of filteredMovies" 
+                (click)="selectMovie(movie)">
+        <div class="movie-poster">
+          <img [src]="getPosterUrl(movie)" 
+               [alt]="movie.title" 
+               loading="lazy">
+        </div>
+        <mat-card-content class="movie-info">
+          <h3 class="movie-title">{{ movie.title }}</h3>
+          <p class="movie-year" *ngIf="getMovieYear(movie)">{{ getMovieYear(movie) }}</p>
+          <p class="movie-original-title" *ngIf="movie.originalTitle && movie.originalTitle !== movie.title">
+            {{ movie.originalTitle }}
+          </p>
+          <div class="movie-rating" *ngIf="movie.averageRating">
+            <span class="stars">{{ getRatingStars(movie.averageRating) }}</span>
+            <span class="rating-value">{{ movie.averageRating | number:'1.1-1' }}/10</span>
+          </div>
+          <p class="movie-description" *ngIf="movie.description">
+            {{ movie.description | slice:0:120 }}{{ movie.description.length > 120 ? '...' : '' }}
+          </p>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+
+  <div class="search-info" *ngIf="!isLoading && availableMovies.length > 0">
+    <small>
+      <mat-icon>info</mat-icon>
+      {{ filteredMovies.length }} film(s) sur {{ availableMovies.length }} disponible(s) en séance
+    </small>
+  </div>
+</div>

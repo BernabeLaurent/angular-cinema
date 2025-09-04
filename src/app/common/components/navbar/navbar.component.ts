@@ -12,6 +12,7 @@ import { Observable } from 'rxjs';
 
 import { LoginComponent } from '../../../auth/login/login.component';
 import { RegisterComponent } from '../../../auth/register/register.component';
+import { SearchModalComponent } from '../search-modal/search-modal.component';
 import { AuthService } from '../../../auth/auth.service';
 import { UserRoleService } from '../../../services/user-role.service';
 import { User } from '../../../auth/user.interface';
@@ -64,6 +65,12 @@ export class NavbarComponent {
   }
 
   openSearchModal() {
+    this.dialog.open(SearchModalComponent, {
+      width: '90vw',
+      maxWidth: '900px',
+      maxHeight: '90vh',
+      panelClass: 'search-modal-dialog'
+    });
   }
 
   openLoginDialog() {
