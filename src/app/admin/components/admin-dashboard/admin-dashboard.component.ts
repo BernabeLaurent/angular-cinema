@@ -40,7 +40,7 @@ export class AdminDashboardComponent implements OnInit {
     pendingBookings: 0
   });
   
-  currentUser$ = this.userRoleService.getCurrentUser();
+  currentUser$!: Observable<any>;
   loading = true;
 
   quickActions = [
@@ -112,7 +112,9 @@ export class AdminDashboardComponent implements OnInit {
   constructor(
     private adminService: AdminService,
     private userRoleService: UserRoleService
-  ) {}
+  ) {
+    this.currentUser$ = this.userRoleService.getCurrentUser();
+  }
 
   ngOnInit(): void {
     this.loadDashboardStats();
@@ -126,11 +128,11 @@ export class AdminDashboardComponent implements OnInit {
       users: this.adminService.getAllUsers().pipe(catchError(() => of([]))),
       bookings: this.adminService.getAllBookings().pipe(catchError(() => of([])))
     }).pipe(
-      map(data => ({
+      map((data: { users: any[], bookings: any[] }) => ({
         totalUsers: data.users.length,
         totalTheaters: 2, // Hardcodé car pas d'endpoint GET /theaters
         totalBookings: data.bookings.length,
-        pendingBookings: data.bookings.filter((b: any) => b.status === 'pending').length
+        pendingBookings: data.bookings.filter((b: any, _index: number, _array: any[]) => b.status === 'pending').length
       })),
       catchError(error => {
         console.error('Error loading dashboard stats:', error);

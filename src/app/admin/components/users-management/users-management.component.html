@@ -9,7 +9,7 @@
         Gérez les utilisateurs de la plateforme
       </mat-card-subtitle>
     </mat-card-header>
-    
+
     <mat-card-content>
       <div class="toolbar">
         <div class="filters">
@@ -18,34 +18,34 @@
             <input matInput [(ngModel)]="searchTerm" placeholder="email@exemple.com">
             <mat-icon matSuffix>search</mat-icon>
           </mat-form-field>
-          
+
           <mat-form-field appearance="outline">
             <mat-label>Filtrer par rôle</mat-label>
-            <mat-select [(ngValue)]="selectedRole">
+            <mat-select [(value)]="selectedRole">
               <mat-option value="">Tous les rôles</mat-option>
               <mat-option *ngFor="let role of roles" [value]="role">
                 {{ getRoleDisplayName(role) }}
               </mat-option>
             </mat-select>
           </mat-form-field>
-          
+
           <button mat-raised-button (click)="applyFilter()">
             <mat-icon>filter_list</mat-icon>
             Filtrer
           </button>
-          
+
           <button mat-button (click)="clearFilters()">
             <mat-icon>clear</mat-icon>
             Effacer
           </button>
         </div>
-        
+
         <div class="actions">
           <button mat-raised-button color="primary" (click)="openCreateUserDialog()">
             <mat-icon>person_add</mat-icon>
             Nouvel utilisateur
           </button>
-          
+
           <button mat-button (click)="loadUsers()">
             <mat-icon>refresh</mat-icon>
             Actualiser
@@ -58,7 +58,7 @@
   <mat-card class="table-card">
     <mat-card-content>
       <div class="table-container" *ngIf="!loading; else loadingTemplate">
-        <table mat-table [dataSource]="users$ | async" class="users-table">
+        <table mat-table [dataSource]="(users$ | async) || []" class="users-table">
           <!-- ID Column -->
           <ng-container matColumnDef="id">
             <th mat-header-cell *matHeaderCellDef class="id-column">ID</th>
@@ -71,7 +71,7 @@
             <td mat-cell *matCellDef="let user">
               <div class="user-info">
                 <div class="user-avatar">
-                  {{ user.firstName?.[0] || user.email[0] }}{{ user.lastName?.[0] || '' }}
+                  {{ user.firstName?.[0] || user.email?.[0] }}{{ user.lastName?.[0] || '' }}
                 </div>
                 <div class="user-details">
                   <div class="name">{{ user.firstName || 'N/A' }} {{ user.lastName || '' }}</div>
@@ -93,7 +93,7 @@
           <ng-container matColumnDef="role">
             <th mat-header-cell *matHeaderCellDef>Rôle</th>
             <td mat-cell *matCellDef="let user">
-              <mat-chip [color]="getRoleColor(user.roleUser)" selected>
+              <mat-chip [color]="getRoleColor(user.roleUser)">
                 {{ getRoleDisplayName(user.roleUser) }}
               </mat-chip>
             </td>
@@ -111,11 +111,11 @@
           <ng-container matColumnDef="actions">
             <th mat-header-cell *matHeaderCellDef class="actions-column">Actions</th>
             <td mat-cell *matCellDef="let user" class="actions-column">
-              <button mat-icon-button (click)="openEditUserDialog(user)" 
+              <button mat-icon-button (click)="openEditUserDialog(user)"
                       matTooltip="Modifier l'utilisateur">
                 <mat-icon>edit</mat-icon>
               </button>
-              
+
               <button mat-icon-button color="warn" (click)="deleteUser(user)"
                       matTooltip="Supprimer l'utilisateur">
                 <mat-icon>delete</mat-icon>
@@ -124,7 +124,8 @@
           </ng-container>
 
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="user-row"></tr>
+          <!-- @ts-ignore: Required by Angular mat-table directive -->
+          <tr mat-row *matRowDef="let _user; columns: displayedColumns;" class="user-row"></tr>
         </table>
 
         <!-- Empty state -->

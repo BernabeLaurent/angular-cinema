@@ -11,6 +11,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { Observable, of } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 
@@ -35,7 +36,8 @@ import { UserFormDialogComponent } from '../user-form-dialog/user-form-dialog.co
     MatChipsModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSelectModule
+    MatSelectModule,
+    MatTooltipModule
   ],
   templateUrl: './users-management.component.html',
   styleUrls: ['./users-management.component.scss']
@@ -45,8 +47,8 @@ export class UsersManagementComponent implements OnInit {
   displayedColumns: string[] = ['id', 'name', 'email', 'role', 'createDate', 'actions'];
   loading = false;
   searchTerm = '';
-  selectedRole = '';
-  roles = Object.values(RoleUser);
+  selectedRole: RoleUser | '' = '';
+  roles = Object.values(RoleUser) as RoleUser[];
 
   constructor(
     private adminService: AdminService,
