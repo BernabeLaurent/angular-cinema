@@ -34,6 +34,8 @@ export const AuthInterceptor: HttpInterceptorFn = (
 
   return next(authReq).pipe(
     catchError((error) => {
+      console.error('HTTP Error:', error);
+      
       if (
         error instanceof HttpErrorResponse &&
         error.status === 401 &&

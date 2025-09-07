@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {FormBuilder, Validators, FormGroup, ReactiveFormsModule} from '@angular/forms';
+import {FormBuilder, Validators, FormGroup, ReactiveFormsModule, AbstractControl, ValidationErrors} from '@angular/forms';
 import {AuthService} from '../auth.service';
 import {Router} from '@angular/router';
 import {CreateUserDto} from '../../users/dtos/create-user.dto';
@@ -12,9 +12,9 @@ import {MatButtonModule} from '@angular/material/button';
 import {MatCardModule} from '@angular/material/card';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatSelectModule} from '@angular/material/select';
-import {NgIf} from '@angular/common';
 import { MatDialogRef } from '@angular/material/dialog';
-import {MatIcon} from '@angular/material/icon';
+import {CommonModule} from '@angular/common';
+import {MatIconModule} from '@angular/material/icon';
 
 
 @Component({
@@ -28,8 +28,8 @@ import {MatIcon} from '@angular/material/icon';
     MatCardModule,
     MatCheckboxModule,
     MatSelectModule,
-    NgIf,
-    MatIcon,
+    CommonModule,
+    MatIconModule,
   ],
   templateUrl: './register.component.html',
   styleUrls: ['../auth.scss']
@@ -37,11 +37,6 @@ import {MatIcon} from '@angular/material/icon';
 export class RegisterComponent {
   registerForm: FormGroup;
   error: string | null = null;
-  roles = [
-    { value: RoleUser.CUSTOMER, label: 'Client' },
-    { value: RoleUser.ADMIN, label: 'Administrateur' },
-    { value: RoleUser.WORKER, label: 'Employé' }
-  ];
   countries = [
     { value: RegionsIso.FRANCE, label: 'France' },
     { value: RegionsIso.USA, label: 'États-Unis' }
@@ -52,8 +47,8 @@ export class RegisterComponent {
       firstName: ['', [Validators.required, Validators.minLength(2)]],
       lastName: ['', [Validators.required, Validators.minLength(2)]],
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
-      roleUser: [RoleUser.CUSTOMER, [Validators.required]],
+      password: ['', [Validators.required, Validators.minLength(8), this.passwordFormatValidator.bind(this)]],
+      roleUser: [RoleUser.CUSTOMER],
       hasDisability: [false],
       address: [''],
       city: [''],
@@ -96,5 +91,21 @@ export class RegisterComponent {
 
   closeDialog(): void {
     this.dialogRef.close();
+  }
+
+  private passwordFormatValidator(control: AbstractControl): ValidationErrors | null {
+    const value = control.value;
+    if (!value) {
+      return null;
+    }
+
+    // Regex qui correspond exactement au backend NestJS
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
+    
+    if (!passwordRegex.test(value)) {
+      return { passwordFormat: true };
+    }
+
+    return null;
   }
 }

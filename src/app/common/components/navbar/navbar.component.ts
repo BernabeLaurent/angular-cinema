@@ -8,6 +8,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatMenuModule } from '@angular/material/menu';
 
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { Overlay } from '@angular/cdk/overlay';
 import { Observable } from 'rxjs';
 
 import { LoginComponent } from '../../../auth/login/login.component';
@@ -47,6 +48,7 @@ export class NavbarComponent {
 
   constructor(
     private dialog: MatDialog, 
+    private overlay: Overlay,
     private authService: AuthService,
     private userRoleService: UserRoleService
   ) {
@@ -83,7 +85,12 @@ export class NavbarComponent {
   openRegisterDialog() {
     this.dialog.open(RegisterComponent, {
       width: '450px',
-      panelClass: 'custom-dialog-container'
+      maxHeight: '90vh',
+      panelClass: 'register-dialog-container',
+      hasBackdrop: true,
+      disableClose: false,
+      autoFocus: false,
+      scrollStrategy: this.overlay.scrollStrategies.block()
     });
   }
 

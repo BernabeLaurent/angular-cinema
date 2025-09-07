@@ -134,3 +134,39 @@ a:focus-visible {
   font-weight: 600 !important;
   text-transform: none !important;
 }
+
+/* Material Dialog custom styles for registration */
+.register-dialog-container {
+  position: fixed !important;
+  top: 5vh !important;
+  bottom: 5vh !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: 450px !important;
+  max-width: 90vw !important;
+  height: auto !important;
+  max-height: 90vh !important;
+  overflow: hidden !important;
+
+  .mat-mdc-dialog-container {
+    height: 100% !important;
+    max-height: 90vh !important;
+    overflow-y: auto !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border-radius: 12px !important;
+  }
+
+  .cdk-overlay-pane {
+    position: static !important;
+  }
+
+  /* Force visibility of form field hints */
+  .mat-mdc-form-field-hint {
+    color: #666666 !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    display: block !important;
+    font-size: 12px !important;
+  }
+}
