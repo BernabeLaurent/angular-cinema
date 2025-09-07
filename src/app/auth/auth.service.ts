@@ -60,7 +60,7 @@ export class AuthService {
 
     return this.http
       .post<{ accessToken: string; refreshToken: string }>(
-        `${this.apiUrl}/auth/refresh-token`,
+        `${this.apiUrl}/auth/refresh-tokens`,
         {refreshToken}
       )
       .pipe(
@@ -119,7 +119,7 @@ export class AuthService {
 
   register(data: CreateUserDto): Observable<any> {
     return this.http.post<{ user: User; tokens: { accessToken: string; refreshToken: string } }>(
-      `${this.apiUrl}/create`,
+      `${this.apiUrl}/users`,
       data
     ).pipe(
       tap(({tokens, user}) => {
