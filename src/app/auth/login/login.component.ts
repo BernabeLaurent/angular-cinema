@@ -45,7 +45,14 @@ export class LoginComponent {
       this.authService.login(this.loginForm.value).subscribe({
         next: () => {
           this.dialogRef.close();
-          window.location.reload(); // Refresh to update navbar state
+          
+          // Redirection intelligente selon le rôle
+          this.authService.redirectAfterAuth(this.router);
+          
+          // Refresh léger pour mettre à jour la navbar
+          setTimeout(() => {
+            window.location.reload();
+          }, 100);
         },
         error: err => (this.error = err.error?.message || 'Identifiants incorrects'),
       });

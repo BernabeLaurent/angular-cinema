@@ -30,14 +30,15 @@ export class AuthService {
     }
   }
 
-  login(credentials: { email: string; password: string }): Observable<{ accessToken: string; refreshToken: string }> {
+  login(credentials: { email: string; password: string }): Observable<any> {
     return this.http
-      .post<{ accessToken: string; refreshToken: string }>(
+      .post<{ data: { accessToken: string; refreshToken: string }; apiVersion: string }>(
         `${this.apiUrl}/auth/sign-in`,
         credentials
       )
       .pipe(
-        tap(({accessToken, refreshToken}) => {
+        tap((response) => {
+          const { accessToken, refreshToken } = response.data;
           localStorage.setItem('accessToken', accessToken);
           localStorage.setItem('refreshToken', refreshToken);
           this.setUserFromToken(accessToken);
@@ -115,6 +116,17 @@ export class AuthService {
   saveAccessToken(token: string): void {
     localStorage.setItem('accessToken', token);
     this.setUserFromToken(token);
+  }
+
+  redirectAfterAuth(router: any): void {
+    const currentUser = this.userSubject.value;
+    if (currentUser) {
+      if (currentUser.role === 'ADMIN') {
+        router.navigate(['/admin']);
+      } else {
+        router.navigate(['/']);
+      }
+    }
   }
 
   register(data: CreateUserDto): Observable<any> {
