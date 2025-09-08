@@ -32,5 +32,8 @@ else
     echo "Port 4200 is now free"
 fi
 
+echo "Clearing Angular cache..."
+rm -rf .angular/cache
+
 echo "Starting Angular on port 4200..."
 ng serve
