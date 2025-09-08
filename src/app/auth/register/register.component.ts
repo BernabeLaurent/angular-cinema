@@ -68,9 +68,20 @@ export class RegisterComponent {
       };
       
       this.authService.register(formData).subscribe({
-        next: () => {
+        next: (response) => {
           this.dialogRef.close();
-          window.location.reload(); // Refresh to update navbar state
+          // Le token est déjà sauvé dans le service
+          
+          // Redirection selon le rôle
+          const userRole = response.data.roleUser;
+          if (userRole === 'ADMIN') {
+            this.router.navigate(['/admin']);
+          } else {
+            this.router.navigate(['/']);
+          }
+          
+          // Refresh pour mettre à jour la navbar
+          setTimeout(() => window.location.reload(), 100);
         },
         error: err => {
           console.error('Registration error:', err);

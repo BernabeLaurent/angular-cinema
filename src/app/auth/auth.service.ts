@@ -118,15 +118,16 @@ export class AuthService {
   }
 
   register(data: CreateUserDto): Observable<any> {
-    return this.http.post<{ user: User; tokens: { accessToken: string; refreshToken: string } }>(
+    return this.http.post<{ data: any; apiVersion: string }>(
       `${this.apiUrl}/users`,
       data
     ).pipe(
-      tap(({tokens, user}) => {
-        localStorage.setItem('accessToken', tokens.accessToken);
-        localStorage.setItem('refreshToken', tokens.refreshToken);
-        this.setUserFromToken(tokens.accessToken);
-        this.userSubject.next(user);
+      tap((response) => {
+        const { accessToken, refreshToken } = response.data.token;
+        localStorage.setItem('accessToken', accessToken);
+        localStorage.setItem('refreshToken', refreshToken);
+        this.setUserFromToken(accessToken);
+        this.userSubject.next(response.data);
       }),
       catchError(err => {
         return throwError(() => err);
