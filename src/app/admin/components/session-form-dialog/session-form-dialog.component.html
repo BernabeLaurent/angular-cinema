@@ -17,10 +17,10 @@
 
   <mat-dialog-content>
     <form [formGroup]="sessionForm" class="session-form">
-      <!-- Sélection de la salle -->
+      <!-- Sélection du cinéma -->
       <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Salle de cinéma</mat-label>
-        <mat-select formControlName="theaterId" required>
+        <mat-label>Cinéma</mat-label>
+        <mat-select formControlName="theaterId" (selectionChange)="onTheaterSelected($event.value)" required>
           <mat-option *ngFor="let theater of theaters" [value]="theater.id">
             <div class="theater-option">
               <div class="theater-name">{{ theater.name }}</div>
@@ -30,6 +30,34 @@
         </mat-select>
         <mat-error *ngIf="isFieldInvalid('theaterId')">
           {{ getFieldErrorMessage('theaterId') }}
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Sélection de la salle -->
+      <mat-form-field appearance="outline" class="full-width" 
+                      [class.disabled]="!selectedTheaterId">
+        <mat-label>Salle</mat-label>
+        <mat-select formControlName="roomId" 
+                    [disabled]="!selectedTheaterId || loadingRooms" 
+                    required>
+          <mat-option value="" disabled *ngIf="!selectedTheaterId">
+            Veuillez d'abord sélectionner un cinéma
+          </mat-option>
+          <mat-option value="" disabled *ngIf="loadingRooms">
+            Chargement des salles...
+          </mat-option>
+          <mat-option *ngFor="let room of theaterRooms" [value]="room.id">
+            <div class="room-option">
+              <div class="room-name">Salle {{ room.roomNumber }}</div>
+              <div class="room-details">{{ room.numberSeats }} places</div>
+            </div>
+          </mat-option>
+        </mat-select>
+        <mat-hint *ngIf="!selectedTheaterId">
+          Sélectionnez d'abord un cinéma pour voir les salles disponibles
+        </mat-hint>
+        <mat-error *ngIf="isFieldInvalid('roomId')">
+          {{ getFieldErrorMessage('roomId') }}
         </mat-error>
       </mat-form-field>
 
@@ -109,7 +137,7 @@
           </div>
           <div class="summary-item">
             <mat-icon>location_on</mat-icon>
-            <span>{{ getSelectedTheaterName() }}</span>
+            <span>{{ getSelectedTheaterName() }} - Salle {{ getSelectedRoomName() }}</span>
           </div>
           <div class="summary-item">
             <mat-icon>calendar_today</mat-icon>

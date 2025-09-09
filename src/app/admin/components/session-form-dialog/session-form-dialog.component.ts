@@ -10,6 +10,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
+import { AdminService, Theater, TheaterRoom } from '../../../services/admin.service';
 
 interface Movie {
   id: number;
@@ -24,12 +25,6 @@ interface Movie {
   rating?: string;
 }
 
-interface Theater {
-  id: number;
-  name: string;
-  address: string;
-  city: string;
-}
 
 interface DialogData {
   movie: Movie;
@@ -61,16 +56,24 @@ export class SessionFormDialogComponent implements OnInit {
   isEditMode: boolean;
   movie: Movie;
   
-  theaters: Theater[] = [
-    { id: 1, name: 'Salle 1', address: '123 Rue de la Paix', city: 'Paris' },
-    { id: 2, name: 'Salle 2', address: '456 Avenue des Champs', city: 'Paris' },
-    { id: 3, name: 'Salle IMAX', address: '789 Boulevard Saint-Germain', city: 'Paris' }
-  ];
+  theaters: Theater[] = [];
+  theaterRooms: TheaterRoom[] = [];
+  selectedTheaterId: number | null = null;
+  loadingRooms = false;
 
   qualities = [
     { value: 'HD', label: 'HD (1080p)', icon: 'hd' },
-    { value: '4K', label: '4K Ultra HD', icon: '4k' },
-    { value: 'IMAX', label: 'IMAX', icon: 'crop_landscape' }
+    { value: 'UHD_4K', label: '4K Ultra HD', icon: '4k' },
+    { value: 'IMAX', label: 'IMAX', icon: 'crop_landscape' },
+    { value: 'DOLBY_CINEMA', label: 'Dolby Cinema', icon: 'surround_sound' }
+  ];
+
+  languages = [
+    { value: 'fr', label: 'Français' },
+    { value: 'en', label: 'Anglais' },
+    { value: 'es', label: 'Espagnol' },
+    { value: 'de', label: 'Allemand' },
+    { value: 'it', label: 'Italien' }
   ];
 
   timeSlots = [
@@ -84,7 +87,8 @@ export class SessionFormDialogComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     public dialogRef: MatDialogRef<SessionFormDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: DialogData
+    @Inject(MAT_DIALOG_DATA) public data: DialogData,
+    private adminService: AdminService
   ) {
     this.isEditMode = data.mode === 'edit';
     this.movie = data.movie;
@@ -92,6 +96,7 @@ export class SessionFormDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.loadTheaters();
     if (this.isEditMode && this.data.session) {
       this.populateForm(this.data.session);
     } else {
@@ -102,11 +107,22 @@ export class SessionFormDialogComponent implements OnInit {
   private createForm(): FormGroup {
     return this.fb.group({
       theaterId: ['', [Validators.required]],
+      roomId: ['', [Validators.required]],
       date: ['', [Validators.required]],
       startTime: ['', [Validators.required]],
       quality: ['HD', [Validators.required]],
-      price: [12.50, [Validators.required, Validators.min(0)]],
-      totalSeats: [150, [Validators.required, Validators.min(1), Validators.max(500)]]
+      language: ['fr', [Validators.required]]
+    });
+  }
+
+  private loadTheaters(): void {
+    this.adminService.getTheaters().subscribe({
+      next: (theaters) => {
+        this.theaters = theaters;
+      },
+      error: (error) => {
+        console.error('Error loading theaters:', error);
+      }
     });
   }
 
@@ -127,12 +143,37 @@ export class SessionFormDialogComponent implements OnInit {
   private populateForm(session: any): void {
     this.sessionForm.patchValue({
       theaterId: session.theaterId,
+      roomId: session.roomId,
       date: new Date(session.date),
       startTime: session.startTime,
       quality: session.quality,
       price: session.price,
       totalSeats: session.totalSeats
     });
+    
+    if (session.theaterId) {
+      this.onTheaterSelected(session.theaterId);
+    }
+  }
+
+  onTheaterSelected(theaterId: number): void {
+    this.selectedTheaterId = theaterId;
+    this.theaterRooms = [];
+    this.sessionForm.get('roomId')?.setValue('');
+    
+    if (theaterId) {
+      this.loadingRooms = true;
+      this.adminService.getTheaterRooms(theaterId).subscribe({
+        next: (rooms) => {
+          this.theaterRooms = rooms;
+          this.loadingRooms = false;
+        },
+        error: (error) => {
+          console.error('Error loading theater rooms:', error);
+          this.loadingRooms = false;
+        }
+      });
+    }
   }
 
   calculateEndTime(): string {
@@ -171,6 +212,7 @@ export class SessionFormDialogComponent implements OnInit {
       const sessionData = {
         movieId: this.movie.id,
         theaterId: formValue.theaterId,
+        roomId: formValue.roomId,
         date: formValue.date.toISOString().split('T')[0], // Format YYYY-MM-DD
         startTime: formValue.startTime,
         endTime: this.calculateEndTime(),
@@ -219,7 +261,8 @@ export class SessionFormDialogComponent implements OnInit {
 
   private getFieldLabel(fieldName: string): string {
     const labels: { [key: string]: string } = {
-      theaterId: 'La salle',
+      theaterId: 'Le cinéma',
+      roomId: 'La salle',
       date: 'La date',
       startTime: 'L\'heure de début',
       quality: 'La qualité',
@@ -243,8 +286,14 @@ export class SessionFormDialogComponent implements OnInit {
 
   getSelectedTheaterName(): string {
     const theaterId = this.sessionForm.get('theaterId')?.value;
-    const theater = this.theaters.find(t => t.id === theaterId);
+    const theater = this.theaters.find(t => t.id === Number(theaterId));
     return theater?.name || '';
+  }
+
+  getSelectedRoomName(): string {
+    const roomId = this.sessionForm.get('roomId')?.value;
+    const room = this.theaterRooms.find(r => r.id === Number(roomId));
+    return room?.roomNumber.toString() || '';
   }
 
   getSelectedQualityLabel(): string {

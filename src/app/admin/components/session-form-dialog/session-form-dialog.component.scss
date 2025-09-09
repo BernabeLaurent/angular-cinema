@@ -104,6 +104,26 @@
       }
     }
 
+    // Style pour les options de salle
+    .room-option {
+      .room-name {
+        font-weight: 500;
+        color: #1a1a1a;
+      }
+
+      .room-details {
+        font-size: 0.875rem;
+        color: rgba(0, 0, 0, 0.6);
+        margin-top: 2px;
+      }
+    }
+
+    // Style pour les champs désactivés
+    .disabled {
+      opacity: 0.6;
+      pointer-events: none;
+    }
+
     // Style pour les options de qualité
     .quality-option {
       display: flex;

@@ -20,6 +20,16 @@
             <mat-icon matSuffix>search</mat-icon>
           </mat-form-field>
 
+          <mat-form-field appearance="outline">
+            <mat-label>Filtrer par cinéma</mat-label>
+            <mat-select [(ngModel)]="selectedTheaterId" (selectionChange)="applyFilters()">
+              <mat-option value="">Tous les cinémas</mat-option>
+              <mat-option *ngFor="let theater of theaters" [value]="theater.id">
+                {{ theater.name }} - {{ theater.city }}
+              </mat-option>
+            </mat-select>
+            <mat-icon matSuffix>movie_filter</mat-icon>
+          </mat-form-field>
 
           <button mat-button (click)="clearFilters()">
             <mat-icon>clear</mat-icon>

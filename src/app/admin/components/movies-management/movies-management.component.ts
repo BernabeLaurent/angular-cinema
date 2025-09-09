@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -43,6 +44,37 @@ interface Session {
   totalSeats: number;
 }
 
+interface SessionCinema {
+  id: number;
+  startTime: string;
+  endTime: string;
+  quality: string;
+  codeLanguage: string;
+  movieTheater: {
+    id: number;
+    theater: {
+      id: number;
+      name: string;
+      zipCode: number;
+      city: string;
+      address: string;
+      codeCountry: string;
+      openingTime: string;
+      closingTime: string;
+      phoneNumber: string;
+      createDate: string;
+      updateDate: string;
+    };
+    theaterId: number;
+    numberSeats: number;
+    numberSeatsDisabled: number;
+    roomNumber: number;
+  };
+  movieTheaterId: number;
+  movie: any;
+  movieId: number;
+}
+
 @Component({
   selector: 'app-movies-management',
   standalone: true,
@@ -69,19 +101,24 @@ export class MoviesManagementComponent implements OnInit {
   movies: Movie[] = [];
   filteredMovies: Movie[] = [];
   sessions: Session[] = [];
+  sessionsCinema: SessionCinema[] = [];
   displayedColumns: string[] = ['details', 'title', 'duration', 'releaseDate', 'sessions', 'actions'];
   loading = false;
   searchTerm = '';
+  selectedTheaterId = '';
+  theaters: any[] = [];
 
   constructor(
     private adminService: AdminService,
     private dialog: MatDialog,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private http: HttpClient
   ) {}
 
   ngOnInit(): void {
     this.loadMovies();
     this.loadSessions();
+    this.loadTheaters();
   }
 
   loadMovies(): void {
@@ -120,10 +157,57 @@ export class MoviesManagementComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error loading sessions:', error);
-        // En cas d'erreur, on continue sans les sessions
         this.sessions = [];
       }
     });
+
+    // Charger les sessions complètes avec cinémas
+    this.loadSessionsCinema();
+  }
+
+  loadSessionsCinema(): void {
+    // L'API sessions-cinemas retourne les sessions avec les informations complètes des cinémas
+    this.http.get<{ data: SessionCinema[]; apiVersion: string }>('http://127.0.0.1:3001/sessions-cinemas').subscribe({
+      next: (response) => {
+        console.log('Sessions cinema loaded successfully:', response.data);
+        this.sessionsCinema = response.data;
+        // Extraire les cinémas uniques des sessions
+        this.extractTheatersFromSessions();
+      },
+      error: (error) => {
+        console.error('Error loading sessions cinema:', error);
+        this.sessionsCinema = [];
+      }
+    });
+  }
+
+  loadTheaters(): void {
+    // On charge les cinémas depuis l'API
+    this.adminService.getTheaters().subscribe({
+      next: (theaters) => {
+        console.log('Theaters loaded successfully:', theaters);
+        this.theaters = theaters;
+      },
+      error: (error) => {
+        console.error('Error loading theaters:', error);
+        // En cas d'erreur, on utilise les cinémas extraits des sessions
+        this.theaters = [];
+      }
+    });
+  }
+
+  private extractTheatersFromSessions(): void {
+    // Extraire les cinémas uniques des sessions si on n'a pas les cinémas depuis l'API
+    if (this.theaters.length === 0 && this.sessionsCinema.length > 0) {
+      const theaterMap = new Map();
+      this.sessionsCinema.forEach(session => {
+        if (session.movieTheater?.theater) {
+          const theater = session.movieTheater.theater;
+          theaterMap.set(theater.id, theater);
+        }
+      });
+      this.theaters = Array.from(theaterMap.values());
+    }
   }
 
   private simulateMovies(): void {
@@ -217,8 +301,28 @@ export class MoviesManagementComponent implements OnInit {
       return;
     }
 
+    // Filtrer par cinéma si sélectionné
+    if (this.selectedTheaterId) {
+      this.filterMoviesByTheater();
+      return;
+    }
+
     // Sinon, on affiche tous les films
     this.filteredMovies = [...this.movies];
+  }
+
+  filterMoviesByTheater(): void {
+    // Obtenir les IDs des films qui ont des sessions dans le cinéma sélectionné
+    const movieIdsInTheater = new Set<number>();
+    
+    this.sessionsCinema.forEach(session => {
+      if (session.movieTheater?.theater?.id === parseInt(this.selectedTheaterId)) {
+        movieIdsInTheater.add(session.movieId);
+      }
+    });
+
+    // Filtrer les films
+    this.filteredMovies = this.movies.filter(movie => movieIdsInTheater.has(movie.id));
   }
 
   searchMovies(): void {
@@ -255,6 +359,7 @@ export class MoviesManagementComponent implements OnInit {
 
   clearFilters(): void {
     this.searchTerm = '';
+    this.selectedTheaterId = '';
     // Recharger tous les films quand on efface les filtres
     this.loadMovies();
   }
