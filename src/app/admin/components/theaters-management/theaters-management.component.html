@@ -115,6 +115,18 @@
             </td>
           </ng-container>
 
+          <!-- Rooms Column -->
+          <ng-container matColumnDef="rooms">
+            <th mat-header-cell *matHeaderCellDef>Salles</th>
+            <td mat-cell *matCellDef="let theater">
+              <button mat-raised-button color="accent" (click)="openTheaterRoomsDialog(theater)"
+                      matTooltip="Gérer les salles de ce cinéma">
+                <mat-icon>meeting_room</mat-icon>
+                Gérer les salles
+              </button>
+            </td>
+          </ng-container>
+
           <!-- Create Date Column -->
           <ng-container matColumnDef="createDate">
             <th mat-header-cell *matHeaderCellDef>Date création</th>

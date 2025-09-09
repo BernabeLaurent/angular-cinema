@@ -9,12 +9,14 @@ import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { FormsModule } from '@angular/forms';
 import { Observable, of } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 
 import { AdminService, Theater, CreateTheaterDto } from '../../../services/admin.service';
 import { TheaterFormDialogComponent } from '../theater-form-dialog/theater-form-dialog.component';
+import { TheaterRoomsDialogComponent } from '../theater-rooms-dialog/theater-rooms-dialog.component';
 
 @Component({
   selector: 'app-theaters-management',
@@ -30,7 +32,10 @@ import { TheaterFormDialogComponent } from '../theater-form-dialog/theater-form-
     MatSnackBarModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSelectModule
+    MatSelectModule,
+    MatTooltipModule,
+    TheaterFormDialogComponent,
+    TheaterRoomsDialogComponent
   ],
   templateUrl: './theaters-management.component.html',
   styleUrls: ['./theaters-management.component.scss']
@@ -38,7 +43,7 @@ import { TheaterFormDialogComponent } from '../theater-form-dialog/theater-form-
 export class TheatersManagementComponent implements OnInit {
   theaters: Theater[] = [];
   filteredTheaters: Theater[] = [];
-  displayedColumns: string[] = ['id', 'name', 'location', 'contact', 'hours', 'createDate', 'actions'];
+  displayedColumns: string[] = ['id', 'name', 'location', 'contact', 'hours', 'rooms', 'createDate', 'actions'];
   loading = false;
   searchTerm = '';
   selectedCountry = '';
@@ -184,6 +189,23 @@ export class TheatersManagementComponent implements OnInit {
         }
       });
     }
+  }
+
+  openTheaterRoomsDialog(theater: Theater): void {
+    const dialogRef = this.dialog.open(TheaterRoomsDialogComponent, {
+      width: '900px',
+      maxWidth: '95vw',
+      maxHeight: '90vh',
+      panelClass: 'theater-rooms-dialog',
+      data: { theater: theater }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // Pas besoin de recharger, les salles sont gérées dans leur propre dialog
+        console.log('Theater rooms dialog closed', result);
+      }
+    });
   }
 
 

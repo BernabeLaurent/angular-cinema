@@ -45,6 +45,29 @@ export interface UpdateTheaterDto {
   closingTime?: string;
 }
 
+// Interfaces pour les salles (MovieTheater)
+export interface TheaterRoom {
+  id: number;
+  theaterId: number;
+  theater?: Theater;
+  roomNumber: number;
+  numberSeats: number;
+  numberSeatsDisabled?: number;
+}
+
+export interface CreateTheaterRoomDto {
+  theaterId: number;
+  roomNumber: number;
+  numberSeats: number;
+  numberSeatsDisabled?: number;
+}
+
+export interface UpdateTheaterRoomDto {
+  roomNumber?: number;
+  numberSeats?: number;
+  numberSeatsDisabled?: number;
+}
+
 // Interfaces pour les réservations
 export interface Booking {
   id: number;
@@ -459,6 +482,68 @@ export class AdminService {
     }).pipe(
       catchError((error: any) => {
         console.error('API error in deleteSession:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  // ==================== GESTION DES SALLES ====================
+
+  /**
+   * Récupère toutes les salles d'un cinéma
+   */
+  getTheaterRooms(theaterId: number): Observable<TheaterRoom[]> {
+    return this.http.get<{ data: TheaterRoom[]; apiVersion: string }>(`${this.baseUrl}/movies-theaters/search_by_theater/${theaterId}`, {
+      headers: this.getAuthHeaders()
+    }).pipe(
+      map(response => response.data),
+      catchError((error: any) => {
+        console.error('API error in getTheaterRooms:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  /**
+   * Récupère une salle par son ID
+   */
+  getTheaterRoomById(roomId: number): Observable<TheaterRoom> {
+    return this.http.get<{ data: TheaterRoom; apiVersion: string }>(`${this.baseUrl}/movies-theaters/search/${roomId}`, {
+      headers: this.getAuthHeaders()
+    }).pipe(
+      map(response => response.data),
+      catchError((error: any) => {
+        console.error('API error in getTheaterRoomById:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  /**
+   * Crée une nouvelle salle
+   */
+  createTheaterRoom(roomData: CreateTheaterRoomDto): Observable<TheaterRoom> {
+    return this.http.post<{ data: TheaterRoom; apiVersion: string }>(`${this.baseUrl}/movies-theaters/create`, roomData, {
+      headers: this.getAuthHeaders()
+    }).pipe(
+      map(response => response.data),
+      catchError((error: any) => {
+        console.error('API error in createTheaterRoom:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  /**
+   * Met à jour une salle
+   */
+  updateTheaterRoom(roomId: number, roomData: UpdateTheaterRoomDto): Observable<TheaterRoom> {
+    return this.http.patch<{ data: TheaterRoom; apiVersion: string }>(`${this.baseUrl}/movies-theaters/${roomId}`, roomData, {
+      headers: this.getAuthHeaders()
+    }).pipe(
+      map(response => response.data),
+      catchError((error: any) => {
+        console.error('API error in updateTheaterRoom:', error);
         return throwError(() => error);
       })
     );

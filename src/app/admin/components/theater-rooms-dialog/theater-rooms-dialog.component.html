@@ -1,0 +1,161 @@
+<div class="theater-rooms-dialog">
+  <div class="dialog-header">
+    <div class="header-content">
+      <h2 mat-dialog-title>
+        <mat-icon>meeting_room</mat-icon>
+        Gestion des salles - {{ theater.name }}
+      </h2>
+      <p class="theater-info">
+        <mat-icon>location_on</mat-icon>
+        {{ theater.address }}, {{ theater.city }}
+      </p>
+    </div>
+    <button mat-icon-button (click)="onClose()" class="close-button">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <mat-dialog-content class="dialog-content">
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <h3>
+        <mat-icon>meeting_room</mat-icon>
+        Salles ({{ rooms.length }})
+      </h3>
+      <button mat-raised-button color="primary" (click)="showCreateForm()" [disabled]="showForm">
+        <mat-icon>add</mat-icon>
+        Nouvelle salle
+      </button>
+    </div>
+
+    <!-- Form -->
+    <mat-card class="form-card" *ngIf="showForm">
+      <mat-card-header>
+        <mat-card-title>
+          {{ editingRoom ? 'Modifier la salle' : 'Créer une nouvelle salle' }}
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <form [formGroup]="roomForm" class="room-form">
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Numéro de salle</mat-label>
+              <input matInput type="number" formControlName="roomNumber" min="1">
+              <mat-error *ngIf="isFieldInvalid('roomNumber')">
+                {{ getFieldErrorMessage('roomNumber') }}
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Nombre de places</mat-label>
+              <input matInput type="number" formControlName="numberSeats" min="1" max="1000">
+              <mat-icon matSuffix>event_seat</mat-icon>
+              <mat-error *ngIf="isFieldInvalid('numberSeats')">
+                {{ getFieldErrorMessage('numberSeats') }}
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Places handicapés</mat-label>
+              <input matInput type="number" formControlName="numberSeatsDisabled" min="0" max="100">
+              <mat-icon matSuffix>accessible</mat-icon>
+              <mat-error *ngIf="isFieldInvalid('numberSeatsDisabled')">
+                {{ getFieldErrorMessage('numberSeatsDisabled') }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </form>
+      </mat-card-content>
+      <mat-card-actions class="form-actions">
+        <button mat-button (click)="cancelForm()">
+          <mat-icon>cancel</mat-icon>
+          Annuler
+        </button>
+        <button mat-raised-button color="primary" (click)="saveRoom()" [disabled]="!roomForm.valid">
+          <mat-icon>save</mat-icon>
+          {{ editingRoom ? 'Modifier' : 'Créer' }}
+        </button>
+      </mat-card-actions>
+    </mat-card>
+
+    <!-- Rooms Table -->
+    <mat-card class="table-card">
+      <mat-card-content>
+        <div class="table-container" *ngIf="!loading; else loadingTemplate">
+          <table mat-table [dataSource]="rooms" class="rooms-table" *ngIf="rooms.length > 0; else emptyTemplate">
+            <!-- Room Number Column -->
+            <ng-container matColumnDef="roomNumber">
+              <th mat-header-cell *matHeaderCellDef>Salle n°</th>
+              <td mat-cell *matCellDef="let room">
+                <div class="room-number">
+                  <mat-icon>meeting_room</mat-icon>
+                  <span>Salle {{ room.roomNumber }}</span>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Number of Seats Column -->
+            <ng-container matColumnDef="numberSeats">
+              <th mat-header-cell *matHeaderCellDef>Places totales</th>
+              <td mat-cell *matCellDef="let room">
+                <div class="seats-info">
+                  <mat-icon>event_seat</mat-icon>
+                  <span>{{ room.numberSeats }} places</span>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Disabled Seats Column -->
+            <ng-container matColumnDef="numberSeatsDisabled">
+              <th mat-header-cell *matHeaderCellDef>Places handicapés</th>
+              <td mat-cell *matCellDef="let room">
+                <div class="disabled-seats-info">
+                  <mat-icon>accessible</mat-icon>
+                  <span>{{ room.numberSeatsDisabled || 0 }} places</span>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Actions Column -->
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>Actions</th>
+              <td mat-cell *matCellDef="let room" class="actions-column">
+                <button mat-icon-button (click)="showEditForm(room)" 
+                        matTooltip="Modifier la salle" [disabled]="showForm">
+                  <mat-icon>edit</mat-icon>
+                </button>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="room-row"></tr>
+          </table>
+
+          <!-- Empty template -->
+          <ng-template #emptyTemplate>
+            <div class="empty-state">
+              <mat-icon>meeting_room</mat-icon>
+              <h3>Aucune salle configurée</h3>
+              <p>Ce cinéma n'a encore aucune salle configurée.</p>
+              <button mat-raised-button color="primary" (click)="showCreateForm()">
+                Créer la première salle
+              </button>
+            </div>
+          </ng-template>
+        </div>
+
+        <!-- Loading template -->
+        <ng-template #loadingTemplate>
+          <div class="loading-container">
+            <mat-icon class="loading-spinner">refresh</mat-icon>
+            <p>Chargement des salles...</p>
+          </div>
+        </ng-template>
+      </mat-card-content>
+    </mat-card>
+  </mat-dialog-content>
+
+  <mat-dialog-actions class="dialog-actions">
+    <button mat-button (click)="onClose()">Fermer</button>
+  </mat-dialog-actions>
+</div>
