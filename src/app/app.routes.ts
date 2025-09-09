@@ -8,13 +8,13 @@ import { UsersManagementComponent } from './admin/components/users-management/us
 import { TheatersManagementComponent } from './admin/components/theaters-management/theaters-management.component';
 
 // Composants principaux
-import { HeroSectionComponent } from './components/hero-section/hero-section.component';
+import { HomeComponent } from './pages/home/home.component';
 
 export const routes: Routes = [
   // Route par défaut - Page d'accueil
   {
     path: '',
-    component: HeroSectionComponent,
+    component: HomeComponent,
     title: 'Pathé - Cinéma'
   },
   

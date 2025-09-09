@@ -31,10 +31,15 @@ export class AuthService {
   }
 
   login(credentials: { email: string; password: string }): Observable<any> {
+    const headers = {
+      'Content-Type': 'application/json'
+    };
+    
     return this.http
       .post<{ data: { accessToken: string; refreshToken: string }; apiVersion: string }>(
         `${this.apiUrl}/auth/sign-in`,
-        credentials
+        credentials,
+        { headers }
       )
       .pipe(
         tap((response) => {
@@ -42,6 +47,10 @@ export class AuthService {
           localStorage.setItem('accessToken', accessToken);
           localStorage.setItem('refreshToken', refreshToken);
           this.setUserFromToken(accessToken);
+        }),
+        catchError((error) => {
+          console.error('Login error details:', error);
+          return throwError(() => error);
         })
       );
   }
