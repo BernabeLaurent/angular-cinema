@@ -54,7 +54,7 @@ export const routes: Routes = [
       },
     ]
   },
-  
+
   // Routes publiques
   {
     path: 'movies',

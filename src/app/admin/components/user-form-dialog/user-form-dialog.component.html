@@ -43,8 +43,9 @@
 
         <mat-form-field appearance="outline" class="full-width" *ngIf="!isEditMode">
           <mat-label>Mot de passe *</mat-label>
-          <input matInput type="password" formControlName="password" placeholder="Minimum 6 caractères">
+          <input matInput type="password" formControlName="password" placeholder="8+ caractères, lettre, chiffre, caractère spécial">
           <mat-icon matSuffix>lock</mat-icon>
+          <mat-hint>Au moins 8 caractères avec une lettre, un chiffre et un caractère spécial (&#64;$!%*#?&amp;)</mat-hint>
           <mat-error *ngIf="isFieldInvalid('password')">
             {{ getFieldErrorMessage('password') }}
           </mat-error>

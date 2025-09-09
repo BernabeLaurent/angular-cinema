@@ -132,7 +132,7 @@ export class AdminDashboardComponent implements OnInit {
         totalUsers: data.users.length,
         totalTheaters: 2, // Hardcodé car pas d'endpoint GET /theaters
         totalBookings: data.bookings.length,
-        pendingBookings: data.bookings.filter((b: any, _index: number, _array: any[]) => b.status === 'pending').length
+        pendingBookings: data.bookings.filter((b: any, _index: number, _array: any[]) => b.status === 'PENDING').length
       })),
       catchError(error => {
         console.error('Error loading dashboard stats:', error);

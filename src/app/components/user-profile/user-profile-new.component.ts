@@ -63,7 +63,7 @@ import { BookingDetailsDialogComponent } from './booking-details-dialog.componen
             <div class="user-details">
               <h1>{{ userProfileService.getFullName(currentUser) }}</h1>
               <p class="user-email">{{ currentUser.email }}</p>
-              <mat-chip class="role-chip">{{ getRoleDisplayName(currentUser.role) }}</mat-chip>
+              <mat-chip class="role-chip">{{ getRoleDisplayName(currentUser.roleUser || currentUser.role!) }}</mat-chip>
               <p class="member-since" *ngIf="currentUser.createDate">
                 Membre depuis {{ formatDate(currentUser.createDate) }}
               </p>

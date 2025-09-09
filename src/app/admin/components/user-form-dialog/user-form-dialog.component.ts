@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -73,7 +73,7 @@ export class UserFormDialogComponent implements OnInit {
       email: ['', [Validators.required, Validators.email]],
       password: [
         '', 
-        this.isEditMode ? [] : [Validators.required, Validators.minLength(6)]
+        this.isEditMode ? [] : [Validators.required, Validators.minLength(8), this.passwordFormatValidator.bind(this)]
       ],
       roleUser: [RoleUser.CUSTOMER, [Validators.required]],
       hasDisability: [false],
@@ -159,6 +159,10 @@ export class UserFormDialogComponent implements OnInit {
       return `Minimum ${minLength} caractères requis`;
     }
     
+    if (field?.hasError('passwordFormat')) {
+      return 'Le mot de passe doit contenir au moins 8 caractères, une lettre, un chiffre et un caractère spécial';
+    }
+    
     if (field?.hasError('pattern')) {
       if (fieldName === 'zipCode') {
         return 'Code postal invalide (5 chiffres)';
@@ -186,5 +190,21 @@ export class UserFormDialogComponent implements OnInit {
   isFieldInvalid(fieldName: string): boolean {
     const field = this.userForm.get(fieldName);
     return !!(field && field.invalid && (field.dirty || field.touched));
+  }
+
+  private passwordFormatValidator(control: AbstractControl): ValidationErrors | null {
+    const value = control.value;
+    if (!value) {
+      return null;
+    }
+
+    // Regex qui correspond exactement au backend NestJS
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
+    
+    if (!passwordRegex.test(value)) {
+      return { passwordFormat: true };
+    }
+
+    return null;
   }
 }

@@ -89,12 +89,14 @@ export class AuthService {
   private setUserFromToken(token: string): void {
     try {
       const decoded = jwtDecode<JwtPayload>(token);
+      console.log('Decoded token:', decoded);
       const user: User = {
         id: decoded.sub,
         email: decoded.email,
         role: decoded.roleUser,
         token,
       };
+      console.log('Setting user:', user);
       this.userSubject.next(user);
     } catch (e) {
       console.error('Token decode failed', e);
@@ -111,7 +113,7 @@ export class AuthService {
   }
 
   getToken(): string | null {
-    return this.userSubject.value?.token ?? null;
+    return localStorage.getItem('accessToken');
   }
 
   getCurrentUser(): User | null {
@@ -135,6 +137,15 @@ export class AuthService {
       } else {
         router.navigate(['/']);
       }
+    }
+  }
+
+  // Méthode pour forcer la réinitialisation de l'utilisateur depuis localStorage
+  forceInitFromToken(): void {
+    const token = localStorage.getItem('accessToken');
+    console.log('Force init from token:', token ? 'Token found' : 'No token');
+    if (token) {
+      this.setUserFromToken(token);
     }
   }
 

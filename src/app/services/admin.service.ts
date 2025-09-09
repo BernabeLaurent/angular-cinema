@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { AuthService } from '../auth/auth.service';
 import { CreateUserDto } from '../users/dtos/create-user.dto';
@@ -81,9 +82,21 @@ export class AdminService {
    * Récupère tous les utilisateurs (ADMIN uniquement)
    */
   getAllUsers(): Observable<User[]> {
-    return this.http.get<User[]>(`${this.baseUrl}/users`, { 
+    const token = this.authService.getToken();
+    console.log('Making API call to get users with token:', token ? 'Token present' : 'No token');
+    
+    return this.http.get<{ data: User[]; apiVersion: string }>(`${this.baseUrl}/users`, { 
       headers: this.getAuthHeaders() 
-    });
+    }).pipe(
+      map(response => {
+        console.log('API response received:', response);
+        return response.data;
+      }),
+      catchError((error: any) => {
+        console.error('API error in getAllUsers:', error);
+        return throwError(() => error);
+      })
+    );
   }
 
   /**
@@ -179,9 +192,11 @@ export class AdminService {
    * Récupère toutes les réservations (ADMIN uniquement)
    */
   getAllBookings(): Observable<Booking[]> {
-    return this.http.get<Booking[]>(`${this.baseUrl}/bookings`, { 
+    return this.http.get<{ data: Booking[]; apiVersion: string }>(`${this.baseUrl}/bookings`, { 
       headers: this.getAuthHeaders() 
-    });
+    }).pipe(
+      map(response => response.data)
+    );
   }
 
   /**

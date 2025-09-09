@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatTableModule } from '@angular/material/table';
@@ -16,6 +16,7 @@ import { Observable, of } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 
 import { AdminService } from '../../../services/admin.service';
+import { AuthService } from '../../../auth/auth.service';
 import { User } from '../../../auth/user.interface';
 import { CreateUserDto } from '../../../users/dtos/create-user.dto';
 import { RoleUser } from '../../../users/enums/roles-users.enum';
@@ -44,6 +45,7 @@ import { UserFormDialogComponent } from '../user-form-dialog/user-form-dialog.co
 })
 export class UsersManagementComponent implements OnInit {
   users$: Observable<User[]> = of([]);
+  allUsers: User[] = [];
   displayedColumns: string[] = ['id', 'name', 'email', 'role', 'createDate', 'actions'];
   loading = false;
   searchTerm = '';
@@ -52,25 +54,44 @@ export class UsersManagementComponent implements OnInit {
 
   constructor(
     private adminService: AdminService,
+    private authService: AuthService,
     private dialog: MatDialog,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
-    this.loadUsers();
+    // Force l'initialisation de l'utilisateur depuis le token si nécessaire
+    this.authService.forceInitFromToken();
+    
+    // Petit délai pour laisser le temps au service de s'initialiser
+    setTimeout(() => {
+      this.loadUsers();
+    }, 100);
   }
 
   loadUsers(): void {
+    console.log('Starting to load users...');
     this.loading = true;
-    this.users$ = this.adminService.getAllUsers().pipe(
-      tap(() => this.loading = false),
-      catchError(error => {
+    this.users$ = of([]);
+    this.cdr.detectChanges();
+    
+    this.adminService.getAllUsers().subscribe({
+      next: (users) => {
+        console.log('Users loaded successfully:', users.length, users);
+        this.allUsers = users;
+        this.applyFilter(); // Apply current filters after loading
+        this.loading = false;
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('Error loading users:', error);
         this.loading = false;
         this.showError('Erreur lors du chargement des utilisateurs');
-        console.error('Error loading users:', error);
-        return of([]);
-      })
-    );
+        this.users$ = of([]);
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   openCreateUserDialog(): void {
@@ -175,15 +196,40 @@ export class UsersManagementComponent implements OnInit {
   }
 
   applyFilter(): void {
-    // Cette logique sera implémentée côté serveur si nécessaire
-    // Pour l'instant, nous rechargeons toutes les données
-    this.loadUsers();
+    let filteredUsers = [...this.allUsers];
+    
+    // Filtrer par terme de recherche (email)
+    if (this.searchTerm.trim()) {
+      const searchTerm = this.searchTerm.toLowerCase();
+      filteredUsers = filteredUsers.filter(user => 
+        user.email?.toLowerCase().includes(searchTerm) ||
+        user.firstName?.toLowerCase().includes(searchTerm) ||
+        user.lastName?.toLowerCase().includes(searchTerm)
+      );
+    }
+    
+    // Filtrer par rôle
+    if (this.selectedRole) {
+      filteredUsers = filteredUsers.filter(user => 
+        user.roleUser === this.selectedRole
+      );
+    }
+    
+    console.log('Applied filters:', { 
+      searchTerm: this.searchTerm, 
+      selectedRole: this.selectedRole, 
+      totalUsers: this.allUsers.length, 
+      filteredCount: filteredUsers.length 
+    });
+    
+    this.users$ = of(filteredUsers);
+    this.cdr.detectChanges();
   }
 
   clearFilters(): void {
     this.searchTerm = '';
     this.selectedRole = '';
-    this.loadUsers();
+    this.applyFilter();
   }
 
   private showSuccess(message: string): void {

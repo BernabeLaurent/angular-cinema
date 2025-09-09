@@ -68,7 +68,7 @@
           <div class="user-info" *ngIf="currentUser$ | async as user">
             <div class="user-details">
               <strong>{{ user.email }}</strong>
-              <span class="role-badge">{{ getRoleDisplayName(user.role) }}</span>
+              <span class="role-badge">{{ getRoleDisplayName(user.roleUser || user.role!) }}</span>
             </div>
           </div>
           

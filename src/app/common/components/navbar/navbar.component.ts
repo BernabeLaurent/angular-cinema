@@ -1,6 +1,6 @@
 import { Component, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -49,6 +49,7 @@ export class NavbarComponent {
   constructor(
     private dialog: MatDialog, 
     private overlay: Overlay,
+    private router: Router,
     private authService: AuthService,
     private userRoleService: UserRoleService
   ) {
@@ -97,7 +98,9 @@ export class NavbarComponent {
   logout() {
     this.authService.logout();
     this.closeUserMenu();
-    window.location.reload(); // Refresh to update navbar state
+    this.router.navigate(['/']).then(() => {
+      window.location.reload(); // Refresh to update navbar state
+    });
   }
 
   getRoleDisplayName(role: RoleUser): string {

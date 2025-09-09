@@ -138,7 +138,7 @@ export class UserProfileService {
    */
   getFullName(user?: User | null): string {
     if (!user) return '';
-    return `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email;
+    return `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email || 'Utilisateur';
   }
 
   getInitials(user?: User | null): string {
@@ -148,7 +148,7 @@ export class UserProfileService {
       return `${user.firstName.charAt(0)}${user.lastName.charAt(0)}`.toUpperCase();
     }
     
-    return user.email.charAt(0).toUpperCase();
+    return user.email?.charAt(0).toUpperCase() || 'U';
   }
 
   formatAddress(user?: User | null): string {

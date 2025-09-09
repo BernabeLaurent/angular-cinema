@@ -3,9 +3,9 @@ import {RegionsIso} from '../common/enums/regions-iso.enum';
 
 export interface User {
   id: number;
-  email: string;
-  role: RoleUser;
-  token: string;
+  email?: string;
+  role?: RoleUser;
+  token?: string;
   // Propriétés étendues du profil utilisateur
   firstName?: string;
   lastName?: string;
