@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
+import { Observable, throwError, forkJoin, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { AuthService } from '../auth/auth.service';
@@ -244,6 +244,103 @@ export class AdminService {
   // ==================== GESTION DES FILMS ====================
 
   /**
+   * Récupère tous les films disponibles avec leurs séances
+   * Pour l'administration, on combine la liste de tous les films avec les sessions
+   */
+  getAllMovies(): Observable<any[]> {
+    // Pour l'admin, on récupère tous les films ET on associe leurs sessions
+    return forkJoin({
+      sessions: this.getAllSessions().pipe(catchError(() => of([]))),
+      // On essaie d'abord la recherche normale
+      moviesWithSessions: this.http.get<{ data: any[]; apiVersion: string }>(`${this.baseUrl}/movies/search?name=&adminSearch=true`).pipe(
+        catchError(() => of({ data: [], apiVersion: '1.0.0' }))
+      )
+    }).pipe(
+      map(({ sessions, moviesWithSessions }) => {
+        console.log('Raw API responses:', { sessions, moviesWithSessions });
+        
+        const moviesData = moviesWithSessions.data || [];
+        
+        // Si on a des films avec séances, on les utilise
+        if (moviesData.length > 0) {
+          return moviesData.map(item => ({
+            ...item.movie,
+            availableSessions: item.theaters?.reduce((total: number, theater: any) => {
+              return total + (theater.sessions?.reduce((sessionCount: number, sessionGroup: any) => {
+                return sessionCount + (sessionGroup.sessions?.length || 0);
+              }, 0) || 0);
+            }, 0) || 0,
+            theaters: item.theaters
+          }));
+        }
+        
+        // Sinon, on extrait les films des sessions existantes
+        const moviesFromSessions = new Map();
+        
+        sessions.forEach((session: any) => {
+          if (session.movie) {
+            const movieId = session.movie.id;
+            if (!moviesFromSessions.has(movieId)) {
+              moviesFromSessions.set(movieId, {
+                ...session.movie,
+                availableSessions: 0,
+                theaters: []
+              });
+            }
+            moviesFromSessions.get(movieId).availableSessions++;
+          }
+        });
+        
+        return Array.from(moviesFromSessions.values());
+      }),
+      catchError((error: any) => {
+        console.error('API error in getAllMovies:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  /**
+   * Récupère un film par son ID
+   */
+  getMovieById(id: number): Observable<any> {
+    return this.http.get(`${this.baseUrl}/movies/${id}`);
+  }
+
+  /**
+   * Recherche des films par nom (pour l'administration)
+   */
+  searchMovies(searchTerm: string): Observable<any[]> {
+    return this.http.get<{ data: any[]; apiVersion: string }>(`${this.baseUrl}/movies/search?name=${encodeURIComponent(searchTerm)}&adminSearch=true`).pipe(
+      map(response => {
+        console.log('Search API response:', response);
+        
+        const moviesData = response.data || [];
+        
+        // Si on a des résultats de recherche avec séances, on les utilise
+        if (moviesData.length > 0) {
+          return moviesData.map(item => ({
+            ...item.movie,
+            availableSessions: item.theaters?.reduce((total: number, theater: any) => {
+              return total + (theater.sessions?.reduce((sessionCount: number, sessionGroup: any) => {
+                return sessionCount + (sessionGroup.sessions?.length || 0);
+              }, 0) || 0);
+            }, 0) || 0,
+            theaters: item.theaters
+          }));
+        }
+        
+        // Si pas de résultats, retourner un tableau vide
+        return [];
+      }),
+      catchError((error: any) => {
+        console.error('API error in searchMovies:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  /**
    * Recherche des films externes (ADMIN uniquement)
    */
   searchExternalMovies(query: string): Observable<any> {
@@ -295,6 +392,76 @@ export class AdminService {
     return this.http.patch(`${this.baseUrl}/movies/reviews/${reviewId}/validate`, {}, { 
       headers: this.getAuthHeaders() 
     });
+  }
+
+  // ==================== GESTION DES SESSIONS ====================
+
+  /**
+   * Récupère toutes les sessions
+   */
+  getAllSessions(): Observable<any[]> {
+    return this.http.get<{ data: any[]; apiVersion: string }>(`${this.baseUrl}/sessions-cinemas`).pipe(
+      map(response => response.data),
+      catchError((error: any) => {
+        console.error('API error in getAllSessions:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  /**
+   * Récupère les sessions d'un film spécifique
+   */
+  getMovieSessions(movieId: number): Observable<any[]> {
+    return this.http.get<{ data: any[]; apiVersion: string }>(`${this.baseUrl}/sessions-cinemas/ByMovie/${movieId}`).pipe(
+      map(response => response.data),
+      catchError((error: any) => {
+        console.error('API error in getMovieSessions:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  /**
+   * Crée une nouvelle session (ADMIN uniquement)
+   */
+  createSession(sessionData: any): Observable<any> {
+    return this.http.post(`${this.baseUrl}/sessions-cinemas/create`, sessionData, { 
+      headers: this.getAuthHeaders() 
+    }).pipe(
+      catchError((error: any) => {
+        console.error('API error in createSession:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  /**
+   * Met à jour une session (ADMIN uniquement)
+   */
+  updateSession(sessionId: number, sessionData: any): Observable<any> {
+    return this.http.patch(`${this.baseUrl}/sessions-cinemas/${sessionId}`, sessionData, { 
+      headers: this.getAuthHeaders() 
+    }).pipe(
+      catchError((error: any) => {
+        console.error('API error in updateSession:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  /**
+   * Supprime une session (ADMIN uniquement)
+   */
+  deleteSession(sessionId: number): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/sessions-cinemas/${sessionId}`, { 
+      headers: this.getAuthHeaders() 
+    }).pipe(
+      catchError((error: any) => {
+        console.error('API error in deleteSession:', error);
+        return throwError(() => error);
+      })
+    );
   }
 
   // ==================== STATISTIQUES ====================

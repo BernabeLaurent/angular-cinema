@@ -1,0 +1,243 @@
+.movie-details-dialog {
+  min-height: 400px;
+  max-height: 90vh;
+  
+  .dialog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 24px;
+    margin-bottom: 16px;
+    
+    h2 {
+      margin: 0;
+      color: #1976d2;
+      font-weight: 500;
+    }
+    
+    .close-button {
+      margin-left: auto;
+    }
+  }
+  
+  .dialog-content {
+    padding: 0 24px;
+    max-height: 70vh;
+    overflow-y: auto;
+    
+    .movie-content {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      
+      .images-section {
+        display: flex;
+        gap: 16px;
+        justify-content: center;
+        flex-wrap: wrap;
+        
+        .poster-container,
+        .backdrop-container {
+          .poster-image {
+            max-width: 200px;
+            max-height: 300px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+          }
+          
+          .backdrop-image {
+            max-width: 400px;
+            max-height: 225px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+          }
+        }
+        
+        .no-images {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          padding: 40px;
+          color: #999;
+          
+          mat-icon {
+            font-size: 48px;
+            width: 48px;
+            height: 48px;
+            margin-bottom: 8px;
+          }
+        }
+      }
+      
+      .details-section {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        
+        .info-card {
+          .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+            
+            .info-item {
+              display: flex;
+              flex-direction: column;
+              gap: 4px;
+              
+              strong {
+                color: #666;
+                font-size: 0.9em;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+              }
+              
+              span {
+                font-size: 1.1em;
+                color: #333;
+              }
+            }
+          }
+        }
+        
+        .description-card {
+          p {
+            line-height: 1.6;
+            margin: 0;
+            text-align: justify;
+          }
+        }
+        
+        .tagline-card {
+          .tagline {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            font-style: italic;
+            font-size: 1.1em;
+            color: #555;
+            margin: 0;
+            padding: 0;
+            border: none;
+            
+            mat-icon {
+              margin-top: 2px;
+              color: #1976d2;
+              opacity: 0.7;
+            }
+          }
+        }
+        
+        .cast-card {
+          .cast-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 16px;
+            margin-top: 8px;
+            
+            .cast-member {
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              text-align: center;
+              
+              .actor-image,
+              .actor-placeholder {
+                width: 80px;
+                height: 80px;
+                border-radius: 50%;
+                margin-bottom: 8px;
+                position: relative;
+                overflow: hidden;
+                
+                img {
+                  width: 100%;
+                  height: 100%;
+                  object-fit: cover;
+                }
+              }
+              
+              .actor-placeholder {
+                background-color: #f5f5f5;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                
+                mat-icon {
+                  color: #999;
+                  font-size: 32px;
+                  width: 32px;
+                  height: 32px;
+                }
+              }
+              
+              .actor-info {
+                .actor-name {
+                  font-weight: 500;
+                  margin-bottom: 2px;
+                  font-size: 0.9em;
+                }
+                
+                .character-name {
+                  font-size: 0.8em;
+                  color: #666;
+                }
+              }
+            }
+          }
+        }
+        
+        .sessions-card {
+          .sessions-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1.1em;
+            
+            mat-icon {
+              color: #1976d2;
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  .dialog-actions {
+    padding: 16px 24px;
+    justify-content: flex-end;
+  }
+}
+
+// Styles responsive
+@media (max-width: 768px) {
+  .movie-details-dialog {
+    .dialog-content {
+      .movie-content {
+        .images-section {
+          .poster-container .poster-image,
+          .backdrop-container .backdrop-image {
+            max-width: 100%;
+            height: auto;
+          }
+        }
+        
+        .details-section {
+          .cast-card .cast-grid {
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 12px;
+            
+            .cast-member {
+              .actor-image,
+              .actor-placeholder {
+                width: 60px;
+                height: 60px;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

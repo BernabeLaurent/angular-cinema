@@ -6,6 +6,7 @@ import { AdminGuard } from './auth/admin.guard';
 import { AdminDashboardComponent } from './admin/components/admin-dashboard/admin-dashboard.component';
 import { UsersManagementComponent } from './admin/components/users-management/users-management.component';
 import { TheatersManagementComponent } from './admin/components/theaters-management/theaters-management.component';
+import { MoviesManagementComponent } from './admin/components/movies-management/movies-management.component';
 
 // Composants principaux
 import { HomeComponent } from './pages/home/home.component';
@@ -51,6 +52,11 @@ export const routes: Routes = [
         path: 'theaters',
         component: TheatersManagementComponent,
         title: 'Gestion des cinémas - Administration Pathé'
+      },
+      {
+        path: 'movies',
+        component: MoviesManagementComponent,
+        title: 'Gestion des films - Administration Pathé'
       },
     ]
   },

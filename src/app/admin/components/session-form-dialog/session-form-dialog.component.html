@@ -1,0 +1,150 @@
+<div class="session-form-container">
+  <div class="dialog-header">
+    <div class="header-content">
+      <h2 mat-dialog-title>
+        <mat-icon>event</mat-icon>
+        Créer une nouvelle session
+      </h2>
+      <p class="movie-info">
+        <span class="movie-title">{{ movie.title }}</span>
+        <span class="movie-duration">{{ formatMovieDuration(movie.duration) }}</span>
+      </p>
+    </div>
+    <button mat-icon-button (click)="onCancel()" class="close-button">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <mat-dialog-content>
+    <form [formGroup]="sessionForm" class="session-form">
+      <!-- Sélection de la salle -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Salle de cinéma</mat-label>
+        <mat-select formControlName="theaterId" required>
+          <mat-option *ngFor="let theater of theaters" [value]="theater.id">
+            <div class="theater-option">
+              <div class="theater-name">{{ theater.name }}</div>
+              <div class="theater-address">{{ theater.address }}, {{ theater.city }}</div>
+            </div>
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="isFieldInvalid('theaterId')">
+          {{ getFieldErrorMessage('theaterId') }}
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Date de la session -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Date de la session</mat-label>
+        <input matInput [matDatepicker]="picker" formControlName="date" required>
+        <mat-hint>Sélectionnez la date de projection</mat-hint>
+        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+        <mat-error *ngIf="isFieldInvalid('date')">
+          {{ getFieldErrorMessage('date') }}
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Sélection de l'horaire -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Heure de début</mat-label>
+        <mat-select formControlName="startTime" (selectionChange)="onStartTimeChange()" required>
+          <mat-option *ngFor="let time of timeSlots" [value]="time">
+            {{ time }}
+          </mat-option>
+        </mat-select>
+        <mat-hint *ngIf="calculateEndTime()">
+          Fin prévue : {{ calculateEndTime() }} (durée + 20 min d'entracte)
+        </mat-hint>
+        <mat-error *ngIf="isFieldInvalid('startTime')">
+          {{ getFieldErrorMessage('startTime') }}
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Qualité de projection -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Qualité de projection</mat-label>
+        <mat-select formControlName="quality" required>
+          <mat-option *ngFor="let quality of qualities" [value]="quality.value">
+            <div class="quality-option">
+              <mat-icon>{{ quality.icon }}</mat-icon>
+              <span>{{ quality.label }}</span>
+            </div>
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="isFieldInvalid('quality')">
+          {{ getFieldErrorMessage('quality') }}
+        </mat-error>
+      </mat-form-field>
+
+      <div class="form-row">
+        <!-- Prix du billet -->
+        <mat-form-field appearance="outline" class="half-width">
+          <mat-label>Prix du billet</mat-label>
+          <input matInput type="number" step="0.50" min="0" formControlName="price" required>
+          <span matTextSuffix>€</span>
+          <mat-error *ngIf="isFieldInvalid('price')">
+            {{ getFieldErrorMessage('price') }}
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Nombre de places -->
+        <mat-form-field appearance="outline" class="half-width">
+          <mat-label>Nombre de places</mat-label>
+          <input matInput type="number" min="1" max="500" formControlName="totalSeats" required>
+          <mat-icon matSuffix>event_seat</mat-icon>
+          <mat-error *ngIf="isFieldInvalid('totalSeats')">
+            {{ getFieldErrorMessage('totalSeats') }}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- Récapitulatif de la session -->
+      <div class="session-summary" *ngIf="sessionForm.valid">
+        <h3>Récapitulatif de la session</h3>
+        <div class="summary-content">
+          <div class="summary-item">
+            <mat-icon>movie</mat-icon>
+            <span>{{ movie.title }}</span>
+          </div>
+          <div class="summary-item">
+            <mat-icon>location_on</mat-icon>
+            <span>{{ getSelectedTheaterName() }}</span>
+          </div>
+          <div class="summary-item">
+            <mat-icon>calendar_today</mat-icon>
+            <span>{{ sessionForm.get('date')?.value | date:'fullDate':'':'fr-FR' }}</span>
+          </div>
+          <div class="summary-item">
+            <mat-icon>schedule</mat-icon>
+            <span>{{ sessionForm.get('startTime')?.value }} - {{ calculateEndTime() }}</span>
+          </div>
+          <div class="summary-item">
+            <mat-icon>{{ getQualityIcon(sessionForm.get('quality')?.value) }}</mat-icon>
+            <span>{{ getSelectedQualityLabel() }}</span>
+          </div>
+          <div class="summary-item">
+            <mat-icon>euro</mat-icon>
+            <span>{{ sessionForm.get('price')?.value }}€ par place</span>
+          </div>
+          <div class="summary-item">
+            <mat-icon>event_seat</mat-icon>
+            <span>{{ sessionForm.get('totalSeats')?.value }} places disponibles</span>
+          </div>
+        </div>
+      </div>
+    </form>
+  </mat-dialog-content>
+
+  <mat-dialog-actions class="dialog-actions">
+    <button mat-button (click)="onCancel()" type="button">
+      <mat-icon>cancel</mat-icon>
+      Annuler
+    </button>
+    <button mat-raised-button color="primary" (click)="onSubmit()" 
+            [disabled]="!sessionForm.valid" type="submit">
+      <mat-icon>save</mat-icon>
+      Créer la session
+    </button>
+  </mat-dialog-actions>
+</div>

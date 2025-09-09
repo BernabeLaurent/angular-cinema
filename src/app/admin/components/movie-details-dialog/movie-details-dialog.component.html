@@ -1,0 +1,139 @@
+<div class="movie-details-dialog">
+  <div mat-dialog-title class="dialog-header">
+    <h2>{{ data.movie.title }}</h2>
+    <button mat-icon-button (click)="onClose()" class="close-button">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <div mat-dialog-content class="dialog-content">
+    <div class="movie-content">
+      <!-- Images Section -->
+      <div class="images-section">
+        <div class="poster-container" *ngIf="data.movie.posterPath">
+          <img [src]="getImageUrl(data.movie.posterPath)" 
+               [alt]="data.movie.title + ' - Poster'"
+               class="poster-image"
+               onerror="this.style.display='none';">
+        </div>
+        <div class="backdrop-container" *ngIf="data.movie.backdropPath">
+          <img [src]="getImageUrl(data.movie.backdropPath)" 
+               [alt]="data.movie.title + ' - Backdrop'"
+               class="backdrop-image"
+               onerror="this.style.display='none';">
+        </div>
+        <div class="no-images" *ngIf="!data.movie.posterPath && !data.movie.backdropPath">
+          <mat-icon>image_not_supported</mat-icon>
+          <p>Aucune image disponible</p>
+        </div>
+      </div>
+
+      <!-- Movie Details Section -->
+      <div class="details-section">
+        <mat-card class="info-card">
+          <mat-card-header>
+            <mat-card-title>Informations générales</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="info-grid">
+              <div class="info-item">
+                <strong>Titre original:</strong>
+                <span>{{ data.movie.originalTitle || data.movie.title }}</span>
+              </div>
+              
+              <div class="info-item">
+                <strong>Durée:</strong>
+                <span>{{ formatDuration(data.movie.runtime) }}</span>
+              </div>
+              
+              <div class="info-item">
+                <strong>Date de sortie:</strong>
+                <span>{{ formatDate(data.movie.releaseDate) }}</span>
+              </div>
+              
+              <div class="info-item" *ngIf="data.movie.averageRatingExterne">
+                <strong>Note externe:</strong>
+                <span>{{ data.movie.averageRatingExterne }}/10</span>
+              </div>
+              
+              <div class="info-item" *ngIf="data.movie.originalLanguage">
+                <strong>Langue originale:</strong>
+                <span>{{ data.movie.originalLanguage }}</span>
+              </div>
+              
+              <div class="info-item" *ngIf="data.movie.minimumAge">
+                <strong>Âge minimum:</strong>
+                <span>{{ data.movie.minimumAge }} ans</span>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Description -->
+        <mat-card class="description-card" *ngIf="data.movie.description">
+          <mat-card-header>
+            <mat-card-title>Synopsis</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <p>{{ data.movie.description }}</p>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Tagline -->
+        <mat-card class="tagline-card" *ngIf="data.movie.tagline">
+          <mat-card-content>
+            <blockquote class="tagline">
+              <mat-icon>format_quote</mat-icon>
+              {{ data.movie.tagline }}
+            </blockquote>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Cast -->
+        <mat-card class="cast-card" *ngIf="data.movie.cast && data.movie.cast.length > 0">
+          <mat-card-header>
+            <mat-card-title>Distribution</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="cast-grid">
+              <div class="cast-member" *ngFor="let actor of data.movie.cast">
+                <div class="actor-image" *ngIf="actor.profilePath">
+                  <img [src]="getImageUrl(actor.profilePath)" 
+                       [alt]="actor.name"
+                       onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                  <div class="actor-placeholder">
+                    <mat-icon>person</mat-icon>
+                  </div>
+                </div>
+                <div class="actor-placeholder" *ngIf="!actor.profilePath">
+                  <mat-icon>person</mat-icon>
+                </div>
+                <div class="actor-info">
+                  <div class="actor-name">{{ actor.name }}</div>
+                  <div class="character-name" *ngIf="actor.character">{{ actor.character }}</div>
+                </div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Sessions info -->
+        <mat-card class="sessions-card" *ngIf="data.movie.availableSessions !== undefined">
+          <mat-card-header>
+            <mat-card-title>Sessions</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="sessions-info">
+              <mat-icon>event_seat</mat-icon>
+              <span>{{ data.movie.availableSessions || 0 }} session(s) programmée(s)</span>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+
+  <div mat-dialog-actions class="dialog-actions">
+    <button mat-button (click)="onClose()">Fermer</button>
+  </div>
+</div>
