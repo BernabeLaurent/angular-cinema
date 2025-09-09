@@ -148,7 +148,13 @@ export class AdminService {
    * Récupère tous les cinémas
    */
   getTheaters(): Observable<Theater[]> {
-    return this.http.get<Theater[]>(`${this.baseUrl}/theaters`);
+    return this.http.get<{ data: Theater[]; apiVersion: string }>(`${this.baseUrl}/theaters`).pipe(
+      map(response => response.data),
+      catchError((error: any) => {
+        console.error('API error in getTheaters:', error);
+        return throwError(() => error);
+      })
+    );
   }
 
   /**

@@ -59,16 +59,26 @@ export class TheatersManagementComponent implements OnInit {
   }
 
   loadTheaters(): void {
+    console.log('Loading theaters from API...');
     this.loading = true;
-    // Note: L'API n'a pas d'endpoint pour lister tous les cinémas
-    // Pour l'instant, nous simulons avec des données vides
-    // Vous devrez implémenter GET /theaters côté backend
-    this.loading = false;
-    this.theaters = [];
-    this.filteredTheaters = [];
     
-    // Simulation temporaire avec quelques cinémas d'exemple
-    this.simulateTheaters();
+    this.adminService.getTheaters().subscribe({
+      next: (theaters) => {
+        console.log('Theaters loaded successfully:', theaters.length, theaters);
+        this.theaters = theaters;
+        this.filteredTheaters = [...theaters];
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('Error loading theaters:', error);
+        this.loading = false;
+        this.theaters = [];
+        this.filteredTheaters = [];
+        // Si l'API échoue, fallback vers les données simulées
+        console.log('Falling back to simulated data...');
+        this.simulateTheaters();
+      }
+    });
   }
 
   private simulateTheaters(): void {
@@ -136,8 +146,8 @@ export class TheatersManagementComponent implements OnInit {
     this.adminService.createTheater(theaterData).subscribe({
       next: (theater) => {
         this.showSuccess('Cinéma créé avec succès');
-        this.theaters.push(theater);
-        this.applyFilters();
+        // Recharger complètement la liste pour éviter les problèmes d'affichage
+        this.loadTheaters();
       },
       error: (error) => {
         this.showError('Erreur lors de la création du cinéma');
@@ -150,11 +160,8 @@ export class TheatersManagementComponent implements OnInit {
     this.adminService.updateTheater(id, theaterData).subscribe({
       next: (updatedTheater) => {
         this.showSuccess('Cinéma modifié avec succès');
-        const index = this.theaters.findIndex(t => t.id === id);
-        if (index !== -1) {
-          this.theaters[index] = updatedTheater;
-          this.applyFilters();
-        }
+        // Recharger complètement la liste pour éviter les problèmes d'affichage
+        this.loadTheaters();
       },
       error: (error) => {
         this.showError('Erreur lors de la modification du cinéma');
@@ -168,8 +175,8 @@ export class TheatersManagementComponent implements OnInit {
       this.adminService.deleteTheater(theater.id).subscribe({
         next: () => {
           this.showSuccess('Cinéma supprimé avec succès');
-          this.theaters = this.theaters.filter(t => t.id !== theater.id);
-          this.applyFilters();
+          // Recharger complètement la liste pour éviter les problèmes d'affichage
+          this.loadTheaters();
         },
         error: (error) => {
           this.showError('Erreur lors de la suppression du cinéma');
@@ -179,19 +186,6 @@ export class TheatersManagementComponent implements OnInit {
     }
   }
 
-  viewTheaterDetails(theater: Theater): void {
-    this.adminService.getTheaterById(theater.id).subscribe({
-      next: (theaterDetails) => {
-        // Ici vous pouvez ouvrir un dialog avec les détails complets
-        console.log('Theater details:', theaterDetails);
-        this.showSuccess('Détails du cinéma chargés');
-      },
-      error: (error) => {
-        this.showError('Erreur lors du chargement des détails');
-        console.error('Error loading theater details:', error);
-      }
-    });
-  }
 
   applyFilters(): void {
     let filtered = [...this.theaters];

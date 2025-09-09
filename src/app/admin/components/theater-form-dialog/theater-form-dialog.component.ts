@@ -142,8 +142,14 @@ export class TheaterFormDialogComponent implements OnInit {
       const openingTime = this.theaterForm.get('openingTime')?.value;
       const closingTime = field.value;
       
-      if (this.timeToMinutes(closingTime) <= this.timeToMinutes(openingTime)) {
-        return 'L\'heure de fermeture doit être après l\'heure d\'ouverture';
+      const openingMinutes = this.timeToMinutes(openingTime);
+      const closingMinutes = this.timeToMinutes(closingTime);
+      
+      // Si l'heure de fermeture est entre 00:00 et 06:00, on considère que c'est le lendemain
+      const isNextDay = closingMinutes >= 0 && closingMinutes <= 360; // 6h = 360 minutes
+      
+      if (!isNextDay && closingMinutes <= openingMinutes) {
+        return 'L\'heure de fermeture doit être après l\'heure d\'ouverture ou être le lendemain (00:00-06:00)';
       }
     }
     
