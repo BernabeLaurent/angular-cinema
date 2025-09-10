@@ -224,7 +224,11 @@ export class AdminService {
     return this.http.get<{ data: Booking[]; apiVersion: string }>(`${this.baseUrl}/bookings`, { 
       headers: this.getAuthHeaders() 
     }).pipe(
-      map(response => response.data)
+      map(response => response.data || []),
+      catchError((error: any) => {
+        console.error('API error in getAllBookings:', error);
+        return of([]);
+      })
     );
   }
 

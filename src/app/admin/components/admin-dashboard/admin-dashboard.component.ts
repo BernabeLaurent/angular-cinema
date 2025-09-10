@@ -129,10 +129,10 @@ export class AdminDashboardComponent implements OnInit {
       bookings: this.adminService.getAllBookings().pipe(catchError(() => of([])))
     }).pipe(
       map((data: { users: any[], bookings: any[] }) => ({
-        totalUsers: data.users.length,
+        totalUsers: Array.isArray(data.users) ? data.users.length : 0,
         totalTheaters: 2, // Hardcodé car pas d'endpoint GET /theaters
-        totalBookings: data.bookings.length,
-        pendingBookings: data.bookings.filter((b: any, _index: number, _array: any[]) => b.status === 'PENDING').length
+        totalBookings: Array.isArray(data.bookings) ? data.bookings.length : 0,
+        pendingBookings: Array.isArray(data.bookings) ? data.bookings.filter((b: any) => b.status === 'PENDING').length : 0
       })),
       catchError(error => {
         console.error('Error loading dashboard stats:', error);

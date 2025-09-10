@@ -33,9 +33,7 @@ import { TheaterRoomsDialogComponent } from '../theater-rooms-dialog/theater-roo
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
-    MatTooltipModule,
-    TheaterFormDialogComponent,
-    TheaterRoomsDialogComponent
+    MatTooltipModule
   ],
   templateUrl: './theaters-management.component.html',
   styleUrls: ['./theaters-management.component.scss']

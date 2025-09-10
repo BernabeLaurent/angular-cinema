@@ -91,8 +91,7 @@ interface SessionCinema {
     MatInputModule,
     MatSelectModule,
     MatChipsModule,
-    MatTooltipModule,
-    MovieDetailsDialogComponent
+    MatTooltipModule
   ],
   templateUrl: './movies-management.component.html',
   styleUrls: ['./movies-management.component.scss']
