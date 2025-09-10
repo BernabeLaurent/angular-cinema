@@ -107,11 +107,15 @@
             <th mat-header-cell *matHeaderCellDef>Sessions</th>
             <td mat-cell *matCellDef="let movie">
               <div class="sessions-info">
-                <span class="sessions-count" 
-                      [class.has-sessions]="movie.availableSessions > 0"
-                      [class.no-sessions]="movie.availableSessions === 0">
+                <button mat-button 
+                        class="sessions-count-button"
+                        [class.has-sessions]="movie.availableSessions > 0"
+                        [class.no-sessions]="movie.availableSessions === 0"
+                        (click)="openSessionsManagementDialog(movie)"
+                        matTooltip="Gérer les sessions de ce film">
+                  <mat-icon>event</mat-icon>
                   {{ movie.availableSessions || 0 }} session(s)
-                </span>
+                </button>
               </div>
             </td>
           </ng-container>

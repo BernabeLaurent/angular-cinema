@@ -1,0 +1,193 @@
+.sessions-management-dialog {
+  min-width: 900px;
+  max-width: 95vw;
+  max-height: 90vh;
+  
+  .dialog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px 0;
+    border-bottom: 1px solid #e0e0e0;
+    margin-bottom: 16px;
+
+    h2 {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0;
+      font-size: 1.5rem;
+      color: #333;
+    }
+  }
+
+  .dialog-content {
+    padding: 0 24px;
+    max-height: 70vh;
+    overflow-y: auto;
+
+    .toolbar {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+      padding: 16px 0;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .sessions-container {
+      .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #666;
+
+        mat-icon {
+          font-size: 64px;
+          width: 64px;
+          height: 64px;
+          color: #ccc;
+          margin-bottom: 16px;
+        }
+
+        h3 {
+          margin: 16px 0 8px;
+          color: #333;
+        }
+
+        p {
+          margin-bottom: 24px;
+          font-size: 14px;
+        }
+      }
+
+      .sessions-table-card {
+        margin-top: 16px;
+      }
+
+      .sessions-table {
+        width: 100%;
+
+        .theater-info {
+          .theater-name {
+            font-weight: 500;
+            color: #333;
+          }
+
+          .theater-city {
+            font-size: 12px;
+            color: #666;
+            margin-top: 2px;
+          }
+        }
+
+        .room-info {
+          .room-number {
+            font-weight: 500;
+            color: #333;
+          }
+
+          .room-capacity {
+            font-size: 12px;
+            color: #666;
+            margin-top: 2px;
+          }
+        }
+
+        .datetime-info {
+          .start-time {
+            font-weight: 500;
+            color: #333;
+          }
+
+          .end-time {
+            font-size: 12px;
+            color: #666;
+            margin-top: 2px;
+          }
+        }
+
+        .quality-badge {
+          padding: 4px 8px;
+          border-radius: 12px;
+          font-size: 12px;
+          font-weight: 500;
+          text-transform: uppercase;
+
+          &.quality-hd {
+            background-color: #e3f2fd;
+            color: #1976d2;
+          }
+
+          &.quality-4k {
+            background-color: #f3e5f5;
+            color: #7b1fa2;
+          }
+
+          &.quality-imax {
+            background-color: #fff3e0;
+            color: #f57c00;
+          }
+        }
+
+        .language-badge {
+          padding: 4px 8px;
+          border-radius: 8px;
+          font-size: 12px;
+          font-weight: 500;
+          background-color: #f5f5f5;
+          color: #333;
+          text-transform: uppercase;
+        }
+
+        .actions-column {
+          width: 120px;
+          text-align: center;
+        }
+
+        .session-row {
+          &:hover {
+            background-color: #fafafa;
+          }
+        }
+      }
+    }
+
+    .loading-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 20px;
+      color: #666;
+
+      p {
+        margin-top: 16px;
+        font-size: 14px;
+      }
+    }
+  }
+
+  .dialog-actions {
+    padding: 16px 24px;
+    border-top: 1px solid #e0e0e0;
+    justify-content: flex-end;
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .sessions-management-dialog {
+    min-width: 100vw;
+    
+    .sessions-table {
+      .theater-info,
+      .room-info,
+      .datetime-info {
+        font-size: 12px;
+      }
+      
+      .actions-column {
+        width: 80px;
+      }
+    }
+  }
+}

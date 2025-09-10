@@ -128,17 +128,37 @@
     .quality-option {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 12px;
 
-      mat-icon {
-        font-size: 18px;
-        width: 18px;
-        height: 18px;
-        color: #FF6B35;
+      .quality-badge {
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: 600;
+        text-align: center;
+        min-width: 50px;
+        color: white;
+
+        &.quality-hd {
+          background: linear-gradient(135deg, #2196F3, #1976D2);
+        }
+
+        &.quality-uhd-4k {
+          background: linear-gradient(135deg, #9C27B0, #7B1FA2);
+        }
+
+        &.quality-imax {
+          background: linear-gradient(135deg, #FF9800, #F57C00);
+        }
+
+        &.quality-dolby-cinema {
+          background: linear-gradient(135deg, #4CAF50, #388E3C);
+        }
       }
 
-      span {
+      .quality-label {
         font-weight: 500;
+        flex: 1;
       }
     }
 

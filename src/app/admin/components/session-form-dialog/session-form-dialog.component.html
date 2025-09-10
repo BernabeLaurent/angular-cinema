@@ -3,7 +3,7 @@
     <div class="header-content">
       <h2 mat-dialog-title>
         <mat-icon>event</mat-icon>
-        Créer une nouvelle session
+        {{ isEditMode ? 'Modifier la session' : 'Créer une nouvelle session' }}
       </h2>
       <p class="movie-info">
         <span class="movie-title">{{ movie.title }}</span>
@@ -95,8 +95,7 @@
         <mat-select formControlName="quality" required>
           <mat-option *ngFor="let quality of qualities" [value]="quality.value">
             <div class="quality-option">
-              <mat-icon>{{ quality.icon }}</mat-icon>
-              <span>{{ quality.label }}</span>
+              <span class="quality-badge quality-{{ quality.value.toLowerCase().replace('_', '-') }}">{{ quality.label }}</span>
             </div>
           </mat-option>
         </mat-select>
@@ -171,8 +170,8 @@
     </button>
     <button mat-raised-button color="primary" (click)="onSubmit()" 
             [disabled]="!sessionForm.valid" type="submit">
-      <mat-icon>save</mat-icon>
-      Créer la session
+      <mat-icon>{{ isEditMode ? 'edit' : 'save' }}</mat-icon>
+      {{ isEditMode ? 'Modifier la session' : 'Créer la session' }}
     </button>
   </mat-dialog-actions>
 </div>

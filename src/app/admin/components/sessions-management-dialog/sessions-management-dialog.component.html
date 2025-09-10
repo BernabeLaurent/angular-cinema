@@ -1,0 +1,127 @@
+<div class="sessions-management-dialog">
+  <div class="dialog-header">
+    <h2 mat-dialog-title>
+      <mat-icon>event</mat-icon>
+      Sessions pour "{{ data.movie.title }}"
+    </h2>
+    <button mat-icon-button mat-dialog-close>
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <div mat-dialog-content class="dialog-content">
+    <div class="toolbar">
+      <button mat-raised-button color="primary" (click)="createNewSession()">
+        <mat-icon>add</mat-icon>
+        Nouvelle Session
+      </button>
+      
+      <button mat-button (click)="loadSessions()">
+        <mat-icon>refresh</mat-icon>
+        Actualiser
+      </button>
+    </div>
+
+    <div class="sessions-container" *ngIf="!loading; else loadingTemplate">
+      <div *ngIf="sessions.length === 0; else sessionsTable" class="empty-state">
+        <mat-icon>event_busy</mat-icon>
+        <h3>Aucune session</h3>
+        <p>Ce film n'a pas encore de sessions programmées.</p>
+        <button mat-raised-button color="primary" (click)="createNewSession()">
+          <mat-icon>add</mat-icon>
+          Créer la première session
+        </button>
+      </div>
+
+      <ng-template #sessionsTable>
+        <mat-card class="sessions-table-card">
+          <table mat-table [dataSource]="sessions" class="sessions-table">
+            <!-- Theater Column -->
+            <ng-container matColumnDef="theater">
+              <th mat-header-cell *matHeaderCellDef>Cinéma</th>
+              <td mat-cell *matCellDef="let session">
+                <div class="theater-info">
+                  <div class="theater-name">{{ session.movieTheater?.theater?.name || 'N/A' }}</div>
+                  <div class="theater-city">{{ session.movieTheater?.theater?.city || 'N/A' }}</div>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Room Column -->
+            <ng-container matColumnDef="room">
+              <th mat-header-cell *matHeaderCellDef>Salle</th>
+              <td mat-cell *matCellDef="let session">
+                <div class="room-info">
+                  <div class="room-number">Salle {{ session.movieTheater?.roomNumber || 'N/A' }}</div>
+                  <div class="room-capacity">{{ session.movieTheater?.numberSeats || 0 }} places</div>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Date & Time Column -->
+            <ng-container matColumnDef="datetime">
+              <th mat-header-cell *matHeaderCellDef>Date & Heure</th>
+              <td mat-cell *matCellDef="let session">
+                <div class="datetime-info">
+                  <div class="start-time">{{ formatDateTime(session.startTime) }}</div>
+                  <div class="end-time" *ngIf="session.endTime">→ {{ formatDateTime(session.endTime) }}</div>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Quality Column -->
+            <ng-container matColumnDef="quality">
+              <th mat-header-cell *matHeaderCellDef>Qualité</th>
+              <td mat-cell *matCellDef="let session">
+                <span class="quality-badge" [class]="'quality-' + session.quality.toLowerCase()">
+                  {{ session.quality }}
+                </span>
+              </td>
+            </ng-container>
+
+            <!-- Language Column -->
+            <ng-container matColumnDef="language">
+              <th mat-header-cell *matHeaderCellDef>Langue</th>
+              <td mat-cell *matCellDef="let session">
+                <span class="language-badge">{{ session.codeLanguage }}</span>
+              </td>
+            </ng-container>
+
+            <!-- Actions Column -->
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef class="actions-column">Actions</th>
+              <td mat-cell *matCellDef="let session" class="actions-column">
+                <button mat-icon-button color="primary" 
+                        (click)="editSession(session)"
+                        matTooltip="Modifier cette session">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                
+                <button mat-icon-button color="warn" 
+                        (click)="deleteSession(session)"
+                        matTooltip="Supprimer cette session">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="session-row"></tr>
+          </table>
+        </mat-card>
+      </ng-template>
+    </div>
+
+    <!-- Loading template -->
+    <ng-template #loadingTemplate>
+      <div class="loading-container">
+        <mat-spinner diameter="40"></mat-spinner>
+        <p>Chargement des sessions...</p>
+      </div>
+    </ng-template>
+  </div>
+
+  <div mat-dialog-actions class="dialog-actions">
+    <button mat-button (click)="close()">Fermer</button>
+  </div>
+</div>

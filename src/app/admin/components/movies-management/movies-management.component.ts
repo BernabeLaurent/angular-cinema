@@ -18,6 +18,7 @@ import { Observable, of } from 'rxjs';
 import { AdminService } from '../../../services/admin.service';
 import { SessionFormDialogComponent } from '../session-form-dialog/session-form-dialog.component';
 import { MovieDetailsDialogComponent } from '../movie-details-dialog/movie-details-dialog.component';
+import { SessionsManagementDialogComponent } from '../sessions-management-dialog/sessions-management-dialog.component';
 
 interface Movie {
   id: number;
@@ -286,6 +287,21 @@ export class MoviesManagementComponent implements OnInit {
       width: '800px',
       maxHeight: '90vh',
       data: { movie: movie }
+    });
+  }
+
+  openSessionsManagementDialog(movie: Movie): void {
+    const dialogRef = this.dialog.open(SessionsManagementDialogComponent, {
+      width: '1000px',
+      maxWidth: '95vw',
+      maxHeight: '90vh',
+      panelClass: 'sessions-management-dialog',
+      data: { movie: movie }
+    });
+
+    dialogRef.afterClosed().subscribe(() => {
+      // Refresh movies list to update session counts
+      this.loadMovies();
     });
   }
 
