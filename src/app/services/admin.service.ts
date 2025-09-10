@@ -362,7 +362,8 @@ export class AdminService {
       }),
       catchError((error: any) => {
         console.error('API error in searchMovies:', error);
-        return throwError(() => error);
+        // Retourner un tableau vide en cas d'erreur pour éviter de casser l'interface
+        return of([]);
       })
     );
   }

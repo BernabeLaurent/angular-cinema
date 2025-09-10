@@ -337,6 +337,10 @@ export class MoviesManagementComponent implements OnInit {
     this.adminService.searchMovies(this.searchTerm.trim()).subscribe({
       next: (movies) => {
         console.log('Search results:', movies);
+        
+        // Note: On n'affiche pas de message d'erreur si aucun film n'est trouvé
+        // car c'est un cas normal de recherche
+        
         // Trier les films : ceux avec séances en premier
         this.movies = movies.sort((a, b) => {
           if (a.availableSessions > 0 && b.availableSessions === 0) return -1;
@@ -351,7 +355,11 @@ export class MoviesManagementComponent implements OnInit {
         this.movies = [];
         this.filteredMovies = [];
         this.loading = false;
-        this.showError('Erreur lors de la recherche des films');
+        if (error.status === 500) {
+          this.showError('Erreur serveur lors de la recherche. Veuillez réessayer plus tard.');
+        } else {
+          this.showError('Erreur lors de la recherche des films');
+        }
       }
     });
   }
