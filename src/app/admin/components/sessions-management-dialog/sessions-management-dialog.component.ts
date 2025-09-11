@@ -81,71 +81,79 @@ export class SessionsManagementDialogComponent implements OnInit {
 
   loadSessions(): void {
     this.loading = true;
-    this.adminService.getMovieSessions(this.data.movie.id).subscribe({
-      next: (sessions) => {
-        console.log('Sessions loaded for movie:', this.data.movie.id, sessions);
-        console.log('Sessions count:', sessions.length);
+    
+    // PROBLÈME IDENTIFIÉ: Les APIs sessions-cinemas ne retournent pas toutes les sessions
+    // Solution: Utiliser l'API de recherche de films qui contient toutes les sessions
+    this.adminService.searchMovies(this.data.movie.title).subscribe({
+      next: (searchResults) => {
+        console.log('Movie search results:', searchResults);
         
-        if (sessions.length === 0) {
+        // Trouver le film correspondant
+        const movieData = searchResults.find(movie => movie.id === this.data.movie.id);
+        if (!movieData || !movieData.sessionsCinemas) {
+          console.log('No movie data or sessions found in search results');
           this.sessions = [];
           this.loading = false;
           return;
         }
 
-        // D'abord afficher les sessions de base, puis enrichir
-        this.sessions = sessions.map(session => ({
+        const movieSessions = movieData.sessionsCinemas;
+        console.log('Sessions loaded for movie:', this.data.movie.id, movieSessions);
+        console.log('Sessions count:', movieSessions.length);
+        
+        if (movieSessions.length === 0) {
+          this.sessions = [];
+          this.loading = false;
+          return;
+        }
+
+        // Les sessions de l'API de recherche ont déjà toutes les données enrichies
+        this.sessions = movieSessions.map((session: any) => ({
           ...session,
-          movieTheater: {
-            id: session.movieTheaterId,
-            theaterId: 2,
-            roomNumber: 0,
-            numberSeats: 150,
-            numberSeatsDisabled: 0,
-            theater: {
-              id: 2,
-              name: 'Chargement...',
-              city: 'Chargement...',
-              address: '',
-              zipCode: 0,
-              codeCountry: '',
-              openingTime: '',
-              closingTime: '',
-              phoneNumber: ''
-            }
-          }
+          // Les données movieTheater sont déjà présentes et complètes
         }));
         
-        this.loading = false; // Arrêter le spinner immédiatement
-        console.log('Basic sessions set, now enriching...');
-        
-        // Enrichir chaque session avec les détails du cinéma et de la salle en arrière-plan
-        const enrichedSessions$ = sessions.map((session, index) => 
-          this.enrichSessionWithTheaterDetails(session).pipe(
-            catchError((error) => {
-              console.error('Error enriching session', session.id, ':', error);
-              // Garder la session de base déjà affichée
-              return of(this.sessions[index]);
-            })
-          )
-        );
-
-        // Enrichir en arrière-plan sans bloquer l'affichage
-        forkJoin(enrichedSessions$).subscribe({
-          next: (enrichedSessions) => {
-            console.log('Enrichment completed, updating sessions');
-            this.sessions = enrichedSessions;
-          },
-          error: (error) => {
-            console.error('Error in enrichment, keeping basic sessions:', error);
-            // Les sessions de base sont déjà affichées, ne rien faire
-          }
-        });
+        this.loading = false;
+        console.log('Sessions loaded and displayed:', this.sessions);
       },
       error: (error) => {
-        console.error('Error loading sessions:', error);
-        this.sessions = [];
-        this.loading = false;
-        this.showError('Erreur lors du chargement des sessions');
+        console.error('Error loading sessions from search:', error);
+        
+        // Fallback: essayer avec l'ancienne méthode si la recherche échoue
+        this.adminService.getAllSessions().subscribe({
+          next: (allSessions) => {
+            const movieSessions = allSessions.filter(session => session.movieId === this.data.movie.id);
+            
+            this.sessions = movieSessions.map(session => ({
+              ...session,
+              movieTheater: {
+                id: session.movieTheaterId,
+                theaterId: 2,
+                roomNumber: 0,
+                numberSeats: 150,
+                numberSeatsDisabled: 0,
+                theater: {
+                  id: 2,
+                  name: 'Données incomplètes',
+                  city: 'N/A',
+                  address: '',
+                  zipCode: 0,
+                  codeCountry: '',
+                  openingTime: '',
+                  closingTime: '',
+                  phoneNumber: ''
+                }
+              }
+            }));
+            this.loading = false;
+          },
+          error: (fallbackError) => {
+            console.error('Error in fallback:', fallbackError);
+            this.sessions = [];
+            this.loading = false;
+            this.showError('Erreur lors du chargement des sessions');
+          }
+        });
       }
     });
   }
