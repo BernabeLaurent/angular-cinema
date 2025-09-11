@@ -8,6 +8,7 @@ import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { SessionsService } from '../../services/sessions.service';
 import { AuthService } from '../../auth/auth.service';
+import { DateFormatService } from '../../services/date-format.service';
 import { Booking, BookingStatus } from '../../models/session.model';
 
 @Component({
@@ -310,7 +311,8 @@ export class MyBookingsComponent implements OnInit {
     private sessionsService: SessionsService,
     private authService: AuthService,
     private snackBar: MatSnackBar,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private dateFormatService: DateFormatService
   ) {}
 
   ngOnInit() {
@@ -367,24 +369,11 @@ export class MyBookingsComponent implements OnInit {
 
   formatDateTime(dateTime: string | undefined): string {
     if (!dateTime) return 'Date non disponible';
-    const date = new Date(dateTime);
-    return date.toLocaleDateString('fr-FR', {
-      weekday: 'long',
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+    return this.dateFormatService.formatDateTime(dateTime);
   }
 
   formatDate(dateStr: string): string {
-    const date = new Date(dateStr);
-    return date.toLocaleDateString('fr-FR', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric'
-    });
+    return this.dateFormatService.formatDate(dateStr);
   }
 
   getSeatsText(reservedSeats: any[]): string {

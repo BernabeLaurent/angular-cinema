@@ -13,6 +13,7 @@ import { map, catchError, switchMap } from 'rxjs/operators';
 
 import { AdminService } from '../../../services/admin.service';
 import { SessionFormDialogComponent } from '../session-form-dialog/session-form-dialog.component';
+import { DateFormatService } from '../../../services/date-format.service';
 
 interface SessionCinema {
   id: number;
@@ -72,7 +73,8 @@ export class SessionsManagementDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: { movie: any },
     private adminService: AdminService,
     private snackBar: MatSnackBar,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private dateFormatService: DateFormatService
   ) {}
 
   ngOnInit(): void {
@@ -459,14 +461,7 @@ export class SessionsManagementDialogComponent implements OnInit {
   }
 
   formatDateTime(dateTimeString: string): string {
-    const date = new Date(dateTimeString);
-    return date.toLocaleDateString('fr-FR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+    return this.dateFormatService.formatDateTime(dateTimeString);
   }
 
   close(): void {

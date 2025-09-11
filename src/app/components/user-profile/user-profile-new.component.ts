@@ -23,6 +23,7 @@ import { RegionsIso } from '../../common/enums/regions-iso.enum';
 import { RoleUser } from '../../users/enums/roles-users.enum';
 import { Booking, BookingStatus } from '../../models/session.model';
 import { BookingDetailsDialogComponent } from './booking-details-dialog.component';
+import { DateFormatService } from '../../services/date-format.service';
 
 @Component({
   selector: 'app-user-profile-new',
@@ -667,7 +668,8 @@ export class UserProfileNewComponent implements OnInit {
     private fb: FormBuilder,
     private snackBar: MatSnackBar,
     private dialog: MatDialog,
-    private router: Router
+    private router: Router,
+    private dateFormatService: DateFormatService
   ) {
     this.initializeForms();
   }
@@ -851,24 +853,12 @@ export class UserProfileNewComponent implements OnInit {
   }
 
   formatDate(dateString: string): string {
-    return new Date(dateString).toLocaleDateString('fr-FR', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric'
-    });
+    return this.dateFormatService.formatDate(dateString);
   }
 
   formatDateTime(dateTime?: string): string {
     if (!dateTime) return 'Date non disponible';
-    const date = new Date(dateTime);
-    return date.toLocaleDateString('fr-FR', {
-      weekday: 'long',
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+    return this.dateFormatService.formatDateTime(dateTime);
   }
 
   formatSeats(seats: any[]): string {

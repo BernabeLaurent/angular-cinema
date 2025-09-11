@@ -1,4 +1,5 @@
 import { Component, Inject } from '@angular/core';
+import { DateFormatService } from '../../../services/date-format.service';
 import { CommonModule } from '@angular/common';
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
@@ -25,7 +26,8 @@ import { MatDividerModule } from '@angular/material/divider';
 export class MovieDetailsDialogComponent {
   constructor(
     public dialogRef: MatDialogRef<MovieDetailsDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { movie: any }
+    @Inject(MAT_DIALOG_DATA) public data: { movie: any },
+    private dateFormatService: DateFormatService
   ) {}
 
   onClose(): void {
@@ -42,12 +44,7 @@ export class MovieDetailsDialogComponent {
   }
 
   formatDate(date: string): string {
-    if (!date) return 'N/A';
-    return new Date(date).toLocaleDateString('fr-FR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric'
-    });
+    return this.dateFormatService.formatDate(date);
   }
 
   getImageUrl(path: string): string {

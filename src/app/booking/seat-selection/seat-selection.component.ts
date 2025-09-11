@@ -12,6 +12,7 @@ import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { SessionsService } from '../../services/sessions.service';
 import { AuthService } from '../../auth/auth.service';
+import { DateFormatService } from '../../services/date-format.service';
 import { SessionBookingInfo, SeatMap, CreateBookingDto, CreateBookingDetailDto } from '../../models/session.model';
 
 @Component({
@@ -388,7 +389,8 @@ export class SeatSelectionComponent implements OnInit {
     private router: Router,
     private sessionsService: SessionsService,
     private authService: AuthService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private dateFormatService: DateFormatService
   ) {}
 
   ngOnInit() {
@@ -554,13 +556,6 @@ export class SeatSelectionComponent implements OnInit {
   }
 
   formatDateTime(dateTime: string): string {
-    const date = new Date(dateTime);
-    return date.toLocaleDateString('fr-FR', {
-      weekday: 'long',
-      day: 'numeric',
-      month: 'long',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+    return this.dateFormatService.formatDateTime(dateTime);
   }
 }

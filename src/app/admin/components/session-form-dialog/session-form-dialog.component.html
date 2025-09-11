@@ -64,8 +64,8 @@
       <!-- Date de la session -->
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>Date de la session</mat-label>
-        <input matInput [matDatepicker]="picker" formControlName="date" required>
-        <mat-hint>Sélectionnez la date de projection</mat-hint>
+        <input matInput [matDatepicker]="picker" formControlName="date" required placeholder="DD/MM/YYYY">
+        <mat-hint>Format: DD/MM/YYYY</mat-hint>
         <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-datepicker #picker></mat-datepicker>
         <mat-error *ngIf="isFieldInvalid('date')">
@@ -140,7 +140,7 @@
           </div>
           <div class="summary-item">
             <mat-icon>calendar_today</mat-icon>
-            <span>{{ sessionForm.get('date')?.value | date:'fullDate':'':'fr-FR' }}</span>
+            <span>{{ sessionForm.get('date')?.value | customDate:'fullDate' }}</span>
           </div>
           <div class="summary-item">
             <mat-icon>schedule</mat-icon>

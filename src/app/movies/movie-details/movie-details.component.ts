@@ -10,6 +10,7 @@ import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MoviesService } from '../../services/movies.service';
 import { AuthService } from '../../auth/auth.service';
+import { DateFormatService } from '../../services/date-format.service';
 import { Movie, Cast } from '../../models/session.model';
 
 @Component({
@@ -494,7 +495,8 @@ export class MovieDetailsComponent implements OnInit {
     private router: Router,
     private moviesService: MoviesService,
     private authService: AuthService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private dateFormatService: DateFormatService
   ) {}
 
   ngOnInit() {
@@ -568,11 +570,7 @@ export class MovieDetailsComponent implements OnInit {
   }
 
   formatDate(dateString: string): string {
-    return new Date(dateString).toLocaleDateString('fr-FR', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric'
-    });
+    return this.dateFormatService.formatDate(dateString);
   }
 
   bookMovie() {

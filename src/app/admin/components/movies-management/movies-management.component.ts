@@ -19,6 +19,7 @@ import { AdminService } from '../../../services/admin.service';
 import { SessionFormDialogComponent } from '../session-form-dialog/session-form-dialog.component';
 import { MovieDetailsDialogComponent } from '../movie-details-dialog/movie-details-dialog.component';
 import { SessionsManagementDialogComponent } from '../sessions-management-dialog/sessions-management-dialog.component';
+import { DateFormatService } from '../../../services/date-format.service';
 
 interface Movie {
   id: number;
@@ -112,7 +113,8 @@ export class MoviesManagementComponent implements OnInit {
     private adminService: AdminService,
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
-    private http: HttpClient
+    private http: HttpClient,
+    private dateFormatService: DateFormatService
   ) {}
 
   ngOnInit(): void {
@@ -397,11 +399,7 @@ export class MoviesManagementComponent implements OnInit {
   }
 
   formatDate(date: string): string {
-    return new Date(date).toLocaleDateString('fr-FR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric'
-    });
+    return this.dateFormatService.formatDate(date);
   }
 
   private showSuccess(message: string): void {

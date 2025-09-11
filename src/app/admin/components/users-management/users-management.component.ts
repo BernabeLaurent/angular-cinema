@@ -21,6 +21,7 @@ import { User } from '../../../auth/user.interface';
 import { CreateUserDto } from '../../../users/dtos/create-user.dto';
 import { RoleUser } from '../../../users/enums/roles-users.enum';
 import { UserFormDialogComponent } from '../user-form-dialog/user-form-dialog.component';
+import { DateFormatService } from '../../../services/date-format.service';
 
 @Component({
   selector: 'app-users-management',
@@ -57,7 +58,8 @@ export class UsersManagementComponent implements OnInit {
     private authService: AuthService,
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private dateFormatService: DateFormatService
   ) {}
 
   ngOnInit(): void {
@@ -188,11 +190,7 @@ export class UsersManagementComponent implements OnInit {
   }
 
   formatDate(date: string): string {
-    return new Date(date).toLocaleDateString('fr-FR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric'
-    });
+    return this.dateFormatService.formatDate(date);
   }
 
   applyFilter(): void {

@@ -7,10 +7,14 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
+import { MatNativeDateModule, DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { AdminService, Theater, TheaterRoom } from '../../../services/admin.service';
+import { DateFormatService } from '../../../services/date-format.service';
+import { DateFormatPipe } from '../../../pipes/date-format.pipe';
+import { CustomDateAdapter } from '../../../services/date-adapter.service';
+import { CustomDateFormatProvider } from '../../../services/date-format.provider';
 
 interface Movie {
   id: number;
@@ -46,7 +50,8 @@ interface DialogData {
     MatDatepickerModule,
     MatNativeDateModule,
     MatIconModule,
-    MatChipsModule
+    MatChipsModule,
+    DateFormatPipe
   ],
   templateUrl: './session-form-dialog.component.html',
   styleUrls: ['./session-form-dialog.component.scss']
@@ -91,7 +96,8 @@ export class SessionFormDialogComponent implements OnInit {
     private fb: FormBuilder,
     public dialogRef: MatDialogRef<SessionFormDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
-    private adminService: AdminService
+    private adminService: AdminService,
+    private dateFormatService: DateFormatService
   ) {
     this.isEditMode = data.mode === 'edit';
     this.movie = data.movie;
@@ -318,10 +324,11 @@ export class SessionFormDialogComponent implements OnInit {
         movieId: this.movie.id,
         theaterId: formValue.theaterId,
         roomId: formValue.roomId,
-        date: formValue.date.toISOString().split('T')[0], // Format YYYY-MM-DD
+        date: this.formatDateForApi(formValue.date), // Format YYYY-MM-DD pour l'API
         startTime: formValue.startTime,
         endTime: this.calculateEndTime(),
         quality: formValue.quality,
+        language: formValue.language,
         price: formValue.price,
         totalSeats: formValue.totalSeats,
         availableSeats: formValue.totalSeats // Initialement toutes les places sont disponibles
@@ -331,6 +338,14 @@ export class SessionFormDialogComponent implements OnInit {
     } else {
       this.markFormGroupTouched();
     }
+  }
+
+  private formatDateForApi(date: Date): string {
+    if (!date) return '';
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    return `${year}-${month}-${day}`;
   }
 
   onCancel(): void {

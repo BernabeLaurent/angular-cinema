@@ -7,6 +7,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { Router } from '@angular/router';
 import { Booking, BookingStatus } from '../../models/session.model';
+import { DateFormatService } from '../../services/date-format.service';
 
 @Component({
   selector: 'app-booking-details-dialog',
@@ -472,7 +473,8 @@ export class BookingDetailsDialogComponent {
   constructor(
     @Inject(MAT_DIALOG_DATA) public booking: Booking,
     private dialogRef: MatDialogRef<BookingDetailsDialogComponent>,
-    private router: Router
+    private router: Router,
+    private dateFormatService: DateFormatService
   ) {
     this.generateSeatMap();
   }
@@ -555,26 +557,12 @@ export class BookingDetailsDialogComponent {
   }
 
   formatDate(dateString: string): string {
-    return new Date(dateString).toLocaleDateString('fr-FR', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+    return this.dateFormatService.formatDate(dateString);
   }
 
   formatDateTime(dateTime?: string): string {
     if (!dateTime) return 'Date non disponible';
-    const date = new Date(dateTime);
-    return date.toLocaleDateString('fr-FR', {
-      weekday: 'long',
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+    return this.dateFormatService.formatDateTime(dateTime);
   }
 
   viewMovie() {

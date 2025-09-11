@@ -14,6 +14,7 @@ import { FormsModule } from '@angular/forms';
 import { SessionsService } from '../services/sessions.service';
 import { AdminService } from '../services/admin.service';
 import { AuthService } from '../auth/auth.service';
+import { DateFormatService } from '../services/date-format.service';
 import { MovieWithSessions, Theater, SessionCinema } from '../models/session.model';
 
 @Component({
@@ -287,7 +288,8 @@ export class BookingComponent implements OnInit {
     private sessionsService: SessionsService,
     private adminService: AdminService,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private dateFormatService: DateFormatService
   ) {}
 
   ngOnInit() {
@@ -385,12 +387,7 @@ export class BookingComponent implements OnInit {
   }
 
   formatDate(dateString: string): string {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('fr-FR', {
-      weekday: 'long',
-      day: 'numeric',
-      month: 'long'
-    });
+    return this.dateFormatService.formatDate(dateString);
   }
 
   formatTime(timeString: string): string {

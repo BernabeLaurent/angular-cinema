@@ -17,6 +17,7 @@ import { catchError, tap } from 'rxjs/operators';
 import { AdminService, Theater, CreateTheaterDto } from '../../../services/admin.service';
 import { TheaterFormDialogComponent } from '../theater-form-dialog/theater-form-dialog.component';
 import { TheaterRoomsDialogComponent } from '../theater-rooms-dialog/theater-rooms-dialog.component';
+import { DateFormatService } from '../../../services/date-format.service';
 
 @Component({
   selector: 'app-theaters-management',
@@ -54,7 +55,8 @@ export class TheatersManagementComponent implements OnInit {
   constructor(
     private adminService: AdminService,
     private dialog: MatDialog,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private dateFormatService: DateFormatService
   ) {}
 
   ngOnInit(): void {
@@ -235,11 +237,7 @@ export class TheatersManagementComponent implements OnInit {
   }
 
   formatDate(date: string): string {
-    return new Date(date).toLocaleDateString('fr-FR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric'
-    });
+    return this.dateFormatService.formatDate(date);
   }
 
   formatTime(time: string): string {
