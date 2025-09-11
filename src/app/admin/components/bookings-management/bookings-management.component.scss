@@ -1,0 +1,260 @@
+.bookings-management-container {
+  padding: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+
+  .header {
+    margin-bottom: 24px;
+    
+    h1 {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 0 0 8px 0;
+      font-size: 2rem;
+      font-weight: 500;
+      color: #333;
+      
+      mat-icon {
+        font-size: 2rem;
+        width: 2rem;
+        height: 2rem;
+      }
+    }
+    
+    .subtitle {
+      margin: 0;
+      color: #666;
+      font-size: 1rem;
+    }
+  }
+
+  .filters-card {
+    margin-bottom: 24px;
+    
+    mat-card-header {
+      margin-bottom: 16px;
+      
+      mat-card-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 1.2rem;
+        
+        mat-icon {
+          font-size: 1.2rem;
+          width: 1.2rem;
+          height: 1.2rem;
+        }
+      }
+    }
+    
+    .filters-container {
+      .filter-row {
+        display: flex;
+        gap: 16px;
+        align-items: center;
+        flex-wrap: wrap;
+        
+        mat-form-field {
+          min-width: 200px;
+          
+          &.search-field {
+            flex: 1;
+            min-width: 300px;
+          }
+        }
+        
+        .clear-filters-btn,
+        .refresh-btn {
+          height: 56px;
+          margin-top: 8px;
+        }
+      }
+    }
+  }
+
+  .bookings-table-card {
+    .table-container {
+      overflow-x: auto;
+      
+      .empty-state {
+        text-align: center;
+        padding: 48px 24px;
+        color: #666;
+        
+        mat-icon {
+          font-size: 4rem;
+          width: 4rem;
+          height: 4rem;
+          margin-bottom: 16px;
+          opacity: 0.5;
+        }
+        
+        h3 {
+          margin: 16px 0 8px 0;
+          font-size: 1.5rem;
+          font-weight: 400;
+        }
+        
+        p {
+          margin: 0;
+          font-size: 1rem;
+          opacity: 0.8;
+        }
+      }
+      
+      .bookings-table {
+        width: 100%;
+        min-width: 1200px;
+        
+        th, td {
+          padding: 12px 16px;
+          
+          &.actions-column {
+            width: 120px;
+            text-align: center;
+          }
+        }
+        
+        .booking-row {
+          &:hover {
+            background-color: #f5f5f5;
+          }
+        }
+        
+        .booking-id {
+          font-weight: 600;
+          color: #1976d2;
+        }
+        
+        .user-info {
+          .user-name {
+            font-weight: 500;
+            margin-bottom: 4px;
+          }
+          
+          .user-email {
+            font-size: 0.875rem;
+            color: #666;
+          }
+        }
+        
+        .movie-info {
+          .movie-title {
+            font-weight: 500;
+            color: #333;
+          }
+        }
+        
+        .session-info {
+          .session-time {
+            font-weight: 500;
+            margin-bottom: 4px;
+          }
+          
+          .quality-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            
+            &.quality-hd {
+              background-color: #e3f2fd;
+              color: #1976d2;
+            }
+            
+            &.quality-uhd_4k,
+            &.quality-4k {
+              background-color: #f3e5f5;
+              color: #7b1fa2;
+            }
+            
+            &.quality-imax {
+              background-color: #fff3e0;
+              color: #f57c00;
+            }
+            
+            &.quality-dolby_cinema {
+              background-color: #e8f5e8;
+              color: #388e3c;
+            }
+          }
+        }
+        
+        .theater-info {
+          .theater-details {
+            font-weight: 500;
+            color: #333;
+          }
+        }
+        
+        .price {
+          font-weight: 600;
+          font-size: 1.1rem;
+          color: #2e7d32;
+        }
+        
+        .date-info {
+          .create-date {
+            font-weight: 500;
+            margin-bottom: 2px;
+          }
+          
+          .create-time {
+            font-size: 0.875rem;
+            color: #666;
+          }
+        }
+      }
+    }
+    
+    .loading-container {
+      text-align: center;
+      padding: 48px 24px;
+      
+      mat-spinner {
+        margin: 0 auto 16px auto;
+      }
+      
+      p {
+        margin: 0;
+        color: #666;
+      }
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .bookings-management-container {
+    padding: 16px;
+    
+    .filters-card .filters-container .filter-row {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 12px;
+      
+      mat-form-field {
+        min-width: auto;
+        width: 100%;
+        
+        &.search-field {
+          min-width: auto;
+        }
+      }
+      
+      .clear-filters-btn,
+      .refresh-btn {
+        height: 48px;
+        margin-top: 0;
+      }
+    }
+    
+    .bookings-table-card .table-container .bookings-table {
+      min-width: 800px;
+    }
+  }
+}

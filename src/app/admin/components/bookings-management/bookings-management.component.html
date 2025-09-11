@@ -1,0 +1,198 @@
+<div class="bookings-management-container">
+  <div class="header">
+    <h1>
+      <mat-icon>book_online</mat-icon>
+      Gestion des Réservations
+    </h1>
+    <p class="subtitle">Gérez toutes les réservations des clients</p>
+  </div>
+
+  <!-- Filtres -->
+  <mat-card class="filters-card">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>filter_list</mat-icon>
+        Filtres
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="filters-container">
+        <div class="filter-row">
+          <mat-form-field appearance="outline" class="search-field">
+            <mat-label>Rechercher</mat-label>
+            <input matInput 
+                   [(ngModel)]="searchTerm" 
+                   (ngModelChange)="applyFilters()" 
+                   placeholder="ID, nom, prénom, email...">
+            <mat-icon matSuffix>search</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Statut</mat-label>
+            <mat-select [(ngModel)]="selectedStatus" (selectionChange)="applyFilters()">
+              <mat-option *ngFor="let status of statuses" [value]="status.value">
+                {{ status.label }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Cinéma</mat-label>
+            <mat-select [(ngModel)]="selectedTheater" (selectionChange)="applyFilters()">
+              <mat-option *ngFor="let theater of theaters" [value]="theater.id">
+                {{ theater.name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <button mat-stroked-button (click)="clearFilters()" class="clear-filters-btn">
+            <mat-icon>clear</mat-icon>
+            Effacer
+          </button>
+
+          <button mat-raised-button color="primary" (click)="loadBookings()" class="refresh-btn">
+            <mat-icon>refresh</mat-icon>
+            Actualiser
+          </button>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Tableau des réservations -->
+  <mat-card class="bookings-table-card">
+    <mat-card-header>
+      <mat-card-title>
+        <span>Réservations ({{ filteredBookings.length }})</span>
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="table-container" *ngIf="!loading; else loadingTemplate">
+        <div *ngIf="filteredBookings.length === 0; else bookingsTable" class="empty-state">
+          <mat-icon>inbox</mat-icon>
+          <h3>Aucune réservation</h3>
+          <p>Aucune réservation ne correspond aux critères sélectionnés.</p>
+        </div>
+
+        <ng-template #bookingsTable>
+          <table mat-table [dataSource]="filteredBookings" class="bookings-table" matSort>
+            <!-- ID Column -->
+            <ng-container matColumnDef="id">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>ID</th>
+              <td mat-cell *matCellDef="let booking">
+                <span class="booking-id">#{{ booking.id }}</span>
+              </td>
+            </ng-container>
+
+            <!-- User Column -->
+            <ng-container matColumnDef="user">
+              <th mat-header-cell *matHeaderCellDef>Client</th>
+              <td mat-cell *matCellDef="let booking">
+                <div class="user-info">
+                  <div class="user-name">{{ getUserDisplayName(booking.user) }}</div>
+                  <div class="user-email">{{ booking.user?.email || 'Email non disponible' }}</div>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Movie Column -->
+            <ng-container matColumnDef="movie">
+              <th mat-header-cell *matHeaderCellDef>Film</th>
+              <td mat-cell *matCellDef="let booking">
+                <div class="movie-info">
+                  <div class="movie-title">{{ getMovieTitle(booking) }}</div>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Session Column -->
+            <ng-container matColumnDef="session">
+              <th mat-header-cell *matHeaderCellDef>Séance</th>
+              <td mat-cell *matCellDef="let booking">
+                <div class="session-info">
+                  <div class="session-time">{{ getSessionInfo(booking) }}</div>
+                  <div class="session-quality" *ngIf="booking.sessionCinema?.quality">
+                    <span class="quality-badge quality-{{ booking.sessionCinema.quality.toLowerCase() }}">
+                      {{ booking.sessionCinema.quality }}
+                    </span>
+                  </div>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Theater Column -->
+            <ng-container matColumnDef="theater">
+              <th mat-header-cell *matHeaderCellDef>Cinéma</th>
+              <td mat-cell *matCellDef="let booking">
+                <div class="theater-info">
+                  <div class="theater-details">{{ getTheaterInfo(booking) }}</div>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Total Price Column -->
+            <ng-container matColumnDef="totalPrice">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Prix Total</th>
+              <td mat-cell *matCellDef="let booking">
+                <span class="price">{{ formatPrice(booking.totalPrice) }}</span>
+              </td>
+            </ng-container>
+
+            <!-- Status Column -->
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef>Statut</th>
+              <td mat-cell *matCellDef="let booking">
+                <mat-chip [color]="getStatusColor(booking.status)" selected>
+                  {{ getStatusLabel(booking.status) }}
+                </mat-chip>
+              </td>
+            </ng-container>
+
+            <!-- Create Date Column -->
+            <ng-container matColumnDef="createDate">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Date de Commande</th>
+              <td mat-cell *matCellDef="let booking">
+                <div class="date-info">
+                  <div class="create-date">{{ formatDate(booking.createDate) }}</div>
+                  <div class="create-time">{{ formatDateTime(booking.createDate).split(' ')[1] }}</div>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Actions Column -->
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef class="actions-column">Actions</th>
+              <td mat-cell *matCellDef="let booking" class="actions-column">
+                <button mat-icon-button 
+                        color="primary" 
+                        (click)="validateBooking(booking)"
+                        *ngIf="booking.status === 'PENDING'"
+                        matTooltip="Valider la réservation">
+                  <mat-icon>check_circle</mat-icon>
+                </button>
+                
+                <button mat-icon-button 
+                        color="accent" 
+                        (click)="viewBookingDetails(booking)"
+                        matTooltip="Voir les détails">
+                  <mat-icon>visibility</mat-icon>
+                </button>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="booking-row"></tr>
+          </table>
+        </ng-template>
+      </div>
+
+      <!-- Loading template -->
+      <ng-template #loadingTemplate>
+        <div class="loading-container">
+          <mat-spinner diameter="40"></mat-spinner>
+          <p>Chargement des réservations...</p>
+        </div>
+      </ng-template>
+    </mat-card-content>
+  </mat-card>
+</div>

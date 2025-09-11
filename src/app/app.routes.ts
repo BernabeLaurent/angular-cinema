@@ -7,6 +7,7 @@ import { AdminDashboardComponent } from './admin/components/admin-dashboard/admi
 import { UsersManagementComponent } from './admin/components/users-management/users-management.component';
 import { TheatersManagementComponent } from './admin/components/theaters-management/theaters-management.component';
 import { MoviesManagementComponent } from './admin/components/movies-management/movies-management.component';
+import { BookingsManagementComponent } from './admin/components/bookings-management/bookings-management.component';
 
 // Composants principaux
 import { HomeComponent } from './pages/home/home.component';
@@ -57,6 +58,11 @@ export const routes: Routes = [
         path: 'movies',
         component: MoviesManagementComponent,
         title: 'Gestion des films - Administration Pathé'
+      },
+      {
+        path: 'bookings',
+        component: BookingsManagementComponent,
+        title: 'Gestion des réservations - Administration Pathé'
       },
     ]
   },

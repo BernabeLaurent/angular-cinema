@@ -1,0 +1,320 @@
+.booking-details-dialog {
+  .dialog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    border-bottom: 1px solid #e0e0e0;
+    
+    h2 {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 0;
+      font-size: 1.5rem;
+      font-weight: 500;
+      
+      mat-icon {
+        font-size: 1.5rem;
+        width: 1.5rem;
+        height: 1.5rem;
+      }
+    }
+    
+    .close-button {
+      color: #666;
+    }
+  }
+
+  .loading-container {
+    text-align: center;
+    padding: 48px 24px;
+    
+    mat-spinner {
+      margin: 0 auto 16px auto;
+    }
+    
+    p {
+      margin: 0;
+      color: #666;
+    }
+  }
+
+  .booking-content {
+    padding: 24px;
+    max-height: 70vh;
+    overflow-y: auto;
+    
+    mat-card {
+      margin-bottom: 24px;
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+      
+      mat-card-header {
+        margin-bottom: 16px;
+        
+        mat-card-title {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          font-size: 1.2rem;
+          
+          mat-icon {
+            font-size: 1.2rem;
+            width: 1.2rem;
+            height: 1.2rem;
+          }
+        }
+      }
+    }
+
+    .booking-info-card {
+      .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 24px;
+        
+        .info-section {
+          h4 {
+            margin: 0 0 12px 0;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #333;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 8px;
+          }
+          
+          .client-info {
+            .client-name {
+              font-weight: 500;
+              font-size: 1.1rem;
+              margin-bottom: 4px;
+            }
+            
+            .client-email {
+              color: #666;
+              font-size: 0.9rem;
+            }
+          }
+          
+          .movie-info {
+            .movie-title {
+              font-weight: 500;
+              font-size: 1.1rem;
+              margin-bottom: 8px;
+              color: #333;
+            }
+            
+            .session-time {
+              color: #1976d2;
+              font-weight: 500;
+              margin-bottom: 4px;
+            }
+            
+            .theater-info {
+              color: #666;
+              margin-bottom: 8px;
+            }
+            
+            .quality-badge {
+              .quality {
+                display: inline-block;
+                padding: 4px 12px;
+                border-radius: 16px;
+                font-size: 0.8rem;
+                font-weight: 500;
+                text-transform: uppercase;
+                
+                &.quality-hd {
+                  background-color: #e3f2fd;
+                  color: #1976d2;
+                }
+                
+                &.quality-uhd_4k,
+                &.quality-4k {
+                  background-color: #f3e5f5;
+                  color: #7b1fa2;
+                }
+                
+                &.quality-imax {
+                  background-color: #fff3e0;
+                  color: #f57c00;
+                }
+                
+                &.quality-dolby_cinema {
+                  background-color: #e8f5e8;
+                  color: #388e3c;
+                }
+              }
+            }
+          }
+          
+          .booking-summary {
+            .booking-date {
+              margin-bottom: 4px;
+              color: #666;
+            }
+            
+            .booking-total {
+              font-weight: 600;
+              font-size: 1.1rem;
+              color: #2e7d32;
+              margin-bottom: 8px;
+            }
+            
+            .booking-seats {
+              margin-bottom: 8px;
+              font-weight: 500;
+            }
+            
+            .booking-status-summary {
+              display: flex;
+              gap: 16px;
+              
+              .validated {
+                color: #2e7d32;
+                font-weight: 500;
+              }
+              
+              .pending {
+                color: #f57c00;
+                font-weight: 500;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .status-management-card {
+      .status-controls {
+        display: flex;
+        gap: 16px;
+        align-items: center;
+        flex-wrap: wrap;
+        
+        mat-form-field {
+          min-width: 200px;
+        }
+        
+        .validate-all-btn {
+          height: 56px;
+          margin-top: 8px;
+        }
+      }
+    }
+
+    .seats-details-card {
+      .table-container {
+        overflow-x: auto;
+        
+        .seats-table {
+          width: 100%;
+          
+          .seat-row {
+            &:hover {
+              background-color: #f5f5f5;
+            }
+          }
+          
+          .seat-number {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            
+            mat-icon {
+              color: #666;
+            }
+          }
+          
+          .price {
+            font-weight: 600;
+            color: #2e7d32;
+          }
+          
+          .status-select {
+            min-width: 140px;
+            
+            mat-select {
+              font-size: 0.9rem;
+            }
+          }
+          
+          .create-date {
+            font-size: 0.9rem;
+            color: #666;
+          }
+          
+          .actions-column {
+            width: 80px;
+            text-align: center;
+          }
+        }
+      }
+      
+      .no-seats {
+        text-align: center;
+        padding: 48px 24px;
+        color: #666;
+        
+        mat-icon {
+          font-size: 3rem;
+          width: 3rem;
+          height: 3rem;
+          margin-bottom: 16px;
+          opacity: 0.5;
+        }
+        
+        p {
+          margin: 0;
+          font-size: 1rem;
+        }
+      }
+    }
+  }
+
+  .dialog-actions {
+    padding: 16px 24px;
+    border-top: 1px solid #e0e0e0;
+    justify-content: flex-end;
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .booking-details-dialog {
+    .booking-content {
+      padding: 16px;
+      
+      .booking-info-card .info-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+      
+      .status-management-card .status-controls {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+        
+        mat-form-field {
+          min-width: auto;
+          width: 100%;
+        }
+        
+        .validate-all-btn {
+          height: 48px;
+          margin-top: 0;
+        }
+      }
+      
+      .seats-details-card .table-container .seats-table {
+        .status-select {
+          min-width: 120px;
+        }
+      }
+    }
+  }
+}
