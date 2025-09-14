@@ -1,7 +1,7 @@
 <!-- Barre de navigation -->
 <mat-toolbar color="primary" class="transparent-toolbar">
   <div class="left-section">
-    <img src="assets/images/pathe-logo.svg" alt="Tchitcha" class="logo" height="32">
+    <img src="assets/images/logo.svg" alt="Tchitcha" class="logo" height="32">
     <span class="logo-text">TCHITCHA</span>
     <button mat-icon-button (click)="openSearchModal()">
       <mat-icon>search</mat-icon>
@@ -9,8 +9,8 @@
     <button mat-button routerLink="/movies">Films</button>
     <button mat-button routerLink="/booking">Réserver</button>
     
-    <!-- Menu Administration pour les admins -->
-    <ng-container *ngIf="isAdmin$ | async">
+    <!-- Menu Administration pour les admins et workers -->
+    <ng-container *ngIf="canAccessAdmin$ | async">
       <button mat-button [matMenuTriggerFor]="adminMenu" class="admin-menu-trigger">
         <mat-icon>admin_panel_settings</mat-icon>
         Administration
@@ -21,18 +21,22 @@
           <mat-icon>dashboard</mat-icon>
           Tableau de bord
         </button>
-        <button mat-menu-item routerLink="/admin/users">
+        <!-- Gestion des utilisateurs - ADMIN uniquement -->
+        <button mat-menu-item routerLink="/admin/users" *ngIf="isAdmin$ | async">
           <mat-icon>people</mat-icon>
           Gestion des utilisateurs
         </button>
-        <button mat-menu-item routerLink="/admin/theaters">
+        <!-- Gestion des cinémas - ADMIN uniquement -->
+        <button mat-menu-item routerLink="/admin/theaters" *ngIf="isAdmin$ | async">
           <mat-icon>location_city</mat-icon>
           Gestion des cinémas
         </button>
+        <!-- Gestion des films - ADMIN et WORKER -->
         <button mat-menu-item routerLink="/admin/movies">
           <mat-icon>movie</mat-icon>
           Gestion des films
         </button>
+        <!-- Gestion des réservations - ADMIN et WORKER -->
         <button mat-menu-item routerLink="/admin/bookings">
           <mat-icon>event_seat</mat-icon>
           Gestion des réservations

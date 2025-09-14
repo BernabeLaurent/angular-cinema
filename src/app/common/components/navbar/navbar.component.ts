@@ -42,6 +42,8 @@ export class NavbarComponent {
   isLoggedIn$: Observable<boolean>;
   currentUser$: Observable<User | null>;
   isAdmin$: Observable<boolean>;
+  isWorker$: Observable<boolean>;
+  canAccessAdmin$: Observable<boolean>;
   userInitials$: Observable<string>;
 
   @ViewChild('userMenuButton') userMenuButton!: ElementRef<HTMLButtonElement>;
@@ -56,6 +58,8 @@ export class NavbarComponent {
     this.isLoggedIn$ = this.userRoleService.isLoggedIn();
     this.currentUser$ = this.userRoleService.getCurrentUser();
     this.isAdmin$ = this.userRoleService.isAdmin();
+    this.isWorker$ = this.userRoleService.isWorker();
+    this.canAccessAdmin$ = this.userRoleService.canAccessAdmin();
     this.userInitials$ = this.userRoleService.getUserInitials();
   }
 
@@ -79,7 +83,10 @@ export class NavbarComponent {
   openLoginDialog() {
     this.dialog.open(LoginComponent, {
       width: '400px',
-      panelClass: 'custom-dialog-container'
+      panelClass: 'login-dialog-positioned',
+      hasBackdrop: true,
+      backdropClass: 'custom-backdrop',
+      disableClose: false
     });
   }
 

@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { AuthGuard } from './auth/auth.guard';
 import { AdminGuard } from './auth/admin.guard';
+import { AdminOnlyGuard } from './auth/admin-only.guard';
 
 // Composants d'administration
 import { AdminDashboardComponent } from './admin/components/admin-dashboard/admin-dashboard.component';
@@ -47,11 +48,13 @@ export const routes: Routes = [
       {
         path: 'users',
         component: UsersManagementComponent,
+        canActivate: [AdminOnlyGuard],
         title: 'Gestion des utilisateurs - Administration Tchitcha'
       },
       {
         path: 'theaters',
         component: TheatersManagementComponent,
+        canActivate: [AdminOnlyGuard],
         title: 'Gestion des cinémas - Administration Tchitcha'
       },
       {

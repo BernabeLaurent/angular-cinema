@@ -1,6 +1,14 @@
 .auth-container {
-  padding: 20px;
-  background: rgba(0, 0, 0, 0.5);
+  padding: 0;
+  background: transparent !important;
+  width: 100%;
+  height: 100%;
+
+  /* Centrage du dialog quand utilisé dans un dialog Material */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: auto;
 }
 
 .auth-card {

@@ -50,6 +50,116 @@ body {
   background: rgba(255, 255, 255, 0.5);
 }
 
+/* Custom Dialog Styles - Centered Login Dialog */
+/* Target the overlay pane directly - with navbar offset */
+.cdk-overlay-pane.centered-dialog-container,
+.cdk-overlay-container .cdk-overlay-pane.centered-dialog-container {
+  position: fixed !important;
+  top: 120px !important; /* Position fixe plus bas que la navbar */
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  max-width: 90vw !important;
+  max-height: calc(100vh - 150px) !important;
+  margin: 0 !important;
+  width: 400px !important;
+  z-index: 1000 !important;
+}
+
+/* Styles for the dialog container */
+.mat-mdc-dialog-container.centered-dialog-container,
+.centered-dialog-container .mat-mdc-dialog-container {
+  border-radius: 12px !important;
+  box-shadow: 0 24px 38px 3px rgba(0,0,0,0.14),
+              0 9px 46px 8px rgba(0,0,0,0.12),
+              0 11px 15px -7px rgba(0,0,0,0.2) !important;
+  background: white !important;
+}
+
+/* Backdrop styling */
+.cdk-overlay-backdrop.custom-backdrop {
+  background-color: rgba(0, 0, 0, 0.6) !important;
+}
+
+/* Force centering for all dialog containers with this class */
+.cdk-overlay-container {
+  .cdk-overlay-pane.centered-dialog-container {
+    position: fixed !important;
+    top: 120px !important; /* Position fixe plus bas que la navbar */
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    margin: 0 !important;
+  }
+}
+
+/* Specific override for auth containers in dialogs */
+.centered-dialog-container .auth-container {
+  background: transparent !important;
+  padding: 0 !important;
+  min-height: auto !important;
+  width: 100% !important;
+  height: 100% !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  position: relative !important;
+  left: auto !important;
+  top: auto !important;
+  transform: none !important;
+}
+
+/* Force position override with maximum specificity */
+body .cdk-overlay-container .cdk-overlay-pane.centered-dialog-container,
+html body .cdk-overlay-container .cdk-overlay-pane.centered-dialog-container {
+  position: fixed !important;
+  top: 120px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  margin: 0 !important;
+  width: 400px !important;
+}
+
+/* Positioned Login Dialog */
+.cdk-overlay-pane.login-dialog-positioned,
+.cdk-overlay-container .cdk-overlay-pane.login-dialog-positioned,
+body .cdk-overlay-container .cdk-overlay-pane.login-dialog-positioned {
+  position: fixed !important;
+  top: 120px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  margin: 0 !important;
+  width: 400px !important;
+  max-width: 90vw !important;
+  z-index: 1000 !important;
+}
+
+.login-dialog-positioned .mat-mdc-dialog-container {
+  border-radius: 12px !important;
+  box-shadow: 0 24px 38px 3px rgba(0,0,0,0.14),
+              0 9px 46px 8px rgba(0,0,0,0.12),
+              0 11px 15px -7px rgba(0,0,0,0.2) !important;
+  background: white !important;
+}
+
+.login-dialog-positioned .auth-container {
+  background: transparent !important;
+  padding: 0 !important;
+  min-height: auto !important;
+  width: 100% !important;
+  height: 100% !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  position: relative !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .cdk-overlay-pane.centered-dialog-container {
+    width: 90vw !important;
+    max-width: 400px !important;
+  }
+}
+
 /* Typography */
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Roboto', sans-serif;

@@ -1,4 +1,4 @@
-import {Component, OnInit, Optional} from '@angular/core';
+import {Component, OnInit, Optional, Inject} from '@angular/core';
 import {FormBuilder, FormGroup, Validators, ReactiveFormsModule} from '@angular/forms';
 import {Router, ActivatedRoute} from '@angular/router';
 import {AuthService} from '../auth.service';
@@ -8,7 +8,7 @@ import {MatInputModule} from '@angular/material/input';
 import {MatButtonModule} from '@angular/material/button';
 import {MatCardModule} from '@angular/material/card';
 import {NgIf} from '@angular/common';
-import {MatDialogRef} from '@angular/material/dialog';
+import {MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {MatIcon} from '@angular/material/icon';
 
 
@@ -34,11 +34,12 @@ export class LoginComponent implements OnInit {
   isDialog: boolean = false;
 
   constructor(
-    private fb: FormBuilder, 
-    private authService: AuthService, 
+    private fb: FormBuilder,
+    private authService: AuthService,
     private router: Router,
     private route: ActivatedRoute,
-    @Optional() public dialogRef?: MatDialogRef<LoginComponent>
+    @Optional() public dialogRef?: MatDialogRef<LoginComponent>,
+    @Optional() @Inject(MAT_DIALOG_DATA) public dialogData?: any
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -50,8 +51,9 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit() {
-    // Récupérer returnUrl depuis les query parameters
-    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+    // Récupérer returnUrl depuis les query parameters ou les données du dialog
+    this.returnUrl = this.dialogData?.returnUrl ||
+                     this.route.snapshot.queryParams['returnUrl'] || '/';
     console.log('Login component - returnUrl:', this.returnUrl);
   }
 
