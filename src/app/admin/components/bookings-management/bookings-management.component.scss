@@ -2,6 +2,48 @@
   padding: 24px;
   max-width: 1400px;
   margin: 0 auto;
+  color: #000 !important;
+
+  // Force tous les textes en noir
+  *, *::before, *::after {
+    color: #000 !important;
+  }
+
+  // Exceptions pour les éléments qui doivent garder leur couleur
+  .price {
+    color: #2e7d32 !important;
+  }
+
+  .booking-id {
+    color: #1976d2 !important;
+  }
+
+  mat-chip {
+    &.mat-mdc-chip {
+      color: #000 !important;
+    }
+  }
+
+  // Styles spécifiques pour le tableau Angular Material
+  .mat-mdc-table {
+    th, td, .mat-mdc-header-cell, .mat-mdc-cell {
+      color: #000 !important;
+    }
+  }
+
+  // Styles pour les chips de statut
+  mat-chip-listbox mat-chip {
+    color: #000 !important;
+  }
+
+  // Styles pour les form fields
+  .mat-mdc-form-field {
+    .mat-mdc-form-field-label,
+    .mat-mdc-input-element,
+    .mat-mdc-select-value-text {
+      color: #000 !important;
+    }
+  }
 
   .header {
     margin-bottom: 24px;

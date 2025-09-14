@@ -84,7 +84,15 @@ export class BookingDetailsDialogComponent implements OnInit {
         if (this.booking.bookingDetails && this.booking.bookingDetails.length > 0) {
           this.dataSource.data = this.booking.bookingDetails;
           this.cdr.detectChanges(); // Forcer la détection des changements
-          console.log('DataSource updated from API:', this.booking.bookingDetails);
+        } else {
+          // Générer des données de sièges basées sur les informations disponibles
+          const generatedSeats = this.generateBookingDetailsFromReservation(this.booking);
+          if (generatedSeats.length > 0) {
+            this.dataSource.data = generatedSeats;
+          } else {
+            // Initialiser avec un tableau vide pour éviter les erreurs
+            this.dataSource.data = [];
+          }
         }
         
         this.loading = false;
@@ -347,6 +355,36 @@ export class BookingDetailsDialogComponent implements OnInit {
       duration: 3000,
       panelClass: ['success-snackbar']
     });
+  }
+
+  private generateBookingDetailsFromReservation(booking: Booking): BookingDetail[] {
+    const seats: BookingDetail[] = [];
+    const numberOfSeats = (booking as any).numberSeats || 0;
+    const totalPrice = parseFloat((booking.totalPrice || 0).toString());
+    const pricePerSeat = numberOfSeats > 0 ? totalPrice / numberOfSeats : 0;
+
+    for (let i = 0; i < numberOfSeats; i++) {
+      const seatNumber = this.generateSeatNumber(i);
+      const bookingDetail: BookingDetail = {
+        id: booking.id + i + 1000, // ID temporaire unique
+        seatNumber: seatNumber,
+        status: booking.status,
+        price: pricePerSeat,
+        createDate: booking.createDate,
+        updateDate: booking.createDate,
+        bookingId: booking.id
+      };
+      seats.push(bookingDetail);
+    }
+
+    return seats;
+  }
+
+  private generateSeatNumber(index: number): string {
+    // Générer des numéros de sièges réalistes (A1, A2, B1, B2, etc.)
+    const row = String.fromCharCode(65 + Math.floor(index / 10)); // A, B, C, etc.
+    const seatInRow = (index % 10) + 1;
+    return `${row}${seatInRow}`;
   }
 
   private showError(message: string): void {

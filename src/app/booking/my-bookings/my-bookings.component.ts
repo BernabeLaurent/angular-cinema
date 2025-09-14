@@ -34,7 +34,7 @@ import { RoleUser } from '../../users/enums/roles-users.enum';
       <div class="bookings-list" *ngIf="bookings.length > 0">
         <mat-card *ngFor="let booking of bookings" class="booking-card">
           <mat-card-header>
-            <div mat-card-avatar class="booking-status" [ngClass]="'status-' + (booking.status.toLowerCase() || 'unknown')">
+            <div mat-card-avatar class="booking-status" [ngClass]="'status-' + (booking.status?.toLowerCase() || 'unknown')">
               <mat-icon>{{ getStatusIcon(booking.status) }}</mat-icon>
             </div>
             <mat-card-title>{{ booking.sessionCinema?.movie?.title || 'Film non disponible' }}</mat-card-title>
@@ -92,7 +92,7 @@ import { RoleUser } from '../../users/enums/roles-users.enum';
             <!-- Statut de la réservation -->
             <div class="booking-status-section">
               <mat-chip-listbox>
-                <mat-chip [ngClass]="'chip-' + (booking.status.toLowerCase() || 'unknown')">
+                <mat-chip [ngClass]="'chip-' + (booking.status?.toLowerCase() || 'unknown')">
                   <mat-icon>{{ getStatusIcon(booking.status) }}</mat-icon>
                   {{ getStatusText(booking.status) }}
                 </mat-chip>

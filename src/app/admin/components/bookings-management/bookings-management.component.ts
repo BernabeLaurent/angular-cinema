@@ -57,6 +57,7 @@ export class BookingsManagementComponent implements OnInit {
     { value: '', label: 'Tous les statuts' },
     { value: 'PENDING', label: 'En attente' },
     { value: 'CONFIRMED', label: 'Confirmée' },
+    { value: 'VALIDATED', label: 'Validée' },
     { value: 'CANCELLED', label: 'Annulée' },
     { value: 'COMPLETED', label: 'Terminée' }
   ];
@@ -82,6 +83,8 @@ export class BookingsManagementComponent implements OnInit {
     this.adminService.getAllBookings().subscribe({
       next: (bookings) => {
         console.log('Bookings loaded successfully:', bookings);
+
+
         // Trier par date de commande (plus récentes en premier)
         this.bookings = bookings.sort((a, b) => {
           const dateA = new Date(a.createDate).getTime();
@@ -196,6 +199,8 @@ export class BookingsManagementComponent implements OnInit {
         return 'accent';
       case 'CONFIRMED':
         return 'primary';
+      case 'VALIDATED':
+        return 'primary';
       case 'CANCELLED':
         return 'warn';
       case 'COMPLETED':
@@ -216,6 +221,9 @@ export class BookingsManagementComponent implements OnInit {
   formatPrice(price: number): string {
     if (typeof price === 'number' && !isNaN(price)) {
       return `${price.toFixed(2)}€`;
+    }
+    if (typeof price === 'string' && !isNaN(parseFloat(price))) {
+      return `${parseFloat(price).toFixed(2)}€`;
     }
     return '0,00€';
   }
@@ -251,6 +259,17 @@ export class BookingsManagementComponent implements OnInit {
       const room = booking.sessionCinema.movieTheater.roomNumber;
       return `${theater.name} - Salle ${room}`;
     }
+
+    // Essayer de trouver le théâtre via l'ID
+    if (booking.sessionCinema?.movieTheater?.theaterId) {
+      const theaterId = booking.sessionCinema.movieTheater.theaterId;
+      const theater = this.theaters.find(t => t.id === theaterId);
+      if (theater) {
+        const room = booking.sessionCinema.movieTheater.roomNumber;
+        return `${theater.name} - Salle ${room}`;
+      }
+    }
+
     return 'Cinéma inconnu';
   }
 
