@@ -30,9 +30,7 @@ export class FooterComponent {
 
   quickLinks = [
     { name: 'Films à l\'affiche', route: '/movies' },
-    { name: 'Cinémas', route: '/cinemas' },
-    { name: 'Mes réservations', route: '/bookings' },
-    { name: 'Cartes cadeaux', route: '/gift-cards' }
+    { name: 'Mes réservations', route: '/my-bookings' }
   ];
 
   helpLinks = [

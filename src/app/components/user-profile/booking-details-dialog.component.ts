@@ -8,6 +8,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { Router } from '@angular/router';
 import { Booking, BookingStatus } from '../../models/session.model';
 import { DateFormatService } from '../../services/date-format.service';
+import { MoviesService } from '../../services/movies.service';
 
 @Component({
   selector: 'app-booking-details-dialog',
@@ -474,7 +475,8 @@ export class BookingDetailsDialogComponent {
     @Inject(MAT_DIALOG_DATA) public booking: Booking,
     private dialogRef: MatDialogRef<BookingDetailsDialogComponent>,
     private router: Router,
-    private dateFormatService: DateFormatService
+    private dateFormatService: DateFormatService,
+    private moviesService: MoviesService
   ) {
     this.generateSeatMap();
   }
@@ -533,9 +535,7 @@ export class BookingDetailsDialogComponent {
 
   getMoviePosterUrl(): string {
     const posterPath = this.booking.sessionCinema?.movie?.posterPath;
-    if (!posterPath) return '/assets/images/no-poster.jpg';
-    if (posterPath.startsWith('http')) return posterPath;
-    return `https://image.tmdb.org/t/p/w200${posterPath}`;
+    return this.moviesService.getPosterUrl(posterPath);
   }
 
   getStatusIcon(status: BookingStatus): string {

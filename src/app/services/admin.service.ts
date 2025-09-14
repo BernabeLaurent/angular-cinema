@@ -226,7 +226,7 @@ export class AdminService {
         if (theaters.length === 1) {
           theaters.push({
             id: 999,
-            name: 'Pathé Liberté',
+            name: 'Tchitcha Liberté',
             zipCode: 83000,
             city: 'Toulon',
             address: '123 Avenue de la République',
@@ -337,7 +337,7 @@ export class AdminService {
             numberSeats: 150,
             theater: {
               id: 1,
-              name: 'Pathé Cabinet',
+              name: 'Tchitcha Cabinet',
               city: 'Toulon',
               address: 'quelque part',
               zipCode: 83000,
@@ -382,7 +382,7 @@ export class AdminService {
             numberSeats: 200,
             theater: {
               id: 1,
-              name: 'Pathé Cabinet',
+              name: 'Tchitcha Cabinet',
               city: 'Toulon',
               address: 'quelque part',
               zipCode: 83000,

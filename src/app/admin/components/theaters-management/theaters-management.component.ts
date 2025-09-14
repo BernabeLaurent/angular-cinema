@@ -91,7 +91,7 @@ export class TheatersManagementComponent implements OnInit {
     this.theaters = [
       {
         id: 1,
-        name: 'Pathé Beaugrenelle',
+        name: 'Tchitcha Beaugrenelle',
         zipCode: 75015,
         city: 'Paris',
         address: '7 Rue Linois',
@@ -105,7 +105,7 @@ export class TheatersManagementComponent implements OnInit {
       },
       {
         id: 2,
-        name: 'Pathé République',
+        name: 'Tchitcha République',
         zipCode: 75003,
         city: 'Paris',
         address: '2-8 Avenue de la République',

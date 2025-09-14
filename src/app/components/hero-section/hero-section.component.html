@@ -1,33 +1,46 @@
-<div class="hero-section" [style.background-image]="'url(' + featuredMovie.backgroundImage + ')'">
+<!-- Loading state -->
+<div *ngIf="loading" class="hero-section loading-hero">
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="movie-info">
+      <div class="loading-placeholder">
+        <h1>Chargement...</h1>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Hero section - only display if we have a featured movie -->
+<div *ngIf="!loading && featuredMovie" class="hero-section" [style.background-image]="'url(' + featuredMovie.backgroundImage + ')'">
   <div class="hero-overlay"></div>
   <div class="hero-content">
     <div class="movie-info">
       <h1 class="movie-title">{{ featuredMovie.title }}</h1>
       <h2 class="movie-subtitle">{{ featuredMovie.subtitle }}</h2>
-      
+
       <div class="movie-meta">
-        <span class="duration">{{ featuredMovie.duration }}</span>
-        <span class="separator">•</span>
-        <span class="genre">{{ featuredMovie.genre }}</span>
-        <span class="separator">•</span>
-        <div class="rating">
+        <span class="duration" *ngIf="featuredMovie.duration">{{ featuredMovie.duration }}</span>
+        <span class="separator" *ngIf="featuredMovie.duration && featuredMovie.genre">•</span>
+        <span class="genre" *ngIf="featuredMovie.genre">{{ featuredMovie.genre }}</span>
+        <span class="separator" *ngIf="featuredMovie.genre && featuredMovie.rating">•</span>
+        <div class="rating" *ngIf="featuredMovie.rating">
           <mat-icon class="star">star</mat-icon>
           <span>{{ featuredMovie.rating }}/5</span>
         </div>
       </div>
-      
+
       <p class="movie-description">{{ featuredMovie.description }}</p>
-      
+
       <div class="action-buttons">
-        <button mat-raised-button class="play-btn" (click)="onPlayTrailer()">
-          <mat-icon>play_arrow</mat-icon>
-          BANDE-ANNONCE
+        <button mat-raised-button class="book-btn" (click)="onBookTicket()">
+          RÉSERVER
         </button>
-        <button mat-stroked-button class="info-btn" (click)="onMoreInfo()">
-          <mat-icon>info</mat-icon>
-          PLUS D'INFOS
+        <button mat-stroked-button class="details-btn" (click)="onViewDetails()">
+          DÉTAILS
         </button>
       </div>
     </div>
   </div>
 </div>
+
+<!-- No movie available - section is completely hidden -->

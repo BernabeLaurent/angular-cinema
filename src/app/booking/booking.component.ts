@@ -15,6 +15,7 @@ import { SessionsService } from '../services/sessions.service';
 import { AdminService } from '../services/admin.service';
 import { AuthService } from '../auth/auth.service';
 import { DateFormatService } from '../services/date-format.service';
+import { MoviesService } from '../services/movies.service';
 import { MovieWithSessions, Theater, SessionCinema } from '../models/session.model';
 
 @Component({
@@ -206,8 +207,12 @@ import { MovieWithSessions, Theater, SessionCinema } from '../models/session.mod
     .selection-card .mat-mdc-form-field-label,
     .selection-card .mat-mdc-select,
     .selection-card .mat-mdc-select-value,
-    .selection-card .mat-mdc-option {
-      color: #333 !important;
+    .selection-card .mat-mdc-option,
+    .selection-card .mat-mdc-form-field-infix,
+    .selection-card .mat-mdc-select-trigger,
+    .selection-card .mat-mdc-select-value-text,
+    .mat-mdc-option-text {
+      color: #000 !important;
     }
 
     .full-width {
@@ -688,8 +693,19 @@ import { MovieWithSessions, Theater, SessionCinema } from '../models/session.mod
       color: #333 !important;
     }
 
-    /* Global text color fixes - preserve header white text */
-    .booking-container *:not(.booking-header):not(.booking-header *):not(.book-session-btn):not(.book-session-btn *) {
+    /* Specific text color fixes - target only necessary elements */
+    .booking-container .movie-title,
+    .booking-container .movie-title-link,
+    .booking-container .movie-title a,
+    .booking-container h3,
+    .booking-container h3 a,
+    .booking-container .theater-name,
+    .booking-container .session-date,
+    .booking-container h4,
+    .booking-container h5,
+    .booking-container .selection-card *,
+    .booking-container .loading,
+    .booking-container .no-sessions {
       color: #333 !important;
     }
 
@@ -721,7 +737,8 @@ export class BookingComponent implements OnInit {
     private adminService: AdminService,
     private authService: AuthService,
     private router: Router,
-    private dateFormatService: DateFormatService
+    private dateFormatService: DateFormatService,
+    private moviesService: MoviesService
   ) {}
 
   ngOnInit() {
@@ -824,13 +841,21 @@ export class BookingComponent implements OnInit {
 
   selectSession(session: SessionCinema) {
     console.log('Session sélectionnée:', session);
+    
+    // Vérifier si l'utilisateur est connecté
+    if (!this.authService.isLoggedIn()) {
+      // Si pas connecté, rediriger vers la connexion avec returnUrl
+      const returnUrl = `/booking/session/${session.id}`;
+      this.router.navigate(['/login'], { queryParams: { returnUrl } });
+      return;
+    }
+    
+    // Si connecté, naviguer vers la sélection des sièges
     this.router.navigate(['/booking/session', session.id]);
   }
 
   getMoviePosterUrl(poster?: string): string {
-    if (!poster) return '/assets/images/no-poster.svg';
-    if (poster.startsWith('http')) return poster;
-    return `https://image.tmdb.org/t/p/w500${poster}`;
+    return this.moviesService.getPosterUrl(poster);
   }
 
   formatDate(dateString: string): string {

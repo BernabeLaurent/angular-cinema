@@ -17,7 +17,7 @@ export const routes: Routes = [
   {
     path: '',
     component: HomeComponent,
-    title: 'Pathé - Cinéma'
+    title: 'Tchitcha - Cinéma'
   },
   
   // Routes utilisateur
@@ -26,7 +26,7 @@ export const routes: Routes = [
     loadComponent: () => import('./components/user-profile/user-profile-new.component')
       .then(c => c.UserProfileNewComponent),
     canActivate: [AuthGuard],
-    title: 'Mon Profil - Pathé'
+    title: 'Mon Profil - Tchitcha'
   },
   
   // Routes d'administration - Protégées par AdminGuard
@@ -42,29 +42,37 @@ export const routes: Routes = [
       {
         path: 'dashboard',
         component: AdminDashboardComponent,
-        title: 'Tableau de bord - Administration Pathé'
+        title: 'Tableau de bord - Administration Tchitcha'
       },
       {
         path: 'users',
         component: UsersManagementComponent,
-        title: 'Gestion des utilisateurs - Administration Pathé'
+        title: 'Gestion des utilisateurs - Administration Tchitcha'
       },
       {
         path: 'theaters',
         component: TheatersManagementComponent,
-        title: 'Gestion des cinémas - Administration Pathé'
+        title: 'Gestion des cinémas - Administration Tchitcha'
       },
       {
         path: 'movies',
         component: MoviesManagementComponent,
-        title: 'Gestion des films - Administration Pathé'
+        title: 'Gestion des films - Administration Tchitcha'
       },
       {
         path: 'bookings',
         component: BookingsManagementComponent,
-        title: 'Gestion des réservations - Administration Pathé'
+        title: 'Gestion des réservations - Administration Tchitcha'
       },
     ]
+  },
+
+  // Routes d'authentification
+  {
+    path: 'login',
+    loadComponent: () => import('./auth/login/login.component')
+      .then(c => c.LoginComponent),
+    title: 'Connexion - Tchitcha'
   },
 
   // Routes publiques
@@ -72,7 +80,7 @@ export const routes: Routes = [
     path: 'movies',
     loadComponent: () => import('./components/movies-section/movies-section.component')
       .then(c => c.MoviesSectionComponent),
-    title: 'Films - Pathé'
+    title: 'Films - Tchitcha'
   },
   
   {
@@ -89,7 +97,7 @@ export const routes: Routes = [
           throw err;
         });
     },
-    title: 'Détails du film - Pathé'
+    title: 'Détails du film - Tchitcha'
   },
   
   {
@@ -103,7 +111,7 @@ export const routes: Routes = [
     path: 'booking',
     loadComponent: () => import('./booking/booking.component')
       .then(c => c.BookingComponent),
-    title: 'Réserver une séance - Pathé'
+    title: 'Réserver une séance - Tchitcha'
   },
   
   {
@@ -111,7 +119,7 @@ export const routes: Routes = [
     canActivate: [AuthGuard],
     loadComponent: () => import('./booking/seat-selection/seat-selection.component')
       .then(c => c.SeatSelectionComponent),
-    title: 'Sélection des places - Pathé'
+    title: 'Sélection des places - Tchitcha'
   },
   
   {
@@ -119,7 +127,7 @@ export const routes: Routes = [
     canActivate: [AuthGuard],
     loadComponent: () => import('./booking/my-bookings/my-bookings.component')
       .then(c => c.MyBookingsComponent),
-    title: 'Mes Réservations - Pathé'
+    title: 'Mes Réservations - Tchitcha'
   },
   
   // Gestion d'erreurs

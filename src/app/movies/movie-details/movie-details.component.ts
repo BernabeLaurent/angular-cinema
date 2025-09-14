@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Location } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -29,6 +30,16 @@ import { Movie, Cast } from '../../models/session.model';
   template: `
     <!-- Page détails du film - AVEC VRAIES DONNÉES -->
     <div style="max-width: 1200px; margin: 0 auto; padding: 100px 20px 40px 20px; min-height: 100vh; background: white;">
+      <!-- Header avec bouton fermer -->
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        <h1 style="font-size: 2rem; font-weight: bold; margin: 0; color: #333;">
+          Détails du film
+        </h1>
+        <button mat-icon-button (click)="goBack()" class="close-btn" title="Fermer">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+
       <div style="display: flex; gap: 40px; margin-bottom: 40px;">
         <div style="flex-shrink: 0;">
           <img [src]="getMoviePosterSafely()" [alt]="movie?.data?.title || 'Film'"
@@ -176,6 +187,29 @@ import { Movie, Cast } from '../../models/session.model';
       height: 48px;
     }
 
+    .close-btn {
+      background-color: #f5f5f5;
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+
+    .close-btn:hover {
+      background-color: #e0e0e0;
+      transform: scale(1.05);
+    }
+
+    .close-btn mat-icon {
+      color: #666;
+      font-size: 24px;
+      width: 24px;
+      height: 24px;
+    }
+
     @media (max-width: 768px) {
       .movie-header {
         flex-direction: column;
@@ -211,6 +245,7 @@ export class MovieDetailsComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
+    private location: Location,
     private moviesService: MoviesService,
     private authService: AuthService,
     private dialog: MatDialog,
@@ -328,6 +363,12 @@ export class MovieDetailsComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigate(['/booking']);
+    // Essayer d'utiliser l'historique du navigateur en premier
+    if (window.history.length > 1) {
+      this.location.back();
+    } else {
+      // Fallback si pas d'historique : aller à la page d'accueil
+      this.router.navigate(['/']);
+    }
   }
 }

@@ -89,14 +89,14 @@ export class AdminDashboardComponent implements OnInit {
     {
       type: 'booking',
       message: 'Nouvelle réservation',
-      detail: 'Spider-Man - Pathé République',
+      detail: 'Dune: Deuxième Partie - Tchitcha République',
       time: '5 minutes',
       icon: 'confirmation_number'
     },
     {
       type: 'theater',
       message: 'Cinéma mis à jour',
-      detail: 'Pathé Beaugrenelle - Horaires modifiés',
+      detail: 'Tchitcha Beaugrenelle - Horaires modifiés',
       time: '12 minutes',
       icon: 'edit'
     },

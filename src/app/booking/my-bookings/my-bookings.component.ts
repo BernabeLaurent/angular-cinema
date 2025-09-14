@@ -10,6 +10,8 @@ import { SessionsService } from '../../services/sessions.service';
 import { AuthService } from '../../auth/auth.service';
 import { DateFormatService } from '../../services/date-format.service';
 import { Booking, BookingStatus } from '../../models/session.model';
+import { BookingDetailsDialogComponent } from '../../components/user-profile/booking-details-dialog.component';
+import { RoleUser } from '../../users/enums/roles-users.enum';
 
 @Component({
   selector: 'app-my-bookings',
@@ -32,7 +34,7 @@ import { Booking, BookingStatus } from '../../models/session.model';
       <div class="bookings-list" *ngIf="bookings.length > 0">
         <mat-card *ngFor="let booking of bookings" class="booking-card">
           <mat-card-header>
-            <div mat-card-avatar class="booking-status" [ngClass]="'status-' + booking.status.toLowerCase()">
+            <div mat-card-avatar class="booking-status" [ngClass]="'status-' + (booking.status?.toLowerCase() || 'unknown')">
               <mat-icon>{{ getStatusIcon(booking.status) }}</mat-icon>
             </div>
             <mat-card-title>{{ booking.sessionCinema?.movie?.title || 'Film non disponible' }}</mat-card-title>
@@ -90,7 +92,7 @@ import { Booking, BookingStatus } from '../../models/session.model';
             <!-- Statut de la réservation -->
             <div class="booking-status-section">
               <mat-chip-listbox>
-                <mat-chip [ngClass]="'chip-' + booking.status.toLowerCase()">
+                <mat-chip [ngClass]="'chip-' + (booking.status?.toLowerCase() || 'unknown')">
                   <mat-icon>{{ getStatusIcon(booking.status) }}</mat-icon>
                   {{ getStatusText(booking.status) }}
                 </mat-chip>
@@ -99,10 +101,10 @@ import { Booking, BookingStatus } from '../../models/session.model';
           </mat-card-content>
 
           <mat-card-actions>
-            <button 
-              mat-button 
-              color="primary" 
-              *ngIf="booking.status === 'PENDING'"
+            <button
+              mat-button
+              color="primary"
+              *ngIf="booking.status === 'PENDING' && canValidateBooking()"
               (click)="validateBooking(booking)">
               <mat-icon>check_circle</mat-icon>
               Valider
@@ -148,6 +150,20 @@ import { Booking, BookingStatus } from '../../models/session.model';
       padding: 20px;
       max-width: 1000px;
       margin: 0 auto;
+      color: #333;
+    }
+    
+    /* Force all text to be black */
+    .my-bookings-container *,
+    .booking-card *,
+    mat-card-title,
+    mat-card-subtitle,
+    mat-card-content,
+    .booking-details,
+    .session-info,
+    .info-row,
+    h3, h2, h1, p, span, div {
+      color: #333 !important;
     }
 
     .header {
@@ -193,6 +209,11 @@ import { Booking, BookingStatus } from '../../models/session.model';
 
     .booking-status.status-cancelled {
       background: #f44336;
+      color: white;
+    }
+
+    .booking-status.status-unknown {
+      background: #757575;
       color: white;
     }
 
@@ -252,6 +273,11 @@ import { Booking, BookingStatus } from '../../models/session.model';
     .chip-cancelled {
       background: #ffebee;
       color: #c62828;
+    }
+
+    .chip-unknown {
+      background: #f5f5f5;
+      color: #616161;
     }
 
     .no-bookings {
@@ -383,6 +409,11 @@ export class MyBookingsComponent implements OnInit {
       .join(', ');
   }
 
+  canValidateBooking(): boolean {
+    const currentUser = this.authService.getCurrentUser();
+    return currentUser?.role === RoleUser.ADMIN || currentUser?.role === RoleUser.WORKER;
+  }
+
   validateBooking(booking: Booking) {
     if (confirm('Voulez-vous vraiment confirmer cette réservation ?')) {
       this.sessionsService.validateBooking(booking.id).subscribe({
@@ -426,7 +457,18 @@ export class MyBookingsComponent implements OnInit {
   }
 
   showBookingDetails(booking: Booking) {
-    // TODO: Implémenter une modale avec plus de détails
-    console.log('Détails de la réservation:', booking);
+    const dialogRef = this.dialog.open(BookingDetailsDialogComponent, {
+      data: booking,
+      width: '800px',
+      maxWidth: '95vw',
+      maxHeight: '90vh'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      // Optionnel: recharger les données si nécessaire
+      if (result === 'refresh') {
+        this.loadBookings();
+      }
+    });
   }
 }

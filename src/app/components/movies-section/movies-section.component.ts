@@ -186,12 +186,12 @@ export class MoviesSectionComponent implements OnInit {
     this.nowShowingMovies = [
       {
         id: 1,
-        title: 'Spider-Man: No Way Home',
+        title: 'Dune: Deuxième Partie',
         poster: 'assets/images/placeholder-movie.svg',
-        genre: 'Action, Aventure',
-        duration: '2h28',
-        rating: 4.5,
-        releaseDate: '15 décembre 2021'
+        genre: 'Science-Fiction, Action',
+        duration: '2h46',
+        rating: 4.7,
+        releaseDate: '28 février 2024'
       }
     ];
     

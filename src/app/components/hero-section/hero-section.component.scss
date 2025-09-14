@@ -11,6 +11,20 @@
   padding: 0 60px;
   margin-top: 64px; // Account for fixed navbar
 
+  &.loading-hero {
+    background-color: #1a1a1a;
+
+    .loading-placeholder {
+      h1 {
+        font-size: 3rem;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.7);
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+        animation: pulse 2s infinite;
+      }
+    }
+  }
+
   .hero-overlay {
     position: absolute;
     top: 0;
@@ -84,16 +98,13 @@
         display: flex;
         gap: 16px;
 
-        .play-btn {
+        .book-btn {
           background-color: #FF6B35;
           color: white;
+          font-weight: 600;
           padding: 12px 32px;
           font-size: 1rem;
-          font-weight: 600;
           border-radius: 8px;
-          display: flex;
-          align-items: center;
-          gap: 8px;
           transition: all 0.3s ease;
 
           &:hover {
@@ -101,34 +112,24 @@
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4);
           }
-
-          mat-icon {
-            font-size: 20px;
-          }
         }
 
-        .info-btn {
-          border: 2px solid rgba(255, 255, 255, 0.8);
-          color: white;
-          padding: 10px 32px;
-          font-size: 1rem;
-          font-weight: 600;
-          border-radius: 8px;
-          display: flex;
-          align-items: center;
-          gap: 8px;
+        .details-btn {
+          color: rgba(255, 255, 255, 0.9);
+          border: 2px solid rgba(255, 255, 255, 0.6);
           background-color: rgba(255, 255, 255, 0.1);
           backdrop-filter: blur(10px);
+          font-weight: 600;
+          padding: 10px 32px;
+          font-size: 1rem;
+          border-radius: 8px;
           transition: all 0.3s ease;
 
           &:hover {
+            color: white;
+            border-color: rgba(255, 255, 255, 0.9);
             background-color: rgba(255, 255, 255, 0.2);
-            border-color: white;
             transform: translateY(-2px);
-          }
-
-          mat-icon {
-            font-size: 20px;
           }
         }
       }
@@ -156,14 +157,23 @@
 
         .action-buttons {
           flex-direction: column;
-          
-          .play-btn,
-          .info-btn {
+
+          .book-btn,
+          .details-btn {
             width: 100%;
             justify-content: center;
           }
         }
       }
     }
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 1;
   }
 }

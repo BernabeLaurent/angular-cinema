@@ -228,10 +228,10 @@ export class MoviesManagementComponent implements OnInit {
       },
       {
         id: 2,
-        title: 'Spider-Man: No Way Home',
+        title: 'Dune: Deuxième Partie',
         duration: 148,
         releaseDate: '2021-12-17',
-        posterUrl: 'https://example.com/spiderman-poster.jpg',
+        posterUrl: 'https://example.com/dune-poster.jpg',
         description: 'Peter Parker affronte des ennemis du multivers...',
         director: 'Jon Watts',
         actors: ['Tom Holland', 'Zendaya', 'Benedict Cumberbatch'],

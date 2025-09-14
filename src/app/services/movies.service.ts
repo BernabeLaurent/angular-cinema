@@ -34,33 +34,37 @@ export class MoviesService {
     return this.http.post<any>(`${this.apiUrl}/movies/create-review`, reviewData);
   }
 
-  // Méthodes utilitaires pour les URLs d'images
-  getImageUrl(path: string, size: string = 'w500'): string {
-    if (!path) return '/assets/images/no-image.jpg';
+  // Méthodes utilitaires pour les URLs d'images - EXCLUSIVEMENT backend NestJS
+  getImageUrl(path: string): string {
+    if (!path) return '/assets/images/no-image.svg';
+    
+    // Si c'est déjà une URL complète, la retourner
     if (path.startsWith('http')) return path;
     
-    // Si c'est un chemin TMDB (commence par /), utiliser TMDB
-    if (path.startsWith('/') && path.length > 10) {
-      return `https://image.tmdb.org/t/p/${size}${path}`;
+    // TOUS les chemins utilisent maintenant le backend NestJS
+    let backendUrl: string;
+    
+    if (path.startsWith('/')) {
+      // Chemin absolu depuis la racine de l'API (ex: /uploads/posters/image.jpg)
+      backendUrl = `${this.apiUrl}${path}`;
+    } else {
+      // Chemin relatif, on assume que c'est dans le dossier uploads
+      backendUrl = `${this.apiUrl}/uploads/${path}`;
     }
     
-    // Sinon, utiliser le backend NestJS
-    const backendUrl = path.startsWith('/') 
-      ? `${this.apiUrl}${path}`  // Chemin absolu depuis la racine
-      : `${this.apiUrl}/uploads/${path}`;  // Chemin relatif vers uploads
-    
+    console.log('🖼️ Image URL generated:', { originalPath: path, finalUrl: backendUrl });
     return backendUrl;
   }
 
   getPosterUrl(posterPath?: string): string {
-    return this.getImageUrl(posterPath || '', 'w500');
+    return this.getImageUrl(posterPath || '');
   }
 
   getBackdropUrl(backdropPath?: string): string {
-    return this.getImageUrl(backdropPath || '', 'w1280');
+    return this.getImageUrl(backdropPath || '');
   }
 
   getProfileUrl(profilePath?: string): string {
-    return this.getImageUrl(profilePath || '', 'w185');
+    return this.getImageUrl(profilePath || '');
   }
 }

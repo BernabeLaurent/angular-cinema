@@ -78,10 +78,12 @@ export class SearchModalComponent implements OnInit, OnDestroy {
             combineLatest(movieRequests)
               .pipe(takeUntil(this.destroy$))
               .subscribe({
-                next: (movies: Movie[]) => {
-                  this.availableMovies = movies;
-                  this.filteredMovies = movies;
+                next: (movies: any[]) => {
+                  // Extraire les données des films depuis la structure API {data: Movie}
+                  this.availableMovies = movies.map(movieWrapper => movieWrapper.data || movieWrapper);
+                  this.filteredMovies = this.availableMovies;
                   this.isLoading = false;
+                  console.log('Films disponibles pour recherche:', this.availableMovies.length);
                 },
                 error: (error) => {
                   console.error('Erreur lors du chargement des films:', error);
@@ -100,6 +102,9 @@ export class SearchModalComponent implements OnInit, OnDestroy {
   }
 
   onSearchChange() {
+    console.log('Recherche:', this.searchQuery);
+    console.log('Films disponibles:', this.availableMovies.length);
+    
     if (!this.searchQuery.trim()) {
       this.filteredMovies = this.availableMovies;
       return;
@@ -107,10 +112,12 @@ export class SearchModalComponent implements OnInit, OnDestroy {
 
     const query = this.searchQuery.toLowerCase();
     this.filteredMovies = this.availableMovies.filter(movie =>
-      movie.title.toLowerCase().includes(query) ||
+      movie.title?.toLowerCase().includes(query) ||
       movie.originalTitle?.toLowerCase().includes(query) ||
       movie.description?.toLowerCase().includes(query)
     );
+    
+    console.log('Films filtrés:', this.filteredMovies.length);
   }
 
   selectMovie(movie: Movie) {

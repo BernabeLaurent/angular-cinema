@@ -132,13 +132,17 @@ import { SessionBookingInfo, SeatMap, CreateBookingDto, CreateBookingDetailDto }
             </div>
           </div>
 
-          <!-- Formulaire utilisateur si non connecté -->
-          <div class="user-form" *ngIf="!currentUser">
-            <h3>Informations de contact</h3>
-            <mat-form-field appearance="outline" class="full-width">
-              <mat-label>Email</mat-label>
-              <input matInput [(ngModel)]="guestEmail" type="email" required>
-            </mat-form-field>
+          <!-- Message de connexion requis si non connecté -->
+          <div class="login-required" *ngIf="!currentUser">
+            <div class="login-message">
+              <mat-icon>account_circle</mat-icon>
+              <h3>Connexion requise</h3>
+              <p>Vous devez être connecté pour effectuer une réservation.</p>
+              <button mat-raised-button color="primary" (click)="redirectToLogin()">
+                <mat-icon>login</mat-icon>
+                Se connecter
+              </button>
+            </div>
           </div>
 
           <div class="booking-actions">
@@ -151,7 +155,8 @@ import { SessionBookingInfo, SeatMap, CreateBookingDto, CreateBookingDetailDto }
               mat-raised-button
               color="primary"
               [disabled]="!canConfirmBooking()"
-              (click)="confirmBooking()">
+              (click)="confirmBooking()"
+              *ngIf="currentUser">
               Confirmer la réservation
             </button>
           </div>
@@ -168,6 +173,19 @@ import { SessionBookingInfo, SeatMap, CreateBookingDto, CreateBookingDetailDto }
       padding: 20px;
       max-width: 1000px;
       margin: 0 auto;
+      color: #333;
+    }
+    
+    /* Force text colors to black for main content */
+    .seat-map-card mat-card-title,
+    .seat-map-card mat-card-subtitle,
+    .booking-summary mat-card-title,
+    .booking-summary mat-card-subtitle,
+    .summary-details,
+    .user-form,
+    .user-form h3,
+    .loading {
+      color: #333 !important;
     }
 
     .session-info-card {
@@ -354,6 +372,45 @@ import { SessionBookingInfo, SeatMap, CreateBookingDto, CreateBookingDetailDto }
       color: #666;
     }
 
+    .login-required {
+      margin: 20px 0;
+      padding: 30px;
+      background: #fff3e0;
+      border: 2px solid #ff9800;
+      border-radius: 12px;
+      text-align: center;
+    }
+
+    .login-message {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .login-message mat-icon {
+      font-size: 48px;
+      width: 48px;
+      height: 48px;
+      color: #ff9800;
+    }
+
+    .login-message h3 {
+      margin: 0;
+      color: #333;
+      font-size: 20px;
+    }
+
+    .login-message p {
+      margin: 0;
+      color: #666;
+      font-size: 16px;
+    }
+
+    .login-message button {
+      margin-top: 10px;
+    }
+
     @media (max-width: 768px) {
       .seat {
         width: 30px;
@@ -381,7 +438,6 @@ export class SeatSelectionComponent implements OnInit {
   seatRows: SeatMap[][] = [];
   selectedSeats: SeatMap[] = [];
   currentUser: any = null;
-  guestEmail = '';
   loading = true;
 
   constructor(
@@ -498,19 +554,17 @@ export class SeatSelectionComponent implements OnInit {
   }
 
   canConfirmBooking(): boolean {
-    return this.selectedSeats.length > 0 &&
-           (this.currentUser || (this.guestEmail && this.isValidEmail(this.guestEmail)));
+    return this.selectedSeats.length > 0 && this.currentUser;
   }
 
-  isValidEmail(email: string): boolean {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  }
 
   confirmBooking() {
-    if (!this.canConfirmBooking() || !this.bookingInfo || !this.sessionId) return;
+    if (!this.canConfirmBooking() || !this.bookingInfo || !this.sessionId || !this.currentUser) {
+      this.snackBar.open('Vous devez être connecté pour effectuer une réservation', 'Fermer', { duration: 3000 });
+      return;
+    }
 
-    const userId = this.currentUser?.id || 1; // Pour les invités, utiliser un ID par défaut
+    const userId = this.currentUser.id;
     const reservedSeats: CreateBookingDetailDto[] = this.selectedSeats.map(seat => ({
       seatNumber: seat.seatNumber,
       isValidated: false
@@ -547,6 +601,12 @@ export class SeatSelectionComponent implements OnInit {
 
   goBack() {
     this.router.navigate(['/booking']);
+  }
+
+  redirectToLogin() {
+    // Sauvegarder l'URL actuelle pour revenir après connexion
+    const returnUrl = this.router.url;
+    this.router.navigate(['/login'], { queryParams: { returnUrl } });
   }
 
   viewMovieDetails() {
