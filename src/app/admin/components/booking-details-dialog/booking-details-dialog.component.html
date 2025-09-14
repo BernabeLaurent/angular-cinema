@@ -112,8 +112,8 @@
           <mat-card-content>
             <!-- Debug info -->
             <div style="background: #f0f0f0; padding: 10px; margin-bottom: 10px; font-family: monospace; font-size: 12px;">
-              DEBUG: dataSource.data.length = {{ dataSource.data?.length || 0 }}<br>
-              booking.bookingDetails?.length = {{ booking?.bookingDetails?.length || 0 }}<br>
+              DEBUG: dataSource.data.length = {{ dataSource.data.length || 0 }}<br>
+              booking.bookingDetails?.length = {{ booking.bookingDetails?.length || 0 }}<br>
               displayedColumns = {{ displayedColumns | json }}<br>
               <div *ngFor="let detail of dataSource.data; let i = index">
                 [{{ i }}] Siège: {{ detail.seatNumber }} - Status: {{ detail.status }} - Prix: {{ detail.price }}
