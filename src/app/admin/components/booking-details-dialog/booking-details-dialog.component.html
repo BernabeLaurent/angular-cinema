@@ -60,10 +60,6 @@
                   <div class="booking-date">Créée le {{ formatDateTime(booking.createDate) }}</div>
                   <div class="booking-total">Prix total : {{ formatPrice(booking.totalPrice) }}</div>
                   <div class="booking-seats">{{ getTotalSeats() }} place(s) réservée(s)</div>
-                  <div class="booking-status-summary">
-                    <span class="validated">{{ getValidatedSeats() }} validées</span>
-                    <span class="pending">{{ getPendingSeats() }} en attente</span>
-                  </div>
                 </div>
               </div>
             </div>
@@ -71,35 +67,6 @@
         </mat-card>
 
         <!-- Gestion du statut de la réservation -->
-        <mat-card class="status-management-card">
-          <mat-card-header>
-            <mat-card-title>
-              <mat-icon>edit</mat-icon>
-              Gestion du statut
-            </mat-card-title>
-          </mat-card-header>
-          <mat-card-content>
-            <div class="status-controls">
-              <mat-form-field appearance="outline">
-                <mat-label>Statut de la réservation</mat-label>
-                <mat-select [(ngModel)]="booking.status" (selectionChange)="updateBookingStatus()">
-                  <mat-option *ngFor="let status of statusOptions" [value]="status.value">
-                    <mat-chip [color]="status.color" selected>{{ status.label }}</mat-chip>
-                  </mat-option>
-                </mat-select>
-              </mat-form-field>
-
-              <button mat-raised-button 
-                      color="primary" 
-                      (click)="validateAllBookingDetails()"
-                      [disabled]="getPendingSeats() === 0"
-                      class="validate-all-btn">
-                <mat-icon>check_circle</mat-icon>
-                Valider tous les sièges en attente ({{ getPendingSeats() }})
-              </button>
-            </div>
-          </mat-card-content>
-        </mat-card>
 
         <!-- Détails des sièges -->
         <mat-card class="seats-details-card">
@@ -136,14 +103,9 @@
                 <ng-container matColumnDef="status">
                   <th mat-header-cell *matHeaderCellDef>Statut</th>
                   <td mat-cell *matCellDef="let detail">
-                    <mat-form-field appearance="outline" class="status-select">
-                      <mat-select [value]="detail.status" 
-                                 (selectionChange)="updateBookingDetailStatus(detail, $event.value)">
-                        <mat-option *ngFor="let status of statusOptions" [value]="status.value">
-                          <mat-chip [color]="status.color" selected>{{ status.label }}</mat-chip>
-                        </mat-option>
-                      </mat-select>
-                    </mat-form-field>
+                    <mat-chip [color]="getStatusColor(detail.status)" selected>
+                      {{ getStatusLabel(detail.status) }}
+                    </mat-chip>
                   </td>
                 </ng-container>
 
@@ -159,24 +121,18 @@
                 <ng-container matColumnDef="actions">
                   <th mat-header-cell *matHeaderCellDef class="actions-column">Actions</th>
                   <td mat-cell *matCellDef="let detail" class="actions-column">
-                    <button mat-icon-button 
+                    <button mat-icon-button
                             color="primary"
                             (click)="validateBookingDetail(detail)"
                             *ngIf="detail.status === 'PENDING'"
                             matTooltip="Valider ce siège">
                       <mat-icon>check_circle</mat-icon>
                     </button>
-                    
-                    <mat-icon *ngIf="detail.status === 'CONFIRMED'" 
-                             color="primary" 
+
+                    <mat-icon *ngIf="detail.status === 'VALIDATED'"
+                             color="primary"
                              matTooltip="Siège validé">
                       verified
-                    </mat-icon>
-                    
-                    <mat-icon *ngIf="detail.status === 'CANCELLED'" 
-                             color="warn" 
-                             matTooltip="Siège annulé">
-                      cancel
                     </mat-icon>
                   </td>
                 </ng-container>

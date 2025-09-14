@@ -51,6 +51,7 @@ export class BookingDetailsDialogComponent implements OnInit {
   statusOptions = [
     { value: 'PENDING', label: 'En attente', color: 'accent' },
     { value: 'CONFIRMED', label: 'Confirmée', color: 'primary' },
+    { value: 'VALIDATED', label: 'Validée', color: 'primary' },
     { value: 'CANCELLED', label: 'Annulée', color: 'warn' },
     { value: 'COMPLETED', label: 'Terminée', color: 'primary' }
   ];
@@ -73,29 +74,37 @@ export class BookingDetailsDialogComponent implements OnInit {
   loadBookingDetails(): void {
     console.log('Loading booking details for ID:', this.data.bookingId);
     this.loading = true;
-    
+
+    // Charger d'abord les détails du booking
     this.adminService.getBookingById(this.data.bookingId).subscribe({
       next: (booking) => {
         console.log('Booking details loaded successfully:', booking);
         this.booking = booking;
         this.originalStatus = booking.status;
-        
-        // Mettre à jour la dataSource de la table
-        if (this.booking.bookingDetails && this.booking.bookingDetails.length > 0) {
-          this.dataSource.data = this.booking.bookingDetails;
-          this.cdr.detectChanges(); // Forcer la détection des changements
-        } else {
-          // Générer des données de sièges basées sur les informations disponibles
-          const generatedSeats = this.generateBookingDetailsFromReservation(this.booking);
-          if (generatedSeats.length > 0) {
+
+        // Essayer de récupérer les vrais booking details depuis l'API
+        this.adminService.getBookingDetails(this.data.bookingId).subscribe({
+          next: (bookingDetails) => {
+            console.log('Real booking details loaded:', bookingDetails);
+            if (bookingDetails && bookingDetails.length > 0) {
+              this.dataSource.data = bookingDetails;
+            } else {
+              // Si pas de vrais booking details, générer des données fictives
+              const generatedSeats = this.generateBookingDetailsFromReservation(this.booking);
+              this.dataSource.data = generatedSeats;
+            }
+            this.cdr.detectChanges();
+            this.loading = false;
+          },
+          error: (error) => {
+            console.error('Error loading real booking details:', error);
+            // Fallback vers les données générées
+            const generatedSeats = this.generateBookingDetailsFromReservation(this.booking);
             this.dataSource.data = generatedSeats;
-          } else {
-            // Initialiser avec un tableau vide pour éviter les erreurs
-            this.dataSource.data = [];
+            this.cdr.detectChanges();
+            this.loading = false;
           }
-        }
-        
-        this.loading = false;
+        });
       },
       error: (error) => {
         console.error('Error loading booking details:', error);
@@ -196,83 +205,39 @@ export class BookingDetailsDialogComponent implements OnInit {
     console.log('DataSource length:', this.dataSource.data.length);
   }
 
-  updateBookingStatus(): void {
-    if (this.booking.status === this.originalStatus) {
-      return; // Pas de changement
-    }
 
-    this.adminService.updateBookingStatus(this.booking.id, this.booking.status).subscribe({
-      next: () => {
-        this.originalStatus = this.booking.status;
-        this.showSuccess('Statut de la réservation mis à jour');
-      },
-      error: (error) => {
-        console.error('Error updating booking status:', error);
-        this.booking.status = this.originalStatus; // Rétablir l'ancien statut
-        this.showError('Erreur lors de la mise à jour du statut');
-      }
-    });
-  }
-
-  updateBookingDetailStatus(bookingDetail: BookingDetail, newStatus: string): void {
-    const originalStatus = bookingDetail.status;
-    bookingDetail.status = newStatus;
-
-    this.adminService.updateBookingDetailStatus(bookingDetail.id, newStatus).subscribe({
-      next: () => {
-        this.showSuccess('Statut du siège mis à jour');
-        // Recharger les détails pour avoir les données à jour
-        this.loadBookingDetails();
-      },
-      error: (error) => {
-        console.error('Error updating booking detail status:', error);
-        bookingDetail.status = originalStatus; // Rétablir l'ancien statut
-        this.showError('Erreur lors de la mise à jour du statut du siège');
-      }
-    });
-  }
 
   validateBookingDetail(bookingDetail: BookingDetail): void {
     if (confirm(`Êtes-vous sûr de vouloir valider le siège ${bookingDetail.seatNumber} ?`)) {
-      this.adminService.validateBookingDetail(bookingDetail.id).subscribe({
-        next: () => {
-          this.showSuccess(`Siège ${bookingDetail.seatNumber} validé`);
-          // Recharger les détails pour avoir les données à jour
-          this.loadBookingDetails();
-        },
-        error: (error) => {
-          console.error('Error validating booking detail:', error);
-          this.showError('Erreur lors de la validation du siège');
-        }
-      });
-    }
-  }
-
-  validateAllBookingDetails(): void {
-    if (!this.dataSource.data || this.dataSource.data.length === 0) {
-      return;
-    }
-
-    const pendingDetails = this.dataSource.data.filter(detail => detail.status === 'PENDING');
-    if (pendingDetails.length === 0) {
-      this.showError('Aucun siège en attente de validation');
-      return;
-    }
-
-    if (confirm(`Êtes-vous sûr de vouloir valider tous les sièges en attente (${pendingDetails.length} sièges) ?`)) {
-      // Valider tous les sièges en attente
-      const validations = pendingDetails.map(detail => 
-        this.adminService.validateBookingDetail(detail.id)
-      );
-
-      // Exécuter toutes les validations
-      Promise.all(validations.map(obs => obs.toPromise())).then(() => {
-        this.showSuccess(`${pendingDetails.length} sièges validés`);
-        this.loadBookingDetails();
-      }).catch((error) => {
-        console.error('Error validating all booking details:', error);
-        this.showError('Erreur lors de la validation en masse');
-      });
+      // Si le bookingDetail a un vrai ID (pas fictif), utiliser la méthode directe
+      if (bookingDetail.id < 1000) {
+        // ID réel, utiliser la validation directe
+        this.adminService.validateBookingDetailDirect(bookingDetail.id).subscribe({
+          next: () => {
+            this.showSuccess(`Siège ${bookingDetail.seatNumber} validé`);
+            this.loadBookingDetails();
+          },
+          error: (error) => {
+            console.error('Error validating booking detail:', error);
+            this.showError('Erreur lors de la validation du siège');
+          }
+        });
+      } else {
+        // ID fictif, utiliser la méthode avec body
+        this.adminService.validateBookingDetailWithBody(bookingDetail.id, {
+          bookingId: this.booking.id,
+          seatNumber: bookingDetail.seatNumber
+        }).subscribe({
+          next: () => {
+            this.showSuccess(`Siège ${bookingDetail.seatNumber} validé`);
+            this.loadBookingDetails();
+          },
+          error: (error) => {
+            console.error('Error validating booking detail:', error);
+            this.showError('Erreur lors de la validation du siège');
+          }
+        });
+      }
     }
   }
 
@@ -338,13 +303,6 @@ export class BookingDetailsDialogComponent implements OnInit {
     return this.dataSource.data?.length || 0;
   }
 
-  getValidatedSeats(): number {
-    return this.dataSource.data?.filter(detail => detail.status === 'CONFIRMED').length || 0;
-  }
-
-  getPendingSeats(): number {
-    return this.dataSource.data?.filter(detail => detail.status === 'PENDING').length || 0;
-  }
 
   close(): void {
     this.dialogRef.close();
@@ -365,10 +323,13 @@ export class BookingDetailsDialogComponent implements OnInit {
 
     for (let i = 0; i < numberOfSeats; i++) {
       const seatNumber = this.generateSeatNumber(i);
+      // Utiliser un statut approprié selon isValidated ou autres propriétés
+      const seatStatus = (booking as any).isValidated === true ? 'VALIDATED' : 'PENDING';
+
       const bookingDetail: BookingDetail = {
         id: booking.id + i + 1000, // ID temporaire unique
         seatNumber: seatNumber,
-        status: booking.status,
+        status: seatStatus,
         price: pricePerSeat,
         createDate: booking.createDate,
         updateDate: booking.createDate,

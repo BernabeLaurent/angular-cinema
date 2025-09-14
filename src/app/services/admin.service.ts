@@ -434,8 +434,35 @@ export class AdminService {
    * Valide un booking detail spécifique (ADMIN uniquement)
    */
   validateBookingDetail(bookingDetailId: number): Observable<any> {
-    return this.http.patch(`${this.baseUrl}/booking-details/${bookingDetailId}/validate`, {}, { 
-      headers: this.getAuthHeaders() 
+    return this.http.patch(`${this.baseUrl}/booking-details/${bookingDetailId}/validate`, {}, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  /**
+   * Valide un booking detail directement avec l'ID pour les vrais booking details (ID < 1000)
+   */
+  validateBookingDetailDirect(bookingDetailId: number): Observable<any> {
+    return this.http.patch(`${this.baseUrl}/booking-details/${bookingDetailId}/validate`, {}, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  /**
+   * Valide un booking detail avec bookingId et seatNumber dans le body
+   */
+  validateBookingDetailWithBody(bookingDetailId: number, body: { bookingId: number, seatNumber: string }): Observable<any> {
+    return this.http.patch(`${this.baseUrl}/booking-details/${bookingDetailId}/validate`, body, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  /**
+   * Récupère les booking details pour une réservation
+   */
+  getBookingDetails(bookingId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/bookings/get-bookings-details/${bookingId}`, {
+      headers: this.getAuthHeaders()
     });
   }
 
