@@ -22,10 +22,10 @@ export class FooterComponent {
   currentYear = new Date().getFullYear();
   
   socialLinks = [
-    { name: 'Facebook', icon: 'facebook', url: '#' },
-    { name: 'Twitter', icon: 'twitter', url: '#' },
-    { name: 'Instagram', icon: 'instagram', url: '#' },
-    { name: 'YouTube', icon: 'youtube', url: '#' }
+    { name: 'Facebook', icon: 'share', url: '#' },
+    { name: 'Twitter', icon: 'chat', url: '#' },
+    { name: 'Instagram', icon: 'photo_camera', url: '#' },
+    { name: 'YouTube', icon: 'play_circle_outline', url: '#' }
   ];
 
   quickLinks = [

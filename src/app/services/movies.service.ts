@@ -38,7 +38,18 @@ export class MoviesService {
   getImageUrl(path: string, size: string = 'w500'): string {
     if (!path) return '/assets/images/no-image.jpg';
     if (path.startsWith('http')) return path;
-    return `https://image.tmdb.org/t/p/${size}${path}`;
+    
+    // Si c'est un chemin TMDB (commence par /), utiliser TMDB
+    if (path.startsWith('/') && path.length > 10) {
+      return `https://image.tmdb.org/t/p/${size}${path}`;
+    }
+    
+    // Sinon, utiliser le backend NestJS
+    const backendUrl = path.startsWith('/') 
+      ? `${this.apiUrl}${path}`  // Chemin absolu depuis la racine
+      : `${this.apiUrl}/uploads/${path}`;  // Chemin relatif vers uploads
+    
+    return backendUrl;
   }
 
   getPosterUrl(posterPath?: string): string {

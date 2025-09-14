@@ -1,6 +1,7 @@
 <mat-card class="movie-card">
   <div class="card-image-container">
-    <img [src]="movie.poster" [alt]="movie.title" class="movie-poster">
+    <img [src]="movie.poster" [alt]="movie.title" class="movie-poster" 
+         (error)="onImageError($event)" (load)="onImageLoad($event)">
     <div class="card-overlay">
       <div class="rating">
         <mat-icon class="star">star</mat-icon>

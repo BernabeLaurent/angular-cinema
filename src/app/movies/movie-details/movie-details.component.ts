@@ -27,139 +27,48 @@ import { Movie, Cast } from '../../models/session.model';
     MatSnackBarModule
   ],
   template: `
-    <div class="movie-details-container" *ngIf="movie">
-      <!-- Hero Section avec backdrop -->
-      <div class="movie-hero" [style.background-image]="'url(' + getBackdropUrl() + ')'">
-        <div class="hero-overlay">
-          <div class="hero-content">
-            <div class="movie-poster">
-              <img [src]="getPosterUrl()" [alt]="movie.title" class="poster-image">
-            </div>
-            <div class="movie-info">
-              <h1 class="movie-title">{{ movie.title }}</h1>
-              <p class="original-title" *ngIf="movie.originalTitle && movie.originalTitle !== movie.title">
-                Titre original : {{ movie.originalTitle }}
-              </p>
-              <div class="movie-meta">
-                <mat-chip-listbox>
-                  <mat-chip *ngIf="movie.runtime">{{ movie.runtime }}min</mat-chip>
-                  <mat-chip *ngIf="movie.releaseDate">{{ formatYear(movie.releaseDate) }}</mat-chip>
-                  <mat-chip *ngIf="movie.originalLanguage">{{ movie.originalLanguage.toUpperCase() }}</mat-chip>
-                  <mat-chip *ngIf="movie.minimumAge" class="age-rating">{{ movie.minimumAge }}+</mat-chip>
-                </mat-chip-listbox>
-              </div>
-              <div class="ratings" *ngIf="movie.averageRating || movie.averageRatingExterne">
-                <div class="rating-item" *ngIf="movie.averageRating">
-                  <mat-icon>star</mat-icon>
-                  <span>{{ movie.averageRating }}/10</span>
-                  <small>Note utilisateurs</small>
-                </div>
-                <div class="rating-item" *ngIf="movie.averageRatingExterne">
-                  <mat-icon>movie</mat-icon>
-                  <span>{{ movie.averageRatingExterne }}/10</span>
-                  <small>TMDb</small>
-                </div>
-              </div>
-              <p class="tagline" *ngIf="movie.tagline">{{ movie.tagline }}</p>
-              <div class="action-buttons">
-                <button mat-raised-button color="primary" (click)="bookMovie()">
-                  <mat-icon>event_seat</mat-icon>
-                  Réserver des places
-                </button>
-                <button mat-button (click)="toggleFavorite()" *ngIf="isLoggedIn">
-                  <mat-icon>{{ movie.isFavorite ? 'favorite' : 'favorite_border' }}</mat-icon>
-                  {{ movie.isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris' }}
-                </button>
-              </div>
-            </div>
+    <!-- Page détails du film - AVEC VRAIES DONNÉES -->
+    <div style="max-width: 1200px; margin: 0 auto; padding: 100px 20px 40px 20px; min-height: 100vh; background: white;">
+      <div style="display: flex; gap: 40px; margin-bottom: 40px;">
+        <div style="flex-shrink: 0;">
+          <img [src]="getMoviePosterSafely()" [alt]="movie?.data?.title || 'Film'"
+               style="width: 300px; height: 450px; object-fit: cover; border-radius: 12px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);">
+        </div>
+        <div style="flex: 1; display: flex; flex-direction: column; gap: 20px;">
+          <h1 style="font-size: 3rem; font-weight: bold; margin: 0; color: #333; line-height: 1.2;">
+            {{ movie?.data?.title || 'Chargement...' }}
+          </h1>
+          <p *ngIf="movie?.data?.originalTitle && movie.data.originalTitle !== movie.data.title"
+             style="font-style: italic; opacity: 0.7; margin: 0; font-size: 1.2rem; color: #666;">
+            {{ movie.data.originalTitle }}
+          </p>
+          <div style="font-size: 1.1rem; color: #666; font-weight: 500;">
+            <span *ngIf="movie?.data?.runtime">{{ movie.data.runtime }}min</span>
+            <span *ngIf="movie?.data?.releaseDate"> • Sorti en {{ formatYear(movie.data.releaseDate) }}</span>
+            <span *ngIf="movie?.data?.originalLanguage"> • {{ movie.data.originalLanguage.toUpperCase() }}</span>
+          </div>
+          <p *ngIf="movie?.data?.description"
+             style="font-size: 1.1rem; line-height: 1.6; color: #555; margin: 20px 0; max-width: 600px;">
+            {{ movie.data.description }}
+          </p>
+          <div style="margin-top: 30px;">
+            <button mat-raised-button color="primary" 
+                    style="padding: 12px 30px; font-size: 1.1rem; font-weight: bold; height: 50px;" 
+                    (click)="bookMovie()">
+              <mat-icon>event_seat</mat-icon>
+              RÉSERVER
+            </button>
           </div>
         </div>
       </div>
-
-      <!-- Synopsis -->
-      <mat-card class="synopsis-card" *ngIf="movie.description">
-        <mat-card-header>
-          <mat-card-title>Synopsis</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <p class="synopsis">{{ movie.description }}</p>
-          <p class="original-synopsis" *ngIf="movie.originalDescription && movie.originalDescription !== movie.description">
-            <strong>Synopsis original :</strong><br>
-            {{ movie.originalDescription }}
-          </p>
-        </mat-card-content>
-      </mat-card>
-
-      <!-- Casting -->
-      <mat-card class="cast-card" *ngIf="movie.cast && movie.cast.length > 0">
-        <mat-card-header>
-          <mat-card-title>Distribution</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <div class="cast-grid">
-            <div *ngFor="let actor of getMainCast()" class="cast-member" (click)="showActorDetails(actor)">
-              <div class="actor-photo">
-                <img [src]="getActorPhotoUrl(actor)" [alt]="actor.name" class="actor-image">
-                <div class="actor-overlay" *ngIf="!actor.profilePath">
-                  <mat-icon>person</mat-icon>
-                </div>
-              </div>
-              <div class="actor-info">
-                <h4 class="actor-name">{{ actor.name }}</h4>
-                <p class="character-name" *ngIf="actor.character">{{ actor.character }}</p>
-              </div>
-            </div>
-          </div>
-          <button mat-button *ngIf="movie.cast.length > 12" (click)="showFullCast()">
-            Voir toute la distribution ({{ movie.cast.length }} membres)
-          </button>
-        </mat-card-content>
-      </mat-card>
-
-      <!-- Avis utilisateurs -->
-      <mat-card class="reviews-card">
-        <mat-card-header>
-          <mat-card-title>Avis des spectateurs</mat-card-title>
-          <button mat-icon-button (click)="loadReviews()" *ngIf="!reviewsLoaded">
-            <mat-icon>refresh</mat-icon>
-          </button>
-        </mat-card-header>
-        <mat-card-content>
-          <div *ngIf="!reviewsLoaded" class="reviews-placeholder">
-            <p>Cliquez pour charger les avis</p>
-          </div>
-          <div *ngIf="reviewsLoaded && reviews.length === 0" class="no-reviews">
-            <p>Aucun avis pour le moment. Soyez le premier à donner votre opinion !</p>
-          </div>
-          <div *ngIf="reviewsLoaded && reviews.length > 0" class="reviews-list">
-            <div *ngFor="let review of reviews.slice(0, 3)" class="review-item">
-              <div class="review-header">
-                <span class="reviewer-name">{{ review.user?.email || 'Utilisateur' }}</span>
-                <div class="review-rating">
-                  <mat-icon>star</mat-icon>
-                  <span>{{ review.rating }}/10</span>
-                </div>
-              </div>
-              <p class="review-comment">{{ review.comment }}</p>
-              <small class="review-date">{{ formatDate(review.createDate) }}</small>
-            </div>
-          </div>
-          <div class="review-actions" *ngIf="isLoggedIn">
-            <button mat-raised-button color="accent" (click)="writeReview()">
-              <mat-icon>rate_review</mat-icon>
-              Écrire un avis
-            </button>
-          </div>
-        </mat-card-content>
-      </mat-card>
     </div>
 
-    <div class="loading" *ngIf="loading">
+    <div class="loading-state" *ngIf="loading">
       <mat-progress-bar mode="indeterminate"></mat-progress-bar>
       <p>Chargement des détails du film...</p>
     </div>
 
-    <div class="error" *ngIf="error">
+    <div class="error-state" *ngIf="error">
       <mat-card>
         <mat-card-content>
           <div class="error-content">
@@ -174,42 +83,17 @@ import { Movie, Cast } from '../../models/session.model';
     </div>
   `,
   styles: [`
-    .movie-details-container {
-      min-height: 100vh;
-    }
-
-    .movie-hero {
-      height: 70vh;
-      background-size: cover;
-      background-position: center;
-      position: relative;
-      display: flex;
-      align-items: center;
-    }
-
-    .hero-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: linear-gradient(
-        45deg,
-        rgba(0, 0, 0, 0.8) 0%,
-        rgba(0, 0, 0, 0.6) 50%,
-        rgba(0, 0, 0, 0.4) 100%
-      );
-      display: flex;
-      align-items: center;
-    }
-
-    .hero-content {
+    .movie-details-simple {
       max-width: 1200px;
       margin: 0 auto;
       padding: 40px 20px;
+      min-height: 100vh;
+    }
+
+    .movie-header {
       display: flex;
       gap: 40px;
-      color: white;
+      margin-bottom: 40px;
     }
 
     .movie-poster {
@@ -221,224 +105,62 @@ import { Movie, Cast } from '../../models/session.model';
       height: 450px;
       object-fit: cover;
       border-radius: 12px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
     }
 
     .movie-info {
       flex: 1;
       display: flex;
       flex-direction: column;
-      gap: 15px;
+      gap: 20px;
     }
 
     .movie-title {
       font-size: 3rem;
       font-weight: bold;
       margin: 0;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+      color: #333;
+      line-height: 1.2;
     }
 
     .original-title {
       font-style: italic;
-      opacity: 0.8;
-      margin: 0;
-    }
-
-    .movie-meta mat-chip {
-      background: rgba(255, 255, 255, 0.2);
-      color: white;
-    }
-
-    .age-rating {
-      background: #f44336 !important;
-    }
-
-    .ratings {
-      display: flex;
-      gap: 30px;
-    }
-
-    .rating-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .rating-item mat-icon {
-      color: #ffc107;
-    }
-
-    .rating-item span {
-      font-size: 18px;
-      font-weight: bold;
-    }
-
-    .rating-item small {
       opacity: 0.7;
-      margin-left: 5px;
-    }
-
-    .tagline {
-      font-size: 1.2rem;
-      font-style: italic;
-      opacity: 0.9;
-      margin: 10px 0;
-    }
-
-    .action-buttons {
-      display: flex;
-      gap: 15px;
-      margin-top: 20px;
-    }
-
-    .synopsis-card, .cast-card, .reviews-card {
-      margin: 20px;
-      max-width: 1200px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    .synopsis {
-      font-size: 16px;
-      line-height: 1.6;
-      margin-bottom: 15px;
-    }
-
-    .original-synopsis {
-      font-style: italic;
-      opacity: 0.8;
-      margin-top: 15px;
-      padding-top: 15px;
-      border-top: 1px solid #eee;
-    }
-
-    .cast-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-      gap: 20px;
-      margin-bottom: 20px;
-    }
-
-    .cast-member {
-      text-align: center;
-      cursor: pointer;
-      transition: transform 0.3s;
-    }
-
-    .cast-member:hover {
-      transform: translateY(-5px);
-    }
-
-    .actor-photo {
-      position: relative;
-      margin-bottom: 10px;
-    }
-
-    .actor-image {
-      width: 120px;
-      height: 180px;
-      object-fit: cover;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    }
-
-    .actor-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: #f5f5f5;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .actor-overlay mat-icon {
-      font-size: 48px;
-      width: 48px;
-      height: 48px;
-      color: #ccc;
-    }
-
-    .actor-info {
-      padding: 0 5px;
-    }
-
-    .actor-name {
-      font-size: 14px;
-      font-weight: bold;
-      margin: 5px 0;
-      color: #333;
-    }
-
-    .character-name {
-      font-size: 12px;
-      color: #666;
       margin: 0;
-    }
-
-    .reviews-placeholder, .no-reviews {
-      text-align: center;
-      padding: 40px;
+      font-size: 1.2rem;
       color: #666;
     }
 
-    .reviews-list {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
+    .movie-meta {
+      font-size: 1.1rem;
+      color: #666;
+      font-weight: 500;
     }
 
-    .review-item {
-      padding: 15px;
-      border: 1px solid #eee;
-      border-radius: 8px;
-      background: #fafafa;
+    .movie-description {
+      font-size: 1.1rem;
+      line-height: 1.6;
+      color: #555;
+      margin: 20px 0;
+      max-width: 600px;
     }
 
-    .review-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
+    .action-section {
+      margin-top: 30px;
     }
 
-    .reviewer-name {
+    .reserve-btn {
+      padding: 12px 30px;
+      font-size: 1.1rem;
       font-weight: bold;
-      color: #333;
+      height: 50px;
     }
 
-    .review-rating {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .review-rating mat-icon {
-      color: #ffc107;
-      font-size: 18px;
-    }
-
-    .review-comment {
-      margin: 10px 0;
-      line-height: 1.5;
-    }
-
-    .review-date {
-      color: #666;
-      font-size: 12px;
-    }
-
-    .review-actions {
-      margin-top: 20px;
-      text-align: center;
-    }
-
-    .loading, .error {
+    .loading-state, .error-state {
       padding: 40px;
       text-align: center;
+      max-width: 600px;
+      margin: 0 auto;
     }
 
     .error-content {
@@ -455,34 +177,30 @@ import { Movie, Cast } from '../../models/session.model';
     }
 
     @media (max-width: 768px) {
-      .hero-content {
+      .movie-header {
         flex-direction: column;
         text-align: center;
+        gap: 20px;
       }
       
       .poster-image {
-        width: 200px;
-        height: 300px;
+        width: 250px;
+        height: 375px;
+        margin: 0 auto;
       }
       
       .movie-title {
-        font-size: 2rem;
+        font-size: 2.2rem;
       }
-      
-      .cast-grid {
-        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-        gap: 15px;
-      }
-      
-      .actor-image {
-        width: 100px;
-        height: 150px;
+
+      .movie-details-simple {
+        padding: 20px;
       }
     }
   `]
 })
 export class MovieDetailsComponent implements OnInit {
-  movie: Movie | null = null;
+  movie: any = null;
   movieId: number | null = null;
   reviews: any[] = [];
   reviewsLoaded = false;
@@ -546,22 +264,29 @@ export class MovieDetailsComponent implements OnInit {
   }
 
   getPosterUrl(): string {
-    return this.moviesService.getPosterUrl(this.movie?.posterPath || this.movie?.poster);
+    return this.moviesService.getPosterUrl(this.movie?.data?.posterPath || this.movie?.data?.poster);
+  }
+
+  getMoviePosterSafely(): string {
+    if (!this.movie?.data) {
+      return 'assets/images/placeholder-movie.svg';
+    }
+    return this.getPosterUrl();
   }
 
   getBackdropUrl(): string {
-    return this.moviesService.getBackdropUrl(this.movie?.backdropPath);
+    return this.moviesService.getBackdropUrl(this.movie?.data?.backdropPath);
   }
 
-  getActorPhotoUrl(actor: Cast): string {
+  getActorPhotoUrl(actor: any): string {
     return this.moviesService.getProfileUrl(actor.profilePath);
   }
 
-  getMainCast(): Cast[] {
-    if (!this.movie?.cast) return [];
-    return this.movie.cast
-      .filter(actor => !actor.adult)
-      .sort((a, b) => a.order - b.order)
+  getMainCast(): any[] {
+    if (!this.movie?.data?.cast) return [];
+    return this.movie.data.cast
+      .filter((actor: any) => !actor.adult)
+      .sort((a: any, b: any) => a.order - b.order)
       .slice(0, 12);
   }
 
@@ -578,12 +303,12 @@ export class MovieDetailsComponent implements OnInit {
   }
 
   toggleFavorite() {
-    if (!this.movie) return;
+    if (!this.movie?.data) return;
     // TODO: Implémenter la logique de favoris
-    this.movie.isFavorite = !this.movie.isFavorite;
+    this.movie.data.isFavorite = !this.movie.data.isFavorite;
   }
 
-  showActorDetails(actor: Cast) {
+  showActorDetails(actor: any) {
     // TODO: Implémenter la modale de détails de l'acteur
     console.log('Détails de l\'acteur:', actor);
   }

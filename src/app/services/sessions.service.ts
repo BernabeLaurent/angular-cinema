@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 import { SessionCinema, Booking, CreateBookingDto, SessionBookingInfo, MovieWithSessions } from '../models/session.model';
 import { environment } from '../../environments/environment';
 
@@ -26,7 +27,35 @@ export class SessionsService {
     if (theaterId) params.push(`theaterId=${theaterId}`);
     if (startDate) params.push(`startDate=${startDate}`);
     if (params.length) url += `?${params.join('&')}`;
-    return this.http.get<SessionCinema[]>(url);
+    
+    return this.http.get<any>(url).pipe(
+      map((response: any) => {
+        console.log('Réponse brute API sessions:', response);
+        let sessions: SessionCinema[] = [];
+        
+        // Si la réponse a un format avec 'data', on l'extrait
+        if (response && typeof response === 'object' && 'data' in response) {
+          sessions = response.data;
+        } else if (Array.isArray(response)) {
+          sessions = response;
+        }
+        
+        // CORRECTIF : Filtrer manuellement par theaterId car l'API ne le fait pas correctement
+        if (theaterId && sessions.length > 0) {
+          sessions = sessions.filter(session => 
+            session.movieTheater?.theater?.id === theaterId ||
+            session.movieTheater?.theaterId === theaterId
+          );
+          console.log(`Sessions filtrées pour le cinéma ${theaterId}:`, sessions);
+        }
+        
+        return sessions;
+      }),
+      catchError((error: any) => {
+        console.error('Erreur API getSessionsByWeek:', error);
+        return throwError(() => error);
+      })
+    );
   }
 
   getSessionById(sessionId: number): Observable<SessionCinema> {

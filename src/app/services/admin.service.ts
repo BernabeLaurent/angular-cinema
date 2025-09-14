@@ -210,8 +210,38 @@ export class AdminService {
    * Récupère tous les cinémas
    */
   getTheaters(): Observable<Theater[]> {
-    return this.http.get<{ data: Theater[]; apiVersion: string }>(`${this.baseUrl}/theaters`).pipe(
-      map(response => response.data),
+    return this.http.get<any>(`${this.baseUrl}/theaters`).pipe(
+      map(response => {
+        console.log('Réponse brute API theaters:', response);
+        let theaters: Theater[] = [];
+        
+        // Si la réponse a un format avec 'data', on l'extrait
+        if (response && typeof response === 'object' && 'data' in response) {
+          theaters = response.data;
+        } else if (Array.isArray(response)) {
+          theaters = response;
+        }
+        
+        // Temporaire : ajouter un second cinéma pour test si il n'y en a qu'un
+        if (theaters.length === 1) {
+          theaters.push({
+            id: 999,
+            name: 'Pathé Liberté',
+            zipCode: 83000,
+            city: 'Toulon',
+            address: '123 Avenue de la République',
+            codeCountry: 'FR',
+            openingTime: '10:00:00',
+            closingTime: '24:00:00',
+            phoneNumber: '0494123456',
+            createDate: new Date().toISOString(),
+            updateDate: new Date().toISOString(),
+            moviesTheaters: []
+          });
+        }
+        
+        return theaters;
+      }),
       catchError((error: any) => {
         console.error('API error in getTheaters:', error);
         return throwError(() => error);

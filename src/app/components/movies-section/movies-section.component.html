@@ -26,11 +26,12 @@
     <div class="section-header">
       <h2>PROCHAINEMENT</h2>
       <div class="nav-buttons">
-        <button mat-icon-button class="nav-btn" (click)="scrollMovies('coming-soon', 'left')">
+        <button mat-icon-button class="nav-btn" (click)="scrollMovies('coming-soon', 'left')" title="Scroll à gauche">
           <mat-icon>chevron_left</mat-icon>
         </button>
-        <button mat-icon-button class="nav-btn" (click)="scrollMovies('coming-soon', 'right')">
-          <mat-icon>chevron_right</mat-icon>
+        <button mat-icon-button class="nav-btn" (click)="loadMoreUpcomingMovies()" [disabled]="loadingMoreMovies" title="Charger plus de films">
+          <mat-icon *ngIf="!loadingMoreMovies">chevron_right</mat-icon>
+          <mat-icon *ngIf="loadingMoreMovies" class="spinning">refresh</mat-icon>
         </button>
       </div>
     </div>
