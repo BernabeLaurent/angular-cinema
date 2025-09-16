@@ -141,11 +141,26 @@ export class BookingsManagementComponent implements OnInit {
 
     // Filtre par cinéma
     if (this.selectedTheater) {
+      console.log('Filtering by theater ID:', this.selectedTheater);
       filtered = filtered.filter(booking => {
-        // Ici on devrait vérifier le cinéma de la session, mais les données peuvent ne pas être complètes
-        // Pour l'instant, on garde tous les résultats si le filtre cinéma est sélectionné
-        return true;
+        // Vérifier si la réservation a une session avec un cinéma
+        if (booking.sessionCinema?.movieTheater?.theater?.id) {
+          const theaterMatch = booking.sessionCinema.movieTheater.theater.id.toString() === this.selectedTheater.toString();
+          console.log(`Booking ${booking.id}: theater ID ${booking.sessionCinema.movieTheater.theater.id}, matches: ${theaterMatch}`);
+          return theaterMatch;
+        }
+
+        // Fallback: vérifier via theaterId si theater n'est pas disponible
+        if (booking.sessionCinema?.movieTheater?.theaterId) {
+          const theaterMatch = booking.sessionCinema.movieTheater.theaterId.toString() === this.selectedTheater.toString();
+          console.log(`Booking ${booking.id}: theaterId ${booking.sessionCinema.movieTheater.theaterId}, matches: ${theaterMatch}`);
+          return theaterMatch;
+        }
+
+        console.log(`Booking ${booking.id}: no theater information found`);
+        return false; // Exclure les réservations sans information de cinéma
       });
+      console.log(`Filtered ${filtered.length} bookings for theater ${this.selectedTheater}`);
     }
 
     this.filteredBookings = filtered;
