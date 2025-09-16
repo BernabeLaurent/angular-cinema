@@ -79,31 +79,32 @@ export interface BookingDetail {
   bookingId: number;
 }
 
-export interface Booking {
+export interface ReservedSeat {
   id: number;
-  reservationDate: string;
-  status: string;
-  totalPrice: number;
+  seatNumber: number;
+  isValidated: boolean;
   createDate: string;
   updateDate: string;
+}
+
+export interface Booking {
+  id: number;
+  status: string;
   user: User;
-  bookingDetails?: BookingDetail[];
+  userId: number;
+  sessionCinemaId: number;
   sessionCinema?: {
     id: number;
     startTime: string;
     endTime: string;
     quality: string;
     codeLanguage: string;
-    movie?: {
-      id: number;
-      title: string;
-      [key: string]: any;
-    };
     movieTheater?: {
       id: number;
       theaterId: number;
       roomNumber: number;
       numberSeats: number;
+      numberSeatsDisabled?: number;
       theater?: {
         id: number;
         name: string;
@@ -116,7 +117,23 @@ export interface Booking {
         phoneNumber: string;
       };
     };
+    movieTheaterId: number;
+    movie?: {
+      id: number;
+      title: string;
+      originalTitle?: string;
+      description?: string;
+      [key: string]: any;
+    };
+    movieId: number;
   };
+  reservedSeats?: ReservedSeat[];
+  numberSeats: number;
+  numberSeatsDisabled: number;
+  totalPrice: string;
+  createDate: string;
+  qrCodeUrl?: string;
+  bookingDetails?: BookingDetail[];
 }
 
 @Injectable({
@@ -306,11 +323,9 @@ export class AdminService {
     return [
       {
         id: 1,
-        reservationDate: new Date().toISOString(),
         status: 'PENDING',
-        totalPrice: 25.00,
+        totalPrice: '25.00',
         createDate: new Date(Date.now() - 86400000).toISOString(), // Hier
-        updateDate: new Date().toISOString(),
         user: {
           id: 1,
           firstName: 'Jean',
@@ -320,12 +335,18 @@ export class AdminService {
           createDate: new Date().toISOString(),
           updateDate: new Date().toISOString()
         },
+        userId: 1,
+        sessionCinemaId: 1,
+        numberSeats: 1,
+        numberSeatsDisabled: 0,
         sessionCinema: {
           id: 1,
           startTime: new Date(Date.now() + 86400000).toISOString(), // Demain
           endTime: new Date(Date.now() + 86400000 + 7200000).toISOString(),
           quality: 'HD',
           codeLanguage: 'fr',
+          movieTheaterId: 1,
+          movieId: 1,
           movie: {
             id: 1,
             title: 'Thunderbolts*'
@@ -351,11 +372,9 @@ export class AdminService {
       },
       {
         id: 2,
-        reservationDate: new Date().toISOString(),
         status: 'CONFIRMED',
-        totalPrice: 37.50,
+        totalPrice: '37.50',
         createDate: new Date(Date.now() - 172800000).toISOString(), // Avant-hier
-        updateDate: new Date().toISOString(),
         user: {
           id: 2,
           firstName: 'Marie',
@@ -365,12 +384,18 @@ export class AdminService {
           createDate: new Date().toISOString(),
           updateDate: new Date().toISOString()
         },
+        userId: 2,
+        sessionCinemaId: 2,
+        numberSeats: 3,
+        numberSeatsDisabled: 0,
         sessionCinema: {
           id: 2,
           startTime: new Date(Date.now() + 172800000).toISOString(), // Après-demain
           endTime: new Date(Date.now() + 172800000 + 7200000).toISOString(),
           quality: 'IMAX',
           codeLanguage: 'fr',
+          movieTheaterId: 2,
+          movieId: 1,
           movie: {
             id: 1,
             title: 'Thunderbolts*'
@@ -431,6 +456,32 @@ export class AdminService {
   }
 
   /**
+   * Valide un siège réservé spécifique (ADMIN uniquement)
+   * Essaie différents endpoints possibles
+   */
+  validateReservedSeat(reservedSeatId: number, bookingId?: number): Observable<any> {
+    // Essai 1: endpoint spécifique pour reserved-seats
+    return this.http.patch(`${this.baseUrl}/reserved-seats/${reservedSeatId}/validate`, {}, {
+      headers: this.getAuthHeaders()
+    }).pipe(
+      catchError((error) => {
+        console.warn('Reserved seats endpoint failed, trying booking validation:', error);
+        // Essai 2: validation via booking si bookingId fourni
+        if (bookingId) {
+          return this.http.patch(`${this.baseUrl}/bookings/${bookingId}/validate-seat`,
+            { reservedSeatId }, {
+            headers: this.getAuthHeaders()
+          });
+        }
+        // Essai 3: retomber sur l'ancien endpoint
+        return this.http.patch(`${this.baseUrl}/booking-details/${reservedSeatId}/validate`, {}, {
+          headers: this.getAuthHeaders()
+        });
+      })
+    );
+  }
+
+  /**
    * Valide un booking detail spécifique (ADMIN uniquement)
    */
   validateBookingDetail(bookingDetailId: number): Observable<any> {
@@ -440,10 +491,11 @@ export class AdminService {
   }
 
   /**
-   * Valide un booking detail directement avec l'ID pour les vrais booking details (ID < 1000)
+   * Valide un booking detail directement avec l'ID dans le payload
    */
   validateBookingDetailDirect(bookingDetailId: number): Observable<any> {
-    return this.http.patch(`${this.baseUrl}/booking-details/${bookingDetailId}/validate`, {}, {
+    return this.http.patch(`${this.baseUrl}/booking-details/${bookingDetailId}/validate`,
+      { bookingDetailId }, {
       headers: this.getAuthHeaders()
     });
   }
@@ -461,9 +513,15 @@ export class AdminService {
    * Récupère les booking details pour une réservation
    */
   getBookingDetails(bookingId: number): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/bookings/get-bookings-details/${bookingId}`, {
+    return this.http.get<{ data: any[]; apiVersion: string }>(`${this.baseUrl}/bookings/get-bookings-details/${bookingId}`, {
       headers: this.getAuthHeaders()
-    });
+    }).pipe(
+      map(response => response.data),
+      catchError((error: any) => {
+        console.error('API error in getBookingDetails:', error);
+        return throwError(() => error);
+      })
+    );
   }
 
   /**

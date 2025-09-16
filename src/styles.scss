@@ -137,7 +137,8 @@ body .cdk-overlay-container .cdk-overlay-pane.login-dialog-positioned {
   box-shadow: 0 24px 38px 3px rgba(0,0,0,0.14),
               0 9px 46px 8px rgba(0,0,0,0.12),
               0 11px 15px -7px rgba(0,0,0,0.2) !important;
-  background: white !important;
+  background: black !important;
+  padding: 4px !important;
 }
 
 .login-dialog-positioned .auth-container {
@@ -262,9 +263,13 @@ a:focus-visible {
     height: 100% !important;
     max-height: 90vh !important;
     overflow-y: auto !important;
-    padding: 0 !important;
+    padding: 4px !important;
     margin: 0 !important;
     border-radius: 12px !important;
+    background: black !important;
+    box-shadow: 0 24px 38px 3px rgba(0,0,0,0.14),
+                0 9px 46px 8px rgba(0,0,0,0.12),
+                0 11px 15px -7px rgba(0,0,0,0.2) !important;
   }
 
   .cdk-overlay-pane {
@@ -279,4 +284,16 @@ a:focus-visible {
     display: block !important;
     font-size: 12px !important;
   }
+}
+
+.register-dialog-container .auth-container {
+  background: transparent !important;
+  padding: 0 !important;
+  min-height: auto !important;
+  width: 100% !important;
+  height: 100% !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: flex-start !important;
+  position: relative !important;
 }
