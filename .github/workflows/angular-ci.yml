@@ -76,6 +76,14 @@ jobs:
             echo "=== Démarrage des services ==="
             docker compose up -d
 
+            echo "=== Attente du démarrage des services ==="
+            sleep 30
+
             echo "=== Statut des conteneurs ==="
             docker compose ps
+
+            echo "=== Diagnostic complet ==="
+            cd /var/www/angular-cinema
+            chmod +x check-deployment.sh
+            ./check-deployment.sh
           EOF
