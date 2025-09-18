@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 import { MoviesSectionComponent } from './movies-section.component';
 import { SessionsService } from '../../services/sessions.service';
-import { AdminService } from '../../services/admin.service';
+import { AdminService, Theater } from '../../services/admin.service';
 import { MoviesService } from '../../services/movies.service';
 import { Movie } from '../movie-card/movie-card.component';
 
@@ -14,8 +14,34 @@ describe('MoviesSectionComponent', () => {
   let mockMoviesService: jasmine.SpyObj<MoviesService>;
 
   const mockTheaters = [
-    { id: 1, name: 'Cinéma Test 1' },
-    { id: 2, name: 'Cinéma Test 2' }
+    {
+      id: 1,
+      name: 'Cinéma Test 1',
+      zipCode: 75001,
+      city: 'Paris',
+      address: '1 rue de Test',
+      codeCountry: 'FR',
+      openingTime: '09:00',
+      closingTime: '23:00',
+      phoneNumber: '0123456789',
+      createDate: '2024-01-01',
+      updateDate: '2024-01-01',
+      moviesTheaters: []
+    },
+    {
+      id: 2,
+      name: 'Cinéma Test 2',
+      zipCode: 75002,
+      city: 'Paris',
+      address: '2 rue de Test',
+      codeCountry: 'FR',
+      openingTime: '09:00',
+      closingTime: '23:00',
+      phoneNumber: '0123456790',
+      createDate: '2024-01-01',
+      updateDate: '2024-01-01',
+      moviesTheaters: []
+    }
   ];
 
   const mockSessions = [

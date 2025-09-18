@@ -181,7 +181,14 @@ describe('UsersManagementComponent', () => {
   });
 
   it('should create user successfully', () => {
-    mockAdminService.createUser.and.returnValue(of({}));
+    const mockNewUser: User = {
+      id: 4,
+      firstName: mockCreateUserDto.firstName,
+      lastName: mockCreateUserDto.lastName,
+      email: mockCreateUserDto.email,
+      roleUser: mockCreateUserDto.roleUser
+    };
+    mockAdminService.createUser.and.returnValue(of(mockNewUser));
     spyOn(component as any, 'showSuccess');
     spyOn(component, 'loadUsers');
 
@@ -204,7 +211,8 @@ describe('UsersManagementComponent', () => {
   it('should update user successfully', () => {
     const userId = 1;
     const updateData = { firstName: 'Updated' };
-    mockAdminService.updateUser.and.returnValue(of({}));
+    const mockUpdatedUser: User = { id: userId, firstName: 'Updated', email: 'test@test.com' };
+    mockAdminService.updateUser.and.returnValue(of(mockUpdatedUser));
     spyOn(component as any, 'showSuccess');
     spyOn(component, 'loadUsers');
 

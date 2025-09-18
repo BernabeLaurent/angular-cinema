@@ -7,6 +7,17 @@ WORKDIR /app
 # Copier les fichiers package.json et package-lock.json
 COPY package*.json ./
 
+# Installer Chrome pour les tests
+RUN apt-get update && apt-get install -y \
+    chromium-browser \
+    --no-install-recommends \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Définir la variable d'environnement pour Chrome
+ENV CHROME_BIN=/usr/bin/chromium-browser
+ENV CHROMIUM_FLAGS="--no-sandbox --disable-dev-shm-usage --disable-gpu"
+
 # Installer les dépendances
 RUN npm install
 
