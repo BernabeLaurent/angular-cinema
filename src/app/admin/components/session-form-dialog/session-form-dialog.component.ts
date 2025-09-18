@@ -319,7 +319,9 @@ export class SessionFormDialogComponent implements OnInit {
   onSubmit(): void {
     if (this.sessionForm.valid) {
       const formValue = this.sessionForm.value;
-      
+
+      // IMPORTANT: Ces données seront filtrées par sessions-management-dialog.component.ts
+      // qui ne garde que les champs acceptés par l'API NestJS
       const sessionData = {
         movieId: this.movie.id,
         theaterId: formValue.theaterId,
@@ -333,7 +335,7 @@ export class SessionFormDialogComponent implements OnInit {
         totalSeats: formValue.totalSeats,
         availableSeats: formValue.totalSeats // Initialement toutes les places sont disponibles
       };
-      
+
       this.dialogRef.close(sessionData);
     } else {
       this.markFormGroupTouched();

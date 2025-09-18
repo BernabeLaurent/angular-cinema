@@ -271,12 +271,41 @@ export class MoviesManagementComponent implements OnInit {
 
   createSession(movieId: number, sessionData: any): void {
     console.log('Creating session for movie:', movieId, sessionData);
-    
-    this.adminService.createSession(sessionData).subscribe({
+
+    // Filtrer les données pour ne garder que les champs acceptés par l'API
+    const filteredData: any = {};
+
+    // Combiner date et heure si nécessaire
+    if (sessionData.date && sessionData.startTime) {
+      const date = new Date(sessionData.date);
+      const [hours, minutes] = sessionData.startTime.split(':');
+      date.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+      filteredData.startTime = date.toISOString();
+    } else if (sessionData.startTime) {
+      filteredData.startTime = sessionData.startTime;
+    }
+
+    // Ajouter les autres champs acceptés
+    if (sessionData.endTime) filteredData.endTime = sessionData.endTime;
+    if (sessionData.quality) filteredData.quality = sessionData.quality;
+    if (sessionData.language) filteredData.codeLanguage = sessionData.language;
+    if (sessionData.theaterId) filteredData.theaterId = sessionData.theaterId;
+    if (sessionData.roomId) filteredData.movieTheaterId = sessionData.roomId;
+
+    // Ajouter l'ID du film (nécessaire)
+    filteredData.movieId = movieId;
+
+    console.log('Filtered data for creation:', filteredData);
+    console.log('Original data from form:', sessionData);
+
+    this.adminService.createSession(filteredData).subscribe({
       next: (response) => {
         console.log('Session created successfully:', response);
         this.showSuccess('Session créée avec succès');
+
+        // Recharger les sessions ET les films pour mettre à jour les compteurs
         this.loadSessions();
+        this.loadMovies();
       },
       error: (error) => {
         console.error('Error creating session:', error);
