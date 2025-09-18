@@ -18,6 +18,7 @@ import { Observable, of } from 'rxjs';
 import { AdminService } from '../../../services/admin.service';
 import { SessionFormDialogComponent } from '../session-form-dialog/session-form-dialog.component';
 import { MovieDetailsDialogComponent } from '../movie-details-dialog/movie-details-dialog.component';
+import { environment } from '../../../../environments/environment';
 import { SessionsManagementDialogComponent } from '../sessions-management-dialog/sessions-management-dialog.component';
 import { DateFormatService } from '../../../services/date-format.service';
 
@@ -169,7 +170,7 @@ export class MoviesManagementComponent implements OnInit {
 
   loadSessionsCinema(): void {
     // L'API sessions-cinemas retourne les sessions avec les informations complètes des cinémas
-    this.http.get<{ data: SessionCinema[]; apiVersion: string }>('http://127.0.0.1:3001/sessions-cinemas').subscribe({
+    this.http.get<{ data: SessionCinema[]; apiVersion: string }>(`${environment.apiUrl}/sessions-cinemas`).subscribe({
       next: (response) => {
         console.log('Sessions cinema loaded successfully:', response.data);
         this.sessionsCinema = response.data;

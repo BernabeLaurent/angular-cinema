@@ -1,6 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { DateFormatService } from '../../../services/date-format.service';
 import { CommonModule } from '@angular/common';
+import { environment } from '../../../../environments/environment';
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -54,6 +55,6 @@ export class MovieDetailsDialogComponent {
       return path;
     }
     // Sinon, construire l'URL complète pour accéder aux images via le backend
-    return `http://127.0.0.1:3001${path.replace('/root/nestjs-cinema', '')}`;
+    return `${environment.apiUrl}${path.replace('/root/nestjs-cinema', '')}`;
   }
 }
