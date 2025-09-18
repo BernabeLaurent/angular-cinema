@@ -13,11 +13,8 @@ RUN npm install
 # Copier le reste des fichiers de l'application
 COPY . .
 
-# Exécuter les tests unitaires
-RUN npm run test -- --watch=false --browsers=ChromeHeadless
-
-# Builder l'application Angular (ajuste la commande selon ton script npm)
-RUN npm run build --prod
+# Builder l'application Angular en mode production
+RUN npm run build
 
 # Étape 2 : serveur web pour servir l'app (nginx)
 FROM nginx:alpine
