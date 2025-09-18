@@ -9,7 +9,7 @@ import {
 } from 'rxjs';
 import {User} from './user.interface';
 import {JwtPayload} from './jwtPayload.interface';
-import { jwtDecode } from 'jwt-decode';
+import jwtDecode from 'jwt-decode';
 import {CreateUserDto} from '../users/dtos/create-user.dto';
 import { environment } from '../../environments/environment';
 
