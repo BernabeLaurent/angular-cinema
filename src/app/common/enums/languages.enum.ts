@@ -122,4 +122,5 @@ export enum Languages {
   // Langues construites (pour être exhaustif, bien que leur usage soit différent)
   ESPERANTO = 'eo',
   INTERLINGUA = 'ia',
+  GEORGIE = 'ka',
 }
