@@ -1,8 +1,10 @@
 <!-- Barre de navigation -->
 <mat-toolbar color="primary" class="transparent-toolbar">
   <div class="left-section">
-    <img src="assets/images/logo.svg" alt="Tchitcha" class="logo" height="32">
-    <span class="logo-text">TCHITCHA</span>
+    <div class="logo-container" routerLink="/">
+      <img src="assets/images/logo.svg" alt="Tchitcha" class="logo" height="32">
+      <span class="logo-text">TCHITCHA</span>
+    </div>
     <button mat-icon-button (click)="openSearchModal()">
       <mat-icon>search</mat-icon>
     </button>
