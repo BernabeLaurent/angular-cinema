@@ -132,16 +132,24 @@ export class HeroSectionComponent implements OnInit {
   }
 
   private getMovieBackdropUrl(movie: any): string {
-    // Prioriser backdrop_path pour l'arrière-plan hero
-    if (movie.backdrop_path) {
-      const backdropUrl = this.moviesService.getBackdropUrl(movie.backdrop_path);
+    console.log('🔍 DEBUG getMovieBackdropUrl - Film:', movie.title);
+    console.log('🔍 movie.backdrop_path:', movie.backdrop_path);
+    console.log('🔍 movie.backdropPath:', movie.backdropPath);
+    console.log('🔍 movie.poster_path:', movie.poster_path);
+    console.log('🔍 movie.posterPath:', movie.posterPath);
+
+    // Prioriser backdrop_path pour l'arrière-plan hero (avec les deux formats possibles)
+    const backdropPath = movie.backdrop_path || movie.backdropPath;
+    if (backdropPath) {
+      const backdropUrl = this.moviesService.getBackdropUrl(backdropPath);
       console.log('✅ Utilisation backdrop_path:', backdropUrl);
       return backdropUrl;
     }
 
-    // Fallback sur poster_path si pas de backdrop
-    if (movie.poster_path) {
-      const posterUrl = this.moviesService.getPosterUrl(movie.poster_path);
+    // Fallback sur poster_path si pas de backdrop (avec les deux formats possibles)
+    const posterPath = movie.poster_path || movie.posterPath;
+    if (posterPath) {
+      const posterUrl = this.moviesService.getPosterUrl(posterPath);
       console.log('⚠️ Fallback sur poster_path:', posterUrl);
       return posterUrl;
     }

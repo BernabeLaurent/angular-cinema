@@ -69,7 +69,10 @@ export class MoviesService {
   }
 
   getBackdropUrl(backdropPath?: string): string {
-    return this.getImageUrl(backdropPath || '');
+    console.log('🎯 MoviesService.getBackdropUrl input:', backdropPath);
+    const result = this.getImageUrl(backdropPath || '');
+    console.log('🎯 MoviesService.getBackdropUrl output:', result);
+    return result;
   }
 
   getProfileUrl(profilePath?: string): string {
