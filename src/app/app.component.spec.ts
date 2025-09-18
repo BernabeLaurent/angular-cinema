@@ -28,10 +28,11 @@ describe('AppComponent', () => {
     expect(app.title).toEqual('angular-cinema');
   });
 
-  it('should render title', () => {
+  it('should render main content', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, angular-cinema');
+    expect(compiled.querySelector('main.main-content')).toBeTruthy();
+    expect(compiled.querySelector('router-outlet')).toBeTruthy();
   });
 });

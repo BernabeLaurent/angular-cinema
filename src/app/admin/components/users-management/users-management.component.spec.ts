@@ -4,6 +4,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ChangeDetectorRef } from '@angular/core';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { of, throwError } from 'rxjs';
 
 import { UsersManagementComponent } from './users-management.component';
@@ -67,20 +68,22 @@ describe('UsersManagementComponent', () => {
     const authServiceSpy = jasmine.createSpyObj('AuthService', ['forceInitFromToken']);
 
     const mockDialogRef = {
-      afterClosed: () => of(null),
+      afterClosed: jasmine.createSpy('afterClosed').and.returnValue(of(null)),
       close: jasmine.createSpy('close')
     };
-    const dialogSpy = jasmine.createSpyObj('MatDialog', ['open'], {
-      openDialogs: []
-    });
-    dialogSpy.open.and.returnValue(mockDialogRef);
+    const dialogSpy = {
+      open: jasmine.createSpy('open').and.returnValue(mockDialogRef),
+      openDialogs: [],
+      getDialogById: jasmine.createSpy('getDialogById'),
+      closeAll: jasmine.createSpy('closeAll')
+    };
 
     const snackBarSpy = jasmine.createSpyObj('MatSnackBar', ['open']);
     const dateFormatServiceSpy = jasmine.createSpyObj('DateFormatService', ['formatDate']);
     const cdrSpy = jasmine.createSpyObj('ChangeDetectorRef', ['detectChanges']);
 
     await TestBed.configureTestingModule({
-      imports: [UsersManagementComponent],
+      imports: [UsersManagementComponent, NoopAnimationsModule],
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
