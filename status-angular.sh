@@ -12,12 +12,9 @@ if [ -z "$PIDS" ]; then
 else
     echo "✅ Serveur Angular: EN COURS"
     echo "📋 PID(s): $PIDS"
-
-    # Informations sur les processus
     echo ""
     echo "=== Détails des processus ==="
     ps aux | grep "http-server.*angular-cinema" | grep -v grep
-
     EXIT_CODE=0
 fi
 

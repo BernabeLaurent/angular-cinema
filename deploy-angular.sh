@@ -30,7 +30,7 @@ echo "=== Arrêt de l'ancien serveur ==="
 pkill -f "http-server.*angular-cinema" || echo "Aucun serveur à arrêter"
 
 echo "=== Démarrage du nouveau serveur ==="
-nohup http-server dist/angular-cinema -a 0.0.0.0 -p 4200 > angular.log 2>&1 &
+nohup http-server dist/angular-cinema -a 0.0.0.0 -p 4200 --cors > angular.log 2>&1 &
 
 echo "=== Attente du démarrage ==="
 sleep 10
