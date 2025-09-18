@@ -63,8 +63,19 @@ jobs:
           ssh -i ~/.ssh/github-actions root@159.89.20.85 << 'EOF'
             cd /var/www/angular-cinema
             git pull origin main
-            cd ../Nestjs-cinema
+
+            echo "=== Déploiement depuis le projet NestJS ==="
+            cd /var/www/nestjs-cinema
+
+            echo "=== Arrêt des conteneurs ==="
             docker compose down
+
+            echo "=== Build du frontend Angular (avec tests) ==="
             docker compose build angular-frontend
+
+            echo "=== Démarrage des services ==="
             docker compose up -d
+
+            echo "=== Statut des conteneurs ==="
+            docker compose ps
           EOF
