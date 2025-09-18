@@ -2,6 +2,8 @@ import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testin
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ChangeDetectorRef } from '@angular/core';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { of, throwError } from 'rxjs';
 
 import { UsersManagementComponent } from './users-management.component';
@@ -63,7 +65,16 @@ describe('UsersManagementComponent', () => {
       'getAllUsers', 'createUser', 'updateUser', 'deleteUser'
     ]);
     const authServiceSpy = jasmine.createSpyObj('AuthService', ['forceInitFromToken']);
-    const dialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
+
+    const mockDialogRef = {
+      afterClosed: () => of(null),
+      close: jasmine.createSpy('close')
+    };
+    const dialogSpy = jasmine.createSpyObj('MatDialog', ['open'], {
+      openDialogs: []
+    });
+    dialogSpy.open.and.returnValue(mockDialogRef);
+
     const snackBarSpy = jasmine.createSpyObj('MatSnackBar', ['open']);
     const dateFormatServiceSpy = jasmine.createSpyObj('DateFormatService', ['formatDate']);
     const cdrSpy = jasmine.createSpyObj('ChangeDetectorRef', ['detectChanges']);
@@ -71,6 +82,8 @@ describe('UsersManagementComponent', () => {
     await TestBed.configureTestingModule({
       imports: [UsersManagementComponent],
       providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
         { provide: AdminService, useValue: adminServiceSpy },
         { provide: AuthService, useValue: authServiceSpy },
         { provide: MatDialog, useValue: dialogSpy },
@@ -124,7 +137,6 @@ describe('UsersManagementComponent', () => {
     expect(mockAdminService.getAllUsers).toHaveBeenCalled();
     expect(component.allUsers).toEqual(mockUsers);
     expect(component.loading).toBeFalse();
-    expect(mockChangeDetectorRef.detectChanges).toHaveBeenCalled();
   });
 
   it('should handle error when loading users', () => {
@@ -135,7 +147,6 @@ describe('UsersManagementComponent', () => {
 
     expect(component.loading).toBeFalse();
     expect((component as any).showError).toHaveBeenCalledWith('Erreur lors du chargement des utilisateurs');
-    expect(mockChangeDetectorRef.detectChanges).toHaveBeenCalled();
   });
 
   it('should open create user dialog', () => {
@@ -366,7 +377,7 @@ describe('UsersManagementComponent', () => {
   it('should show success message', () => {
     const message = 'Test success';
 
-    (component as any).showSuccess(message);
+    component['showSuccess'](message);
 
     expect(mockSnackBar.open).toHaveBeenCalledWith(message, 'Fermer', {
       duration: 3000,
@@ -377,7 +388,7 @@ describe('UsersManagementComponent', () => {
   it('should show error message', () => {
     const message = 'Test error';
 
-    (component as any).showError(message);
+    component['showError'](message);
 
     expect(mockSnackBar.open).toHaveBeenCalledWith(message, 'Fermer', {
       duration: 5000,

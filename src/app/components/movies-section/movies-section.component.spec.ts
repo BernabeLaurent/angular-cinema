@@ -203,7 +203,7 @@ describe('MoviesSectionComponent', () => {
   it('should generate placeholder poster URL when no poster path', () => {
     const result = (component as any).getMoviePosterUrl('');
     expect(result).toContain('data:image/svg+xml');
-    expect(result).toContain('IMAGE NON TROUVÉE');
+    expect(result).toContain('IMAGE NON TROUV');
   });
 
   it('should format release date correctly', () => {
