@@ -13,6 +13,9 @@ RUN npm install
 # Copier le reste des fichiers de l'application
 COPY . .
 
+# Exécuter les tests unitaires
+RUN npm run test -- --watch=false --browsers=ChromeHeadless
+
 # Builder l'application Angular en mode production
 RUN npm run build
 
