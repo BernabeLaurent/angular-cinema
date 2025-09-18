@@ -61,29 +61,17 @@ jobs:
       - name: Deploy to Angular Droplet
         run: |
           ssh -i ~/.ssh/github-actions root@159.89.20.85 << 'EOF'
+            echo "=== Exécution du script de déploiement Angular ==="
             cd /var/www/angular-cinema
-            git pull origin main
+            chmod +x deploy-angular.sh
+            ./deploy-angular.sh
 
-            echo "=== Déploiement depuis le projet NestJS ==="
+            echo "=== Redémarrage des services NestJS ==="
             cd /var/www/nestjs-cinema
-
-            echo "=== Arrêt des conteneurs ==="
             docker compose down
-
-            echo "=== Build du frontend Angular (avec tests) ==="
-            docker compose build angular-frontend
-
-            echo "=== Démarrage des services ==="
             docker compose up -d
 
-            echo "=== Attente du démarrage des services ==="
-            sleep 30
-
-            echo "=== Statut des conteneurs ==="
-            docker compose ps
-
-            echo "=== Diagnostic complet ==="
-            cd /var/www/angular-cinema
-            chmod +x check-deployment.sh
-            ./check-deployment.sh
+            echo "=== Statut final ==="
+            echo "Angular: $(pgrep -f 'http-server.*angular-cinema' && echo 'Running' || echo 'Stopped')"
+            echo "NestJS: $(docker compose ps --services --filter 'status=running')"
           EOF
