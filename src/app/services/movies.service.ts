@@ -37,21 +37,29 @@ export class MoviesService {
   // Méthodes utilitaires pour les URLs d'images - EXCLUSIVEMENT backend NestJS
   getImageUrl(path: string): string {
     if (!path) return '/assets/images/no-image.svg';
-    
+
     // Si c'est déjà une URL complète, la retourner
     if (path.startsWith('http')) return path;
-    
+
     // TOUS les chemins utilisent maintenant le backend NestJS
     let backendUrl: string;
-    
+
     if (path.startsWith('/')) {
-      // Chemin absolu depuis la racine de l'API (ex: /uploads/posters/image.jpg)
-      backendUrl = `${this.apiUrl}${path}`;
+      // Cas spécial : chemin absolu du système de fichiers depuis NestJS
+      // Ex: /root/Nestjs-cinema/uploads/posters/image.jpg -> /uploads/posters/image.jpg
+      if (path.includes('/uploads/')) {
+        const uploadsIndex = path.indexOf('/uploads/');
+        const relativePath = path.substring(uploadsIndex);
+        backendUrl = `${this.apiUrl}${relativePath}`;
+      } else {
+        // Chemin absolu depuis la racine de l'API (ex: /uploads/posters/image.jpg)
+        backendUrl = `${this.apiUrl}${path}`;
+      }
     } else {
       // Chemin relatif, on assume que c'est dans le dossier uploads
       backendUrl = `${this.apiUrl}/uploads/${path}`;
     }
-    
+
     console.log('🖼️ Image URL generated:', { originalPath: path, finalUrl: backendUrl });
     return backendUrl;
   }
