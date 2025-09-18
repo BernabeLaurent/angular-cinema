@@ -63,7 +63,8 @@ jobs:
           ssh -i ~/.ssh/github-actions root@159.89.20.85 << 'EOF'
             cd /var/www/angular-cinema
             git pull origin main
+            cd ../Nestjs-cinema
             docker compose down
-            docker compose build
+            docker compose build angular-frontend
             docker compose up -d
           EOF
