@@ -8,7 +8,7 @@
 
     <!-- Boutons desktop -->
     <nav class="desktop-nav" aria-label="Menu principal">
-      <button mat-icon-button (click)="openSearchModal()" aria-label="Ouvrir la recherche">
+      <button mat-icon-button (click)="openSearchModal()" [attr.aria-label]="'Ouvrir la recherche'">
         <mat-icon aria-hidden="true">search</mat-icon>
       </button>
       <button mat-button routerLink="/movies">Films</button>
@@ -17,7 +17,7 @@
 
     <!-- Menu Administration pour les admins et workers -->
     <ng-container *ngIf="canAccessAdmin$ | async">
-      <button mat-button [matMenuTriggerFor]="adminMenu" class="admin-menu-trigger desktop-only" aria-haspopup="true" aria-expanded="false" aria-label="Menu administration">
+      <button mat-button [matMenuTriggerFor]="adminMenu" class="admin-menu-trigger desktop-only" aria-haspopup="true" aria-expanded="false" [attr.aria-label]="'Menu administration'">
         <mat-icon aria-hidden="true">admin_panel_settings</mat-icon>
         Administration
         <mat-icon aria-hidden="true">arrow_drop_down</mat-icon>
@@ -111,7 +111,7 @@
     
     <!-- Si utilisateur connecté -->
     <ng-container *ngIf="isLoggedIn$ | async">
-      <button #userMenuButton mat-icon-button (click)="toggleUserMenu()" class="user-avatar" aria-haspopup="true" [attr.aria-expanded]="isUserMenuOpen" aria-label="Menu utilisateur">
+      <button #userMenuButton mat-icon-button (click)="toggleUserMenu()" class="user-avatar" aria-haspopup="true" [attr.aria-expanded]="isUserMenuOpen" [attr.aria-label]="'Menu utilisateur'">
         <div class="avatar-circle">
           {{ userInitials$ | async }}
         </div>
@@ -167,12 +167,12 @@
   <!-- Ligne mobile pour les boutons hamburger et recherche -->
   <div class="mobile-controls">
     <!-- Menu burger pour mobile -->
-    <button mat-icon-button class="mobile-menu-button" (click)="toggleMobileMenu()" aria-label="{{ isMobileMenuOpen ? 'Fermer le menu' : 'Ouvrir le menu' }}">
+    <button mat-icon-button class="mobile-menu-button" (click)="toggleMobileMenu()" [attr.aria-label]="isMobileMenuOpen ? 'Fermer le menu' : 'Ouvrir le menu'">
       <mat-icon aria-hidden="true">{{ isMobileMenuOpen ? 'close' : 'menu' }}</mat-icon>
     </button>
 
     <!-- Bouton recherche mobile (toujours visible) -->
-    <button mat-icon-button class="mobile-search-button" (click)="openSearchModal()" aria-label="Rechercher">
+    <button mat-icon-button class="mobile-search-button" (click)="openSearchModal()" [attr.aria-label]="'Rechercher'">
       <mat-icon aria-hidden="true">search</mat-icon>
     </button>
   </div>
