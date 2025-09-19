@@ -215,20 +215,29 @@
 // Responsive styles for mobile
 @media (max-width: 768px) {
   .transparent-toolbar {
-    padding: 0 16px;
+    padding: 0 12px;
     height: 56px;
 
     .left-section {
-      gap: 12px;
+      gap: 8px;
+      overflow: visible;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .logo-container {
+      flex-shrink: 0;
+      padding: 2px 4px;
     }
 
     .logo-text {
-      font-size: 18px;
-      letter-spacing: 1px;
+      font-size: 16px;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
     }
 
     .logo {
-      height: 28px;
+      height: 24px;
     }
 
     .user-menu-container {
@@ -252,7 +261,7 @@
   }
 
   // Règles pour afficher/masquer les éléments mobile/desktop
-  .mobile-menu-button {
+  .transparent-toolbar .left-section .mobile-menu-button {
     display: flex !important;
     color: white !important;
     background: transparent !important;
@@ -261,9 +270,11 @@
     height: 48px !important;
     align-items: center !important;
     justify-content: center !important;
+    opacity: 1 !important;
+    visibility: visible !important;
   }
 
-  .mobile-search-button {
+  .transparent-toolbar .left-section .mobile-search-button {
     display: flex !important;
     color: white !important;
     background: transparent !important;
@@ -272,6 +283,8 @@
     height: 48px !important;
     align-items: center !important;
     justify-content: center !important;
+    opacity: 1 !important;
+    visibility: visible !important;
   }
 
   .desktop-nav {

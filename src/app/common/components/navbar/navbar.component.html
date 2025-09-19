@@ -6,8 +6,9 @@
       <span class="logo-text">TCHITCHA</span>
     </div>
     <!-- Menu burger pour mobile -->
-    <button mat-icon-button class="mobile-menu-button" (click)="toggleMobileMenu()">
-      <mat-icon>{{ isMobileMenuOpen ? 'close' : 'menu' }}</mat-icon>
+    <button mat-icon-button class="mobile-menu-button hamburger-debug" (click)="toggleMobileMenu()"
+            style="display: block !important; background: red !important; color: white !important; z-index: 9999 !important; position: relative !important;">
+      <mat-icon>menu</mat-icon>
     </button>
 
     <!-- Bouton recherche mobile (toujours visible) -->
