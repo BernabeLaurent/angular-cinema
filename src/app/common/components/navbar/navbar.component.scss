@@ -141,8 +141,8 @@
   backdrop-filter: blur(10px);
   padding: 8px 16px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  justify-content: center;
-  gap: 24px;
+  justify-content: flex-start;
+  gap: 16px;
   z-index: 999;
 }
 
