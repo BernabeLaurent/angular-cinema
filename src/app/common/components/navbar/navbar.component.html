@@ -10,6 +10,11 @@
       <mat-icon>{{ isMobileMenuOpen ? 'close' : 'menu' }}</mat-icon>
     </button>
 
+    <!-- Bouton recherche mobile (toujours visible) -->
+    <button mat-icon-button class="mobile-search-button" (click)="openSearchModal()">
+      <mat-icon>search</mat-icon>
+    </button>
+
     <!-- Boutons desktop -->
     <div class="desktop-nav">
       <button mat-icon-button (click)="openSearchModal()">
@@ -70,10 +75,6 @@
         <mat-icon>event_seat</mat-icon>
         Réserver
       </button>
-      <button mat-button (click)="openSearchModal(); closeMobileMenu()">
-        <mat-icon>search</mat-icon>
-        Rechercher
-      </button>
 
       <!-- Menu Administration pour mobile -->
       <ng-container *ngIf="canAccessAdmin$ | async">
@@ -125,7 +126,7 @@
         </div>
       </button>
       
-      <div class="user-menu" *ngIf="isUserMenuOpen" (clickOutside)="closeUserMenu()">
+      <div class="user-menu" *ngIf="isUserMenuOpen">
         <div class="user-menu-content">
           <div class="user-info" *ngIf="currentUser$ | async as user">
             <div class="user-details">

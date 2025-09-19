@@ -120,15 +120,15 @@
   }
 }
 
-// Menu mobile et bouton burger
+// Menu mobile et boutons
 .mobile-menu-button {
   display: none;
-  color: white;
+  color: white !important;
 }
 
-// Règle spécifique pour forcer l'affichage du bouton burger sur mobile
-mat-toolbar.transparent-toolbar .left-section .mobile-menu-button {
+.mobile-search-button {
   display: none;
+  color: white !important;
 }
 
 .mobile-menu-overlay {
@@ -253,8 +253,25 @@ mat-toolbar.transparent-toolbar .left-section .mobile-menu-button {
 
   // Règles pour afficher/masquer les éléments mobile/desktop
   .mobile-menu-button {
-    display: block !important;
-    color: white;
+    display: flex !important;
+    color: white !important;
+    background: transparent !important;
+    border: none !important;
+    width: 48px !important;
+    height: 48px !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .mobile-search-button {
+    display: flex !important;
+    color: white !important;
+    background: transparent !important;
+    border: none !important;
+    width: 48px !important;
+    height: 48px !important;
+    align-items: center !important;
+    justify-content: center !important;
   }
 
   .desktop-nav {
@@ -281,7 +298,9 @@ mat-toolbar.transparent-toolbar .left-section .mobile-menu-button {
 
     .user-menu-container {
       .login-btn {
-        display: none;
+        padding: 6px 8px;
+        font-size: 0.8rem;
+        margin-right: 6px;
       }
 
       .register-btn {
