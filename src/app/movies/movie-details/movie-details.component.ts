@@ -40,31 +40,31 @@ import { Movie, Cast } from '../../models/session.model';
         </button>
       </div>
 
-      <div style="display: flex; gap: 40px; margin-bottom: 40px;">
-        <div style="flex-shrink: 0;">
+      <div class="movie-header">
+        <div class="movie-poster">
           <img [src]="getMoviePosterSafely()" [alt]="movie?.data?.title || 'Film'"
-               style="width: 300px; height: 450px; object-fit: cover; border-radius: 12px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);">
+               class="poster-image">
         </div>
-        <div style="flex: 1; display: flex; flex-direction: column; gap: 20px;">
-          <h1 style="font-size: 3rem; font-weight: bold; margin: 0; color: #333; line-height: 1.2;">
+        <div class="movie-info">
+          <h1 class="movie-title">
             {{ movie?.data?.title || 'Chargement...' }}
           </h1>
           <p *ngIf="movie?.data?.originalTitle && movie.data.originalTitle !== movie.data.title"
-             style="font-style: italic; opacity: 0.7; margin: 0; font-size: 1.2rem; color: #666;">
+             class="original-title">
             {{ movie.data.originalTitle }}
           </p>
-          <div style="font-size: 1.1rem; color: #666; font-weight: 500;">
+          <div class="movie-meta">
             <span *ngIf="movie?.data?.runtime">{{ movie.data.runtime }}min</span>
             <span *ngIf="movie?.data?.releaseDate"> • Sorti en {{ formatYear(movie.data.releaseDate) }}</span>
             <span *ngIf="movie?.data?.originalLanguage"> • {{ movie.data.originalLanguage.toUpperCase() }}</span>
           </div>
           <p *ngIf="movie?.data?.description"
-             style="font-size: 1.1rem; line-height: 1.6; color: #555; margin: 20px 0; max-width: 600px;">
+             class="movie-description">
             {{ movie.data.description }}
           </p>
-          <div style="margin-top: 30px;">
-            <button mat-raised-button color="primary" 
-                    style="padding: 12px 30px; font-size: 1.1rem; font-weight: bold; height: 50px;" 
+          <div class="action-section">
+            <button mat-raised-button color="primary"
+                    class="reserve-btn"
                     (click)="bookMovie()">
               <mat-icon>event_seat</mat-icon>
               RÉSERVER
@@ -211,24 +211,91 @@ import { Movie, Cast } from '../../models/session.model';
     }
 
     @media (max-width: 768px) {
+      .movie-details-simple {
+        padding: 80px 16px 20px 16px;
+      }
+
       .movie-header {
         flex-direction: column;
         text-align: center;
-        gap: 20px;
-      }
-      
-      .poster-image {
-        width: 250px;
-        height: 375px;
-        margin: 0 auto;
-      }
-      
-      .movie-title {
-        font-size: 2.2rem;
+        gap: 24px;
+        align-items: center;
       }
 
+      .movie-poster {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+      }
+
+      .poster-image {
+        width: 280px;
+        height: 420px;
+        margin: 0 auto;
+      }
+
+      .movie-info {
+        width: 100%;
+        text-align: center;
+        gap: 16px;
+      }
+
+      .movie-title {
+        font-size: 2.2rem;
+        text-align: center;
+      }
+
+      .original-title {
+        text-align: center;
+      }
+
+      .movie-meta {
+        text-align: center;
+        font-size: 1rem;
+      }
+
+      .movie-description {
+        text-align: left;
+        max-width: 100%;
+        font-size: 1rem;
+        line-height: 1.5;
+      }
+
+      .action-section {
+        margin-top: 24px;
+        text-align: center;
+      }
+
+      .reserve-btn {
+        width: 100%;
+        max-width: 300px;
+        padding: 14px 24px;
+        font-size: 1rem;
+        height: 48px;
+      }
+    }
+
+    @media (max-width: 480px) {
       .movie-details-simple {
-        padding: 20px;
+        padding: 70px 12px 20px 12px;
+      }
+
+      .poster-image {
+        width: 240px;
+        height: 360px;
+      }
+
+      .movie-title {
+        font-size: 1.8rem;
+      }
+
+      .movie-description {
+        font-size: 0.95rem;
+      }
+
+      .reserve-btn {
+        font-size: 0.9rem;
+        height: 44px;
       }
     }
   `]

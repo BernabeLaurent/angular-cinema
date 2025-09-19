@@ -37,6 +37,7 @@ import { RoleUser } from '../../../users/enums/roles-users.enum';
 })
 export class NavbarComponent {
   isUserMenuOpen = false;
+  isMobileMenuOpen = false;
   
   // Observables pour la réactivité
   isLoggedIn$: Observable<boolean>;
@@ -69,6 +70,14 @@ export class NavbarComponent {
 
   closeUserMenu() {
     this.isUserMenuOpen = false;
+  }
+
+  toggleMobileMenu() {
+    this.isMobileMenuOpen = !this.isMobileMenuOpen;
+  }
+
+  closeMobileMenu() {
+    this.isMobileMenuOpen = false;
   }
 
   openSearchModal() {

@@ -5,15 +5,23 @@
       <img src="assets/images/logo.svg" alt="Tchitcha" class="logo" height="32">
       <span class="logo-text">TCHITCHA</span>
     </div>
-    <button mat-icon-button (click)="openSearchModal()">
-      <mat-icon>search</mat-icon>
+    <!-- Menu burger pour mobile -->
+    <button mat-icon-button class="mobile-menu-button" (click)="toggleMobileMenu()">
+      <mat-icon>{{ isMobileMenuOpen ? 'close' : 'menu' }}</mat-icon>
     </button>
-    <button mat-button routerLink="/movies">Films</button>
-    <button mat-button routerLink="/booking">Réserver</button>
+
+    <!-- Boutons desktop -->
+    <div class="desktop-nav">
+      <button mat-icon-button (click)="openSearchModal()">
+        <mat-icon>search</mat-icon>
+      </button>
+      <button mat-button routerLink="/movies">Films</button>
+      <button mat-button routerLink="/booking">Réserver</button>
+    </div>
     
     <!-- Menu Administration pour les admins et workers -->
     <ng-container *ngIf="canAccessAdmin$ | async">
-      <button mat-button [matMenuTriggerFor]="adminMenu" class="admin-menu-trigger">
+      <button mat-button [matMenuTriggerFor]="adminMenu" class="admin-menu-trigger desktop-only">
         <mat-icon>admin_panel_settings</mat-icon>
         Administration
         <mat-icon>arrow_drop_down</mat-icon>
@@ -47,6 +55,52 @@
     </ng-container>
   </div>
   <span class="spacer"></span>
+
+  <!-- Menu mobile -->
+  <div class="mobile-menu" *ngIf="isMobileMenuOpen" (clickOutside)="closeMobileMenu()">
+    <div class="mobile-menu-content">
+      <button mat-button routerLink="/movies" (click)="closeMobileMenu()">
+        <mat-icon>movie</mat-icon>
+        Films
+      </button>
+      <button mat-button routerLink="/booking" (click)="closeMobileMenu()">
+        <mat-icon>event_seat</mat-icon>
+        Réserver
+      </button>
+      <button mat-button (click)="openSearchModal(); closeMobileMenu()">
+        <mat-icon>search</mat-icon>
+        Rechercher
+      </button>
+
+      <!-- Menu Administration pour mobile -->
+      <ng-container *ngIf="canAccessAdmin$ | async">
+        <mat-divider></mat-divider>
+        <div class="admin-section">
+          <p class="section-title">Administration</p>
+          <button mat-button routerLink="/admin/dashboard" (click)="closeMobileMenu()">
+            <mat-icon>dashboard</mat-icon>
+            Tableau de bord
+          </button>
+          <button mat-button routerLink="/admin/users" *ngIf="isAdmin$ | async" (click)="closeMobileMenu()">
+            <mat-icon>people</mat-icon>
+            Gestion des utilisateurs
+          </button>
+          <button mat-button routerLink="/admin/theaters" *ngIf="isAdmin$ | async" (click)="closeMobileMenu()">
+            <mat-icon>location_city</mat-icon>
+            Gestion des cinémas
+          </button>
+          <button mat-button routerLink="/admin/movies" (click)="closeMobileMenu()">
+            <mat-icon>movie</mat-icon>
+            Gestion des films
+          </button>
+          <button mat-button routerLink="/admin/bookings" (click)="closeMobileMenu()">
+            <mat-icon>event_seat</mat-icon>
+            Gestion des réservations
+          </button>
+        </div>
+      </ng-container>
+    </div>
+  </div>
   
   <!-- Menu utilisateur -->
   <div class="user-menu-container">
