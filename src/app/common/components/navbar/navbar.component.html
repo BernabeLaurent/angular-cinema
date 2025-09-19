@@ -56,8 +56,11 @@
   </div>
   <span class="spacer"></span>
 
+  <!-- Overlay pour fermer le menu mobile -->
+  <div class="mobile-menu-overlay" *ngIf="isMobileMenuOpen" (click)="closeMobileMenu()"></div>
+
   <!-- Menu mobile -->
-  <div class="mobile-menu" *ngIf="isMobileMenuOpen" (clickOutside)="closeMobileMenu()">
+  <div class="mobile-menu" *ngIf="isMobileMenuOpen">
     <div class="mobile-menu-content">
       <button mat-button routerLink="/movies" (click)="closeMobileMenu()">
         <mat-icon>movie</mat-icon>

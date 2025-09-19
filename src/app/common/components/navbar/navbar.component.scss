@@ -126,6 +126,21 @@
   color: white;
 }
 
+// Règle spécifique pour forcer l'affichage du bouton burger sur mobile
+mat-toolbar.transparent-toolbar .left-section .mobile-menu-button {
+  display: none;
+}
+
+.mobile-menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 998;
+}
+
 .desktop-nav {
   display: flex;
   align-items: center;
@@ -207,18 +222,6 @@
       gap: 12px;
     }
 
-    .mobile-menu-button {
-      display: block;
-    }
-
-    .desktop-nav {
-      display: none;
-    }
-
-    .desktop-only {
-      display: none;
-    }
-
     .logo-text {
       font-size: 18px;
       letter-spacing: 1px;
@@ -246,6 +249,20 @@
       min-width: 260px;
       right: -8px;
     }
+  }
+
+  // Règles pour afficher/masquer les éléments mobile/desktop
+  .mobile-menu-button {
+    display: block !important;
+    color: white;
+  }
+
+  .desktop-nav {
+    display: none;
+  }
+
+  .desktop-only {
+    display: none;
   }
 }
 
