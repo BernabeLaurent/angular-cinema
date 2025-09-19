@@ -2,8 +2,8 @@
   <mat-card class="auth-card">
     <div class="dialog-header">
       <mat-card-title>Connexion</mat-card-title>
-      <button *ngIf="isDialog" mat-icon-button (click)="closeDialog()" class="close-button">
-        <mat-icon>close</mat-icon>
+      <button *ngIf="isDialog" mat-icon-button (click)="closeDialog()" class="close-button" aria-label="Fermer la fenêtre de connexion">
+        <mat-icon aria-hidden="true">close</mat-icon>
       </button>
     </div>
 
@@ -11,15 +11,20 @@
       <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Email</mat-label>
-          <input matInput formControlName="email" required />
+          <input matInput formControlName="email" required type="email" autocomplete="email" aria-describedby="email-hint" />
+          <mat-hint id="email-hint">Votre adresse email de connexion</mat-hint>
+          <mat-error *ngIf="loginForm.get('email')?.hasError('required')">L'email est obligatoire</mat-error>
+          <mat-error *ngIf="loginForm.get('email')?.hasError('email')">Format d'email invalide</mat-error>
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Mot de passe</mat-label>
-          <input matInput formControlName="password" type="password" required />
+          <input matInput formControlName="password" type="password" required autocomplete="current-password" aria-describedby="password-hint" />
+          <mat-hint id="password-hint">Votre mot de passe</mat-hint>
+          <mat-error *ngIf="loginForm.get('password')?.hasError('required')">Le mot de passe est obligatoire</mat-error>
         </mat-form-field>
 
-        <div *ngIf="error" class="error">{{ error }}</div>
+        <div *ngIf="error" class="error" role="alert" aria-live="polite">{{ error }}</div>
 
         <button mat-raised-button color="primary" class="full-width" type="submit" [disabled]="loginForm.invalid">
           Se connecter

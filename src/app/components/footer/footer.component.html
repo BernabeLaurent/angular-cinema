@@ -3,7 +3,7 @@
     <div class="footer-top">
       <div class="footer-section">
         <div class="logo-section">
-          <img src="assets/images/logo.svg" alt="Tchitcha" class="footer-logo" height="40">
+          <img src="assets/images/logo.svg" alt="Logo du cinéma Tchitcha" class="footer-logo" height="40">
           <span class="logo-text">TCHITCHA</span>
           <p class="company-description">
             Depuis plus d'un siècle, Tchitcha vous offre les meilleures expériences cinématographiques 
@@ -14,11 +14,13 @@
 
       <div class="footer-section">
         <h3>Liens rapides</h3>
-        <ul class="footer-links">
-          <li *ngFor="let link of quickLinks">
-            <a [routerLink]="link.route">{{ link.name }}</a>
-          </li>
-        </ul>
+        <nav aria-label="Liens rapides">
+          <ul class="footer-links">
+            <li *ngFor="let link of quickLinks">
+              <a [routerLink]="link.route">{{ link.name }}</a>
+            </li>
+          </ul>
+        </nav>
       </div>
 
     </div>

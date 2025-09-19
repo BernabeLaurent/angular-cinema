@@ -1,15 +1,15 @@
 <mat-card class="movie-card">
   <div class="card-image-container">
-    <img [src]="movie.poster" [alt]="movie.title" class="movie-poster" 
+    <img [src]="movie.poster" [alt]="'Affiche du film ' + movie.title" class="movie-poster"
          (error)="onImageError($event)" (load)="onImageLoad($event)">
     <div class="card-overlay">
       <div class="rating">
-        <mat-icon class="star">star</mat-icon>
+        <mat-icon class="star" aria-hidden="true">star</mat-icon>
         <span>{{ movie.rating }}/5</span>
       </div>
       <div class="overlay-buttons">
-        <button mat-fab class="play-btn" (click)="onViewDetails()">
-          <mat-icon>play_arrow</mat-icon>
+        <button mat-fab class="play-btn" (click)="onViewDetails()" aria-label="Voir les détails du film">
+          <mat-icon aria-hidden="true">play_arrow</mat-icon>
         </button>
       </div>
     </div>

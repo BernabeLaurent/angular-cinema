@@ -1,50 +1,50 @@
 <!-- Barre de navigation -->
-<mat-toolbar color="primary" class="transparent-toolbar">
+<mat-toolbar color="primary" class="transparent-toolbar" role="banner">
   <div class="left-section">
     <div class="logo-container" routerLink="/">
-      <img src="assets/images/logo.svg" alt="Tchitcha" class="logo" height="32">
+      <img src="assets/images/logo.svg" alt="Logo du cinéma Tchitcha" class="logo" height="32">
       <span class="logo-text">TCHITCHA</span>
     </div>
 
     <!-- Boutons desktop -->
-    <div class="desktop-nav">
-      <button mat-icon-button (click)="openSearchModal()">
-        <mat-icon>search</mat-icon>
+    <nav class="desktop-nav" aria-label="Menu principal">
+      <button mat-icon-button (click)="openSearchModal()" aria-label="Ouvrir la recherche">
+        <mat-icon aria-hidden="true">search</mat-icon>
       </button>
       <button mat-button routerLink="/movies">Films</button>
       <button mat-button routerLink="/booking">Réserver</button>
-    </div>
-    
+    </nav>
+
     <!-- Menu Administration pour les admins et workers -->
     <ng-container *ngIf="canAccessAdmin$ | async">
-      <button mat-button [matMenuTriggerFor]="adminMenu" class="admin-menu-trigger desktop-only">
-        <mat-icon>admin_panel_settings</mat-icon>
+      <button mat-button [matMenuTriggerFor]="adminMenu" class="admin-menu-trigger desktop-only" aria-haspopup="true" aria-expanded="false" aria-label="Menu administration">
+        <mat-icon aria-hidden="true">admin_panel_settings</mat-icon>
         Administration
-        <mat-icon>arrow_drop_down</mat-icon>
+        <mat-icon aria-hidden="true">arrow_drop_down</mat-icon>
       </button>
-      <mat-menu #adminMenu="matMenu" class="admin-dropdown-menu">
-        <button mat-menu-item routerLink="/admin/dashboard">
-          <mat-icon>dashboard</mat-icon>
+      <mat-menu #adminMenu="matMenu" class="admin-dropdown-menu" role="menu">
+        <button mat-menu-item routerLink="/admin/dashboard" role="menuitem">
+          <mat-icon aria-hidden="true">dashboard</mat-icon>
           Tableau de bord
         </button>
         <!-- Gestion des utilisateurs - ADMIN uniquement -->
-        <button mat-menu-item routerLink="/admin/users" *ngIf="isAdmin$ | async">
-          <mat-icon>people</mat-icon>
+        <button mat-menu-item routerLink="/admin/users" *ngIf="isAdmin$ | async" role="menuitem">
+          <mat-icon aria-hidden="true">people</mat-icon>
           Gestion des utilisateurs
         </button>
         <!-- Gestion des cinémas - ADMIN uniquement -->
-        <button mat-menu-item routerLink="/admin/theaters" *ngIf="isAdmin$ | async">
-          <mat-icon>location_city</mat-icon>
+        <button mat-menu-item routerLink="/admin/theaters" *ngIf="isAdmin$ | async" role="menuitem">
+          <mat-icon aria-hidden="true">location_city</mat-icon>
           Gestion des cinémas
         </button>
         <!-- Gestion des films - ADMIN et WORKER -->
-        <button mat-menu-item routerLink="/admin/movies">
-          <mat-icon>movie</mat-icon>
+        <button mat-menu-item routerLink="/admin/movies" role="menuitem">
+          <mat-icon aria-hidden="true">movie</mat-icon>
           Gestion des films
         </button>
         <!-- Gestion des réservations - ADMIN et WORKER -->
-        <button mat-menu-item routerLink="/admin/bookings">
-          <mat-icon>event_seat</mat-icon>
+        <button mat-menu-item routerLink="/admin/bookings" role="menuitem">
+          <mat-icon aria-hidden="true">event_seat</mat-icon>
           Gestion des réservations
         </button>
       </mat-menu>
@@ -56,14 +56,14 @@
   <div class="mobile-menu-overlay" *ngIf="isMobileMenuOpen" (click)="closeMobileMenu()"></div>
 
   <!-- Menu mobile -->
-  <div class="mobile-menu" *ngIf="isMobileMenuOpen">
+  <nav class="mobile-menu" *ngIf="isMobileMenuOpen" role="navigation" aria-label="Menu mobile">
     <div class="mobile-menu-content">
       <button mat-button routerLink="/movies" (click)="closeMobileMenu()">
-        <mat-icon>movie</mat-icon>
+        <mat-icon aria-hidden="true">movie</mat-icon>
         Films
       </button>
       <button mat-button routerLink="/booking" (click)="closeMobileMenu()">
-        <mat-icon>event_seat</mat-icon>
+        <mat-icon aria-hidden="true">event_seat</mat-icon>
         Réserver
       </button>
 
@@ -73,29 +73,29 @@
         <div class="admin-section">
           <p class="section-title">Administration</p>
           <button mat-button routerLink="/admin/dashboard" (click)="closeMobileMenu()">
-            <mat-icon>dashboard</mat-icon>
+            <mat-icon aria-hidden="true">dashboard</mat-icon>
             Tableau de bord
           </button>
           <button mat-button routerLink="/admin/users" *ngIf="isAdmin$ | async" (click)="closeMobileMenu()">
-            <mat-icon>people</mat-icon>
+            <mat-icon aria-hidden="true">people</mat-icon>
             Gestion des utilisateurs
           </button>
           <button mat-button routerLink="/admin/theaters" *ngIf="isAdmin$ | async" (click)="closeMobileMenu()">
-            <mat-icon>location_city</mat-icon>
+            <mat-icon aria-hidden="true">location_city</mat-icon>
             Gestion des cinémas
           </button>
           <button mat-button routerLink="/admin/movies" (click)="closeMobileMenu()">
-            <mat-icon>movie</mat-icon>
+            <mat-icon aria-hidden="true">movie</mat-icon>
             Gestion des films
           </button>
           <button mat-button routerLink="/admin/bookings" (click)="closeMobileMenu()">
-            <mat-icon>event_seat</mat-icon>
+            <mat-icon aria-hidden="true">event_seat</mat-icon>
             Gestion des réservations
           </button>
         </div>
       </ng-container>
     </div>
-  </div>
+  </nav>
   
   <!-- Menu utilisateur -->
   <div class="user-menu-container">
@@ -111,13 +111,13 @@
     
     <!-- Si utilisateur connecté -->
     <ng-container *ngIf="isLoggedIn$ | async">
-      <button #userMenuButton mat-icon-button (click)="toggleUserMenu()" class="user-avatar">
+      <button #userMenuButton mat-icon-button (click)="toggleUserMenu()" class="user-avatar" aria-haspopup="true" [attr.aria-expanded]="isUserMenuOpen" aria-label="Menu utilisateur">
         <div class="avatar-circle">
           {{ userInitials$ | async }}
         </div>
       </button>
       
-      <div class="user-menu" *ngIf="isUserMenuOpen">
+      <div class="user-menu" *ngIf="isUserMenuOpen" role="menu">
         <div class="user-menu-content">
           <div class="user-info" *ngIf="currentUser$ | async as user">
             <div class="user-details">
@@ -129,23 +129,23 @@
           <mat-divider></mat-divider>
           
           <div class="menu-section">
-            <button mat-button class="full-width" routerLink="/profile" (click)="closeUserMenu()">
-              <mat-icon>person</mat-icon>
+            <button mat-button class="full-width" routerLink="/profile" (click)="closeUserMenu()" role="menuitem">
+              <mat-icon aria-hidden="true">person</mat-icon>
               Mon profil
             </button>
-            <button mat-button class="full-width" routerLink="/my-bookings" (click)="closeUserMenu()">
-              <mat-icon>event_seat</mat-icon>
+            <button mat-button class="full-width" routerLink="/my-bookings" (click)="closeUserMenu()" role="menuitem">
+              <mat-icon aria-hidden="true">event_seat</mat-icon>
               Mes réservations
             </button>
             
             <!-- Liens spécifiques aux admins -->
             <ng-container *ngIf="isAdmin$ | async">
-              <button mat-button class="full-width" routerLink="/admin/users" (click)="closeUserMenu()">
-                <mat-icon>people</mat-icon>
+              <button mat-button class="full-width" routerLink="/admin/users" (click)="closeUserMenu()" role="menuitem">
+                <mat-icon aria-hidden="true">people</mat-icon>
                 Gestion utilisateurs
               </button>
-              <button mat-button class="full-width" routerLink="/admin/movies" (click)="closeUserMenu()">
-                <mat-icon>theaters</mat-icon>
+              <button mat-button class="full-width" routerLink="/admin/movies" (click)="closeUserMenu()" role="menuitem">
+                <mat-icon aria-hidden="true">theaters</mat-icon>
                 Gestion films
               </button>
             </ng-container>
@@ -154,8 +154,8 @@
           <mat-divider></mat-divider>
           
           <div class="menu-section">
-            <button mat-button class="full-width logout-btn" (click)="logout()">
-              <mat-icon>logout</mat-icon>
+            <button mat-button class="full-width logout-btn" (click)="logout()" role="menuitem">
+              <mat-icon aria-hidden="true">logout</mat-icon>
               Se déconnecter
             </button>
           </div>
@@ -167,13 +167,13 @@
   <!-- Ligne mobile pour les boutons hamburger et recherche -->
   <div class="mobile-controls">
     <!-- Menu burger pour mobile -->
-    <button mat-icon-button class="mobile-menu-button" (click)="toggleMobileMenu()">
-      <mat-icon>{{ isMobileMenuOpen ? 'close' : 'menu' }}</mat-icon>
+    <button mat-icon-button class="mobile-menu-button" (click)="toggleMobileMenu()" aria-label="{{ isMobileMenuOpen ? 'Fermer le menu' : 'Ouvrir le menu' }}">
+      <mat-icon aria-hidden="true">{{ isMobileMenuOpen ? 'close' : 'menu' }}</mat-icon>
     </button>
 
     <!-- Bouton recherche mobile (toujours visible) -->
-    <button mat-icon-button class="mobile-search-button" (click)="openSearchModal()">
-      <mat-icon>search</mat-icon>
+    <button mat-icon-button class="mobile-search-button" (click)="openSearchModal()" aria-label="Rechercher">
+      <mat-icon aria-hidden="true">search</mat-icon>
     </button>
   </div>
 </mat-toolbar>

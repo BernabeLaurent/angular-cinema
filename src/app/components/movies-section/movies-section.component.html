@@ -1,46 +1,46 @@
 <div class="movies-section">
   <!-- Section À l'affiche -->
-  <div class="section">
+  <section class="section" aria-labelledby="now-showing-title">
     <div class="section-header">
-      <h2>À L'AFFICHE</h2>
+      <h2 id="now-showing-title">À L'AFFICHE</h2>
       <div class="nav-buttons">
-        <button mat-icon-button class="nav-btn" (click)="scrollMovies('now-showing', 'left')">
-          <mat-icon>chevron_left</mat-icon>
+        <button mat-icon-button class="nav-btn" (click)="scrollMovies('now-showing', 'left')" aria-label="Faire défiler les films à l'affiche vers la gauche">
+          <mat-icon aria-hidden="true">chevron_left</mat-icon>
         </button>
-        <button mat-icon-button class="nav-btn" (click)="scrollMovies('now-showing', 'right')">
-          <mat-icon>chevron_right</mat-icon>
+        <button mat-icon-button class="nav-btn" (click)="scrollMovies('now-showing', 'right')" aria-label="Faire défiler les films à l'affiche vers la droite">
+          <mat-icon aria-hidden="true">chevron_right</mat-icon>
         </button>
       </div>
     </div>
     
-    <div class="movies-container" id="now-showing">
+    <div class="movies-container" id="now-showing" role="region" aria-label="Films actuellement à l'affiche">
       <app-movie-card 
         *ngFor="let movie of nowShowingMovies" 
         [movie]="movie">
       </app-movie-card>
     </div>
-  </div>
+  </section>
 
   <!-- Section Prochainement -->
-  <div class="section">
+  <section class="section" aria-labelledby="coming-soon-title">
     <div class="section-header">
-      <h2>PROCHAINEMENT</h2>
+      <h2 id="coming-soon-title">PROCHAINEMENT</h2>
       <div class="nav-buttons">
-        <button mat-icon-button class="nav-btn" (click)="scrollMovies('coming-soon', 'left')" title="Scroll à gauche">
-          <mat-icon>chevron_left</mat-icon>
+        <button mat-icon-button class="nav-btn" (click)="scrollMovies('coming-soon', 'left')" aria-label="Faire défiler les films à venir vers la gauche">
+          <mat-icon aria-hidden="true">chevron_left</mat-icon>
         </button>
-        <button mat-icon-button class="nav-btn" (click)="loadMoreUpcomingMovies()" [disabled]="loadingMoreMovies" title="Charger plus de films">
-          <mat-icon *ngIf="!loadingMoreMovies">chevron_right</mat-icon>
-          <mat-icon *ngIf="loadingMoreMovies" class="spinning">refresh</mat-icon>
+        <button mat-icon-button class="nav-btn" (click)="loadMoreUpcomingMovies()" [disabled]="loadingMoreMovies" [attr.aria-label]="loadingMoreMovies ? 'Chargement des films en cours' : 'Charger plus de films à venir'">
+          <mat-icon *ngIf="!loadingMoreMovies" aria-hidden="true">chevron_right</mat-icon>
+          <mat-icon *ngIf="loadingMoreMovies" class="spinning" aria-hidden="true">refresh</mat-icon>
         </button>
       </div>
     </div>
     
-    <div class="movies-container" id="coming-soon">
+    <div class="movies-container" id="coming-soon" role="region" aria-label="Films à venir prochainement">
       <app-movie-card 
         *ngFor="let movie of comingSoonMovies" 
         [movie]="movie">
       </app-movie-card>
     </div>
-  </div>
+  </section>
 </div>

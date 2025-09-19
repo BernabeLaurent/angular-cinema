@@ -1,20 +1,21 @@
 <div class="search-modal-container">
   <div class="search-header">
     <h2>Rechercher un film</h2>
-    <button mat-icon-button (click)="closeModal()" class="close-btn">
-      <mat-icon>close</mat-icon>
+    <button mat-icon-button (click)="closeModal()" class="close-btn" aria-label="Fermer la recherche">
+      <mat-icon aria-hidden="true">close</mat-icon>
     </button>
   </div>
 
   <div class="search-input-container">
     <mat-form-field appearance="outline" class="search-field">
       <mat-label>Rechercher parmi les films disponibles...</mat-label>
-      <input matInput 
-             [(ngModel)]="searchQuery" 
-             (input)="onSearchChange()" 
-             placeholder="Titre, description..." 
-             autocomplete="off">
-      <mat-icon matSuffix>search</mat-icon>
+      <input matInput
+             [(ngModel)]="searchQuery"
+             (input)="onSearchChange()"
+             placeholder="Titre, description..."
+             autocomplete="off"
+             aria-label="Rechercher un film">
+      <mat-icon matSuffix aria-hidden="true">search</mat-icon>
     </mat-form-field>
   </div>
 
@@ -24,25 +25,28 @@
       <p>Chargement des films disponibles...</p>
     </div>
 
-    <div *ngIf="!isLoading && filteredMovies.length === 0 && searchQuery" class="no-results">
-      <mat-icon>search_off</mat-icon>
+    <div *ngIf="!isLoading && filteredMovies.length === 0 && searchQuery" class="no-results" role="status" aria-live="polite">
+      <mat-icon aria-hidden="true">search_off</mat-icon>
       <p>Aucun film trouvé pour "{{ searchQuery }}"</p>
       <small>Essayez avec un autre terme de recherche</small>
     </div>
 
-    <div *ngIf="!isLoading && filteredMovies.length === 0 && !searchQuery" class="no-movies">
-      <mat-icon>movie</mat-icon>
+    <div *ngIf="!isLoading && filteredMovies.length === 0 && !searchQuery" class="no-movies" role="status">
+      <mat-icon aria-hidden="true">movie</mat-icon>
       <p>Aucun film disponible actuellement</p>
       <small>Revenez plus tard pour voir les nouveaux films</small>
     </div>
 
     <div class="movies-grid" *ngIf="!isLoading && filteredMovies.length > 0">
-      <mat-card class="movie-card" 
-                *ngFor="let movie of filteredMovies" 
-                (click)="selectMovie(movie)">
+      <mat-card class="movie-card"
+                *ngFor="let movie of filteredMovies"
+                (click)="selectMovie(movie)"
+                role="button"
+                tabindex="0"
+                [attr.aria-label]="'Sélectionner le film ' + movie.title">
         <div class="movie-poster">
-          <img [src]="getPosterUrl(movie)" 
-               [alt]="movie.title" 
+          <img [src]="getPosterUrl(movie)"
+               [alt]="'Affiche du film ' + movie.title"
                loading="lazy">
         </div>
         <mat-card-content class="movie-info">
@@ -64,8 +68,8 @@
   </div>
 
   <div class="search-info" *ngIf="!isLoading && availableMovies.length > 0">
-    <small>
-      <mat-icon>info</mat-icon>
+    <small role="status" aria-live="polite">
+      <mat-icon aria-hidden="true">info</mat-icon>
       {{ filteredMovies.length }} film(s) sur {{ availableMovies.length }} disponible(s) en séance
     </small>
   </div>

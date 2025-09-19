@@ -24,7 +24,7 @@
         <span class="genre" *ngIf="featuredMovie.genre">{{ featuredMovie.genre }}</span>
         <span class="separator" *ngIf="featuredMovie.genre && featuredMovie.rating">•</span>
         <div class="rating" *ngIf="featuredMovie.rating">
-          <mat-icon class="star">star</mat-icon>
+          <mat-icon class="star" aria-hidden="true">star</mat-icon>
           <span>{{ featuredMovie.rating }}/5</span>
         </div>
       </div>

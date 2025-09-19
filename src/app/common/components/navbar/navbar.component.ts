@@ -66,10 +66,18 @@ export class NavbarComponent {
 
   toggleUserMenu() {
     this.isUserMenuOpen = !this.isUserMenuOpen;
+    // Update aria-expanded attribute
+    if (this.userMenuButton) {
+      this.userMenuButton.nativeElement.setAttribute('aria-expanded', this.isUserMenuOpen.toString());
+    }
   }
 
   closeUserMenu() {
     this.isUserMenuOpen = false;
+    // Update aria-expanded attribute
+    if (this.userMenuButton) {
+      this.userMenuButton.nativeElement.setAttribute('aria-expanded', 'false');
+    }
   }
 
   toggleMobileMenu() {

@@ -2,8 +2,8 @@
   <mat-card class="auth-card">
     <div class="dialog-header">
       <mat-card-title>Créer mon compte</mat-card-title>
-      <button mat-icon-button (click)="closeDialog()" class="close-button">
-        <mat-icon>close</mat-icon>
+      <button mat-icon-button (click)="closeDialog()" class="close-button" aria-label="Fermer la fenêtre d'inscription">
+        <mat-icon aria-hidden="true">close</mat-icon>
       </button>
     </div>
 
@@ -11,23 +11,30 @@
       <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
         <mat-form-field appearance="outline">
           <mat-label>Prénom</mat-label>
-          <input matInput formControlName="firstName" required>
+          <input matInput formControlName="firstName" required autocomplete="given-name" aria-describedby="firstname-hint">
+          <mat-hint id="firstname-hint">Votre prénom</mat-hint>
+          <mat-error *ngIf="registerForm.get('firstName')?.hasError('required')">Le prénom est obligatoire</mat-error>
         </mat-form-field>
 
         <mat-form-field appearance="outline">
           <mat-label>Nom</mat-label>
-          <input matInput formControlName="lastName" required>
+          <input matInput formControlName="lastName" required autocomplete="family-name" aria-describedby="lastname-hint">
+          <mat-hint id="lastname-hint">Votre nom de famille</mat-hint>
+          <mat-error *ngIf="registerForm.get('lastName')?.hasError('required')">Le nom est obligatoire</mat-error>
         </mat-form-field>
 
         <mat-form-field appearance="outline">
           <mat-label>Email</mat-label>
-          <input matInput type="email" formControlName="email" required>
+          <input matInput type="email" formControlName="email" required autocomplete="email" aria-describedby="email-hint">
+          <mat-hint id="email-hint">Votre adresse email (servira pour la connexion)</mat-hint>
+          <mat-error *ngIf="registerForm.get('email')?.hasError('required')">L'email est obligatoire</mat-error>
+          <mat-error *ngIf="registerForm.get('email')?.hasError('email')">Format d'email invalide</mat-error>
         </mat-form-field>
 
         <mat-form-field appearance="outline">
           <mat-label>Mot de passe</mat-label>
-          <input matInput type="password" formControlName="password" required>
-          <mat-hint>Minimum 8 caractères avec au moins 1 lettre, 1 chiffre et 1 caractère spécial</mat-hint>
+          <input matInput type="password" formControlName="password" required autocomplete="new-password" aria-describedby="password-requirements">
+          <mat-hint id="password-requirements">Minimum 8 caractères avec au moins 1 lettre, 1 chiffre et 1 caractère spécial</mat-hint>
           <mat-error *ngIf="registerForm.get('password')?.hasError('required')">
             Le mot de passe est obligatoire
           </mat-error>
@@ -41,41 +48,47 @@
 
         <mat-form-field appearance="outline">
           <mat-label>Téléphone</mat-label>
-          <input matInput formControlName="phoneNumber">
+          <input matInput formControlName="phoneNumber" type="tel" autocomplete="tel" aria-describedby="phone-hint">
+          <mat-hint id="phone-hint">Numéro de téléphone (optionnel)</mat-hint>
         </mat-form-field>
 
         <mat-form-field appearance="outline">
           <mat-label>Adresse</mat-label>
-          <input matInput formControlName="address">
+          <input matInput formControlName="address" autocomplete="street-address" aria-describedby="address-hint">
+          <mat-hint id="address-hint">Votre adresse postale (optionnel)</mat-hint>
         </mat-form-field>
 
         <mat-form-field appearance="outline">
           <mat-label>Ville</mat-label>
-          <input matInput formControlName="city">
+          <input matInput formControlName="city" autocomplete="address-level2" aria-describedby="city-hint">
+          <mat-hint id="city-hint">Votre ville (optionnel)</mat-hint>
         </mat-form-field>
 
         <mat-form-field appearance="outline">
           <mat-label>Code postal</mat-label>
-          <input matInput formControlName="zipCode">
+          <input matInput formControlName="zipCode" autocomplete="postal-code" aria-describedby="zipcode-hint">
+          <mat-hint id="zipcode-hint">Code postal (optionnel)</mat-hint>
         </mat-form-field>
 
         <mat-form-field appearance="outline">
           <mat-label>Pays</mat-label>
-          <mat-select formControlName="codeCountry">
+          <mat-select formControlName="codeCountry" aria-describedby="country-hint">
             <mat-option *ngFor="let country of countries" [value]="country.value">
               {{ country.label }}
             </mat-option>
           </mat-select>
+          <mat-hint id="country-hint">Sélectionnez votre pays (optionnel)</mat-hint>
         </mat-form-field>
 
 
-        <mat-checkbox formControlName="hasDisability">Je suis une personne en situation de handicap</mat-checkbox>
+        <mat-checkbox formControlName="hasDisability" aria-describedby="disability-hint">Je suis une personne en situation de handicap</mat-checkbox>
+        <div id="disability-hint" class="checkbox-hint">Cette information nous aide à améliorer nos services d'accessibilité</div>
 
         <div class="actions">
           <button mat-raised-button color="primary" type="submit" [disabled]="registerForm.invalid">Créer un compte</button>
         </div>
 
-        <mat-error *ngIf="error">{{ error }}</mat-error>
+        <mat-error *ngIf="error" role="alert" aria-live="polite">{{ error }}</mat-error>
       </form>
     </mat-card-content>
   </mat-card>
