@@ -131,6 +131,21 @@
   color: white !important;
 }
 
+.mobile-controls {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.9);
+  backdrop-filter: blur(10px);
+  padding: 8px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  justify-content: center;
+  gap: 24px;
+  z-index: 999;
+}
+
 .mobile-menu-overlay {
   position: fixed;
   top: 0;
@@ -153,10 +168,10 @@
 
 .mobile-menu {
   position: absolute;
-  top: 100%;
+  top: calc(100% + 64px); /* 64px = hauteur navbar + ligne mobile */
   left: 0;
   right: 0;
-  z-index: 999;
+  z-index: 998;
   background: white;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   border-radius: 0 0 12px 12px;
@@ -217,6 +232,7 @@
   .transparent-toolbar {
     padding: 0 12px;
     height: 56px;
+    position: relative;
 
     .left-section {
       gap: 8px;
@@ -260,8 +276,12 @@
     }
   }
 
-  // Règles pour afficher/masquer les éléments mobile/desktop
-  .transparent-toolbar .left-section .mobile-menu-button {
+  // Afficher la ligne mobile des contrôles
+  .mobile-controls {
+    display: flex !important;
+  }
+
+  .mobile-controls .mobile-menu-button {
     display: flex !important;
     color: white !important;
     background: transparent !important;
@@ -274,7 +294,7 @@
     visibility: visible !important;
   }
 
-  .transparent-toolbar .left-section .mobile-search-button {
+  .mobile-controls .mobile-search-button {
     display: flex !important;
     color: white !important;
     background: transparent !important;

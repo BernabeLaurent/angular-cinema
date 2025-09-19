@@ -5,16 +5,6 @@
       <img src="assets/images/logo.svg" alt="Tchitcha" class="logo" height="32">
       <span class="logo-text">TCHITCHA</span>
     </div>
-    <!-- Menu burger pour mobile -->
-    <button mat-icon-button class="mobile-menu-button hamburger-debug" (click)="toggleMobileMenu()"
-            style="display: block !important; background: red !important; color: white !important; z-index: 9999 !important; position: relative !important;">
-      <mat-icon>menu</mat-icon>
-    </button>
-
-    <!-- Bouton recherche mobile (toujours visible) -->
-    <button mat-icon-button class="mobile-search-button" (click)="openSearchModal()">
-      <mat-icon>search</mat-icon>
-    </button>
 
     <!-- Boutons desktop -->
     <div class="desktop-nav">
@@ -172,5 +162,18 @@
         </div>
       </div>
     </ng-container>
+  </div>
+
+  <!-- Ligne mobile pour les boutons hamburger et recherche -->
+  <div class="mobile-controls">
+    <!-- Menu burger pour mobile -->
+    <button mat-icon-button class="mobile-menu-button" (click)="toggleMobileMenu()">
+      <mat-icon>{{ isMobileMenuOpen ? 'close' : 'menu' }}</mat-icon>
+    </button>
+
+    <!-- Bouton recherche mobile (toujours visible) -->
+    <button mat-icon-button class="mobile-search-button" (click)="openSearchModal()">
+      <mat-icon>search</mat-icon>
+    </button>
   </div>
 </mat-toolbar>
