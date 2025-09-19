@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef } from '@angular/core';
+import { Component, ViewChild, ElementRef, OnDestroy, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -6,6 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatMenuModule } from '@angular/material/menu';
+import { Subscription, fromEvent } from 'rxjs';
 
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { Overlay } from '@angular/cdk/overlay';
@@ -35,7 +36,7 @@ import { RoleUser } from '../../../users/enums/roles-users.enum';
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss']
 })
-export class NavbarComponent {
+export class NavbarComponent implements OnDestroy {
   isUserMenuOpen = false;
   isMobileMenuOpen = false;
   
@@ -48,6 +49,8 @@ export class NavbarComponent {
   userInitials$: Observable<string>;
 
   @ViewChild('userMenuButton') userMenuButton!: ElementRef<HTMLButtonElement>;
+
+  private keydownSubscription: Subscription = new Subscription();
 
   constructor(
     private dialog: MatDialog, 
@@ -62,6 +65,52 @@ export class NavbarComponent {
     this.isWorker$ = this.userRoleService.isWorker();
     this.canAccessAdmin$ = this.userRoleService.canAccessAdmin();
     this.userInitials$ = this.userRoleService.getUserInitials();
+
+    // Gestion des touches pour la navigation clavier
+    this.setupKeyboardNavigation();
+  }
+
+  ngOnDestroy() {
+    this.keydownSubscription.unsubscribe();
+  }
+
+  private setupKeyboardNavigation() {
+    this.keydownSubscription = fromEvent<KeyboardEvent>(document, 'keydown')
+      .subscribe(event => {
+        if (this.isUserMenuOpen || this.isMobileMenuOpen) {
+          this.handleMenuKeydown(event);
+        }
+      });
+  }
+
+  private handleMenuKeydown(event: KeyboardEvent) {
+    switch (event.key) {
+      case 'Escape':
+        event.preventDefault();
+        this.closeAllMenus();
+        break;
+      case 'Tab':
+        // Allow natural tab navigation but close menus when tabbing away
+        if (!event.shiftKey) {
+          // Closing menus when Tab is pressed (focus moves away)
+          setTimeout(() => this.closeAllMenus(), 100);
+        }
+        break;
+    }
+  }
+
+  private closeAllMenus() {
+    this.closeUserMenu();
+    this.closeMobileMenu();
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: Event) {
+    // Fermer les menus si on clique en dehors
+    const target = event.target as HTMLElement;
+    if (!target.closest('.user-menu-container') && !target.closest('.mobile-menu')) {
+      this.closeAllMenus();
+    }
   }
 
   toggleUserMenu() {
@@ -82,6 +131,10 @@ export class NavbarComponent {
 
   toggleMobileMenu() {
     this.isMobileMenuOpen = !this.isMobileMenuOpen;
+    // Fermer le menu utilisateur si ouvert
+    if (this.isMobileMenuOpen) {
+      this.closeUserMenu();
+    }
   }
 
   closeMobileMenu() {

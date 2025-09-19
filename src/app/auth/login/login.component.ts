@@ -1,7 +1,8 @@
-import {Component, OnInit, Optional, Inject} from '@angular/core';
+import {Component, OnInit, Optional, Inject, OnDestroy, AfterViewInit, ViewChild, ElementRef} from '@angular/core';
 import {FormBuilder, FormGroup, Validators, ReactiveFormsModule} from '@angular/forms';
 import {Router, ActivatedRoute} from '@angular/router';
 import {AuthService} from '../auth.service';
+import {A11yModule, FocusTrap, FocusTrapFactory} from '@angular/cdk/a11y';
 
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
@@ -10,6 +11,7 @@ import {MatCardModule} from '@angular/material/card';
 import {NgIf} from '@angular/common';
 import {MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {MatIcon} from '@angular/material/icon';
+import {Subscription, fromEvent} from 'rxjs';
 
 
 @Component({
@@ -23,21 +25,27 @@ import {MatIcon} from '@angular/material/icon';
     MatCardModule,
     NgIf,
     MatIcon,
+    A11yModule,
   ],
   templateUrl: './login.component.html',
   styleUrls: ['../auth.scss']
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, OnDestroy, AfterViewInit {
   loginForm: FormGroup;
   error: string | null = null;
   returnUrl: string = '/';
   isDialog: boolean = false;
+  private focusTrap: FocusTrap | null = null;
+  private keydownSubscription: Subscription = new Subscription();
+
+  @ViewChild('dialogContainer', {static: false}) dialogContainer!: ElementRef;
 
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
     private router: Router,
     private route: ActivatedRoute,
+    private focusTrapFactory: FocusTrapFactory,
     @Optional() public dialogRef?: MatDialogRef<LoginComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) public dialogData?: any
   ) {
@@ -55,6 +63,35 @@ export class LoginComponent implements OnInit {
     this.returnUrl = this.dialogData?.returnUrl ||
                      this.route.snapshot.queryParams['returnUrl'] || '/';
     console.log('Login component - returnUrl:', this.returnUrl);
+
+    // Gestion de la touche Escape pour fermer le dialog
+    if (this.isDialog) {
+      this.keydownSubscription = fromEvent<KeyboardEvent>(document, 'keydown')
+        .subscribe(event => {
+          if (event.key === 'Escape') {
+            event.preventDefault();
+            this.closeDialog();
+          }
+        });
+    }
+  }
+
+  ngAfterViewInit() {
+    // Configurer le focus trap pour les modales
+    if (this.isDialog && this.dialogContainer) {
+      setTimeout(() => {
+        this.focusTrap = this.focusTrapFactory.create(this.dialogContainer.nativeElement);
+        this.focusTrap.focusInitialElementWhenReady();
+      });
+    }
+  }
+
+  ngOnDestroy() {
+    // Nettoyer les subscriptions et le focus trap
+    this.keydownSubscription.unsubscribe();
+    if (this.focusTrap) {
+      this.focusTrap.destroy();
+    }
   }
 
   onSubmit() {
@@ -89,6 +126,12 @@ export class LoginComponent implements OnInit {
   }
 
   closeDialog(): void {
+    // Libérer le focus trap avant de fermer
+    if (this.focusTrap) {
+      this.focusTrap.destroy();
+      this.focusTrap = null;
+    }
+
     if (this.dialogRef) {
       this.dialogRef.close();
     } else {

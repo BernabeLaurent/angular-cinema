@@ -1,7 +1,9 @@
-import {Component} from '@angular/core';
+import {Component, OnDestroy, AfterViewInit, ViewChild, ElementRef} from '@angular/core';
 import {FormBuilder, Validators, FormGroup, ReactiveFormsModule, AbstractControl, ValidationErrors} from '@angular/forms';
 import {AuthService} from '../auth.service';
 import {Router} from '@angular/router';
+import {A11yModule, FocusTrap, FocusTrapFactory} from '@angular/cdk/a11y';
+import {Subscription, fromEvent} from 'rxjs';
 import {CreateUserDto} from '../../users/dtos/create-user.dto';
 import {RoleUser} from '../../users/enums/roles-users.enum';
 import {RegionsIso} from '../../common/enums/regions-iso.enum';
@@ -30,19 +32,30 @@ import {MatIconModule} from '@angular/material/icon';
     MatSelectModule,
     CommonModule,
     MatIconModule,
+    A11yModule,
   ],
   templateUrl: './register.component.html',
   styleUrls: ['../auth.scss']
 })
-export class RegisterComponent {
+export class RegisterComponent implements OnDestroy, AfterViewInit {
   registerForm: FormGroup;
   error: string | null = null;
   countries = [
     { value: RegionsIso.FRANCE, label: 'France' },
     { value: RegionsIso.USA, label: 'États-Unis' }
   ];
+  private focusTrap: FocusTrap | null = null;
+  private keydownSubscription: Subscription = new Subscription();
 
-  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router, public dialogRef: MatDialogRef<RegisterComponent>) {
+  @ViewChild('dialogContainer', {static: false}) dialogContainer!: ElementRef;
+
+  constructor(
+    private fb: FormBuilder,
+    private authService: AuthService,
+    private router: Router,
+    private focusTrapFactory: FocusTrapFactory,
+    public dialogRef: MatDialogRef<RegisterComponent>
+  ) {
     this.registerForm = this.fb.group({
       firstName: ['', [Validators.required, Validators.minLength(2)]],
       lastName: ['', [Validators.required, Validators.minLength(2)]],
@@ -56,6 +69,33 @@ export class RegisterComponent {
       codeCountry: [RegionsIso.FRANCE],
       phoneNumber: [''],
     });
+
+    // Gestion de la touche Escape pour fermer le dialog
+    this.keydownSubscription = fromEvent<KeyboardEvent>(document, 'keydown')
+      .subscribe(event => {
+        if (event.key === 'Escape') {
+          event.preventDefault();
+          this.closeDialog();
+        }
+      });
+  }
+
+  ngAfterViewInit() {
+    // Configurer le focus trap pour la modale
+    if (this.dialogContainer) {
+      setTimeout(() => {
+        this.focusTrap = this.focusTrapFactory.create(this.dialogContainer.nativeElement);
+        this.focusTrap.focusInitialElementWhenReady();
+      });
+    }
+  }
+
+  ngOnDestroy() {
+    // Nettoyer les subscriptions et le focus trap
+    this.keydownSubscription.unsubscribe();
+    if (this.focusTrap) {
+      this.focusTrap.destroy();
+    }
   }
 
   onSubmit() {
@@ -101,6 +141,11 @@ export class RegisterComponent {
   }
 
   closeDialog(): void {
+    // Libérer le focus trap avant de fermer
+    if (this.focusTrap) {
+      this.focusTrap.destroy();
+      this.focusTrap = null;
+    }
     this.dialogRef.close();
   }
 

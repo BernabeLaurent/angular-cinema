@@ -1,4 +1,4 @@
-import {Component, OnInit, OnDestroy} from '@angular/core';
+import {Component, OnInit, OnDestroy, AfterViewInit, ViewChild, ElementRef} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {MatDialogRef} from '@angular/material/dialog';
@@ -10,8 +10,9 @@ import {MatButtonModule} from '@angular/material/button';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {MatCardModule} from '@angular/material/card';
 import {Router} from '@angular/router';
-import {Subject, combineLatest} from 'rxjs';
+import {Subject, combineLatest, Subscription, fromEvent} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
+import {A11yModule, FocusTrap, FocusTrapFactory} from '@angular/cdk/a11y';
 
 import {Movie, SessionCinema} from '../../../models/session.model';
 import {SessionsService} from '../../../services/sessions.service';
@@ -29,33 +30,61 @@ import {MoviesService} from '../../../services/movies.service';
     MatIconModule,
     MatButtonModule,
     MatProgressSpinnerModule,
-    MatCardModule
+    MatCardModule,
+    A11yModule
   ],
   templateUrl: './search-modal.component.html',
   styleUrls: ['./search-modal.component.scss']
 })
-export class SearchModalComponent implements OnInit, OnDestroy {
+export class SearchModalComponent implements OnInit, OnDestroy, AfterViewInit {
   searchQuery = '';
   isLoading = false;
   availableMovies: Movie[] = [];
   filteredMovies: Movie[] = [];
   private destroy$ = new Subject<void>();
+  private focusTrap: FocusTrap | null = null;
+  private keydownSubscription: Subscription = new Subscription();
+
+  @ViewChild('searchContainer', {static: false}) searchContainer!: ElementRef;
 
   constructor(
     private dialogRef: MatDialogRef<SearchModalComponent>,
     private sessionsService: SessionsService,
     private moviesService: MoviesService,
-    private router: Router
+    private router: Router,
+    private focusTrapFactory: FocusTrapFactory
   ) {
+    // Gestion de la touche Escape pour fermer la modale
+    this.keydownSubscription = fromEvent<KeyboardEvent>(document, 'keydown')
+      .subscribe(event => {
+        if (event.key === 'Escape') {
+          event.preventDefault();
+          this.closeModal();
+        }
+      });
   }
 
   ngOnInit() {
     this.loadAvailableMovies();
   }
 
+  ngAfterViewInit() {
+    // Configurer le focus trap pour la modale de recherche
+    if (this.searchContainer) {
+      setTimeout(() => {
+        this.focusTrap = this.focusTrapFactory.create(this.searchContainer.nativeElement);
+        this.focusTrap.focusInitialElementWhenReady();
+      });
+    }
+  }
+
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
+    this.keydownSubscription.unsubscribe();
+    if (this.focusTrap) {
+      this.focusTrap.destroy();
+    }
   }
 
   private loadAvailableMovies() {
@@ -126,6 +155,11 @@ export class SearchModalComponent implements OnInit, OnDestroy {
   }
 
   closeModal() {
+    // Libérer le focus trap avant de fermer
+    if (this.focusTrap) {
+      this.focusTrap.destroy();
+      this.focusTrap = null;
+    }
     this.dialogRef.close();
   }
 
