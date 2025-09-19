@@ -3,13 +3,6 @@ import { AuthGuard } from './auth/auth.guard';
 import { AdminGuard } from './auth/admin.guard';
 import { AdminOnlyGuard } from './auth/admin-only.guard';
 
-// Composants d'administration
-import { AdminDashboardComponent } from './admin/components/admin-dashboard/admin-dashboard.component';
-import { UsersManagementComponent } from './admin/components/users-management/users-management.component';
-import { TheatersManagementComponent } from './admin/components/theaters-management/theaters-management.component';
-import { MoviesManagementComponent } from './admin/components/movies-management/movies-management.component';
-import { BookingsManagementComponent } from './admin/components/bookings-management/bookings-management.component';
-
 // Composants principaux
 import { HomeComponent } from './pages/home/home.component';
 
@@ -42,29 +35,34 @@ export const routes: Routes = [
       },
       {
         path: 'dashboard',
-        component: AdminDashboardComponent,
+        loadComponent: () => import('./admin/components/admin-dashboard/admin-dashboard.component')
+          .then(c => c.AdminDashboardComponent),
         title: 'Tableau de bord - Administration Tchitcha'
       },
       {
         path: 'users',
-        component: UsersManagementComponent,
+        loadComponent: () => import('./admin/components/users-management/users-management.component')
+          .then(c => c.UsersManagementComponent),
         canActivate: [AdminOnlyGuard],
         title: 'Gestion des utilisateurs - Administration Tchitcha'
       },
       {
         path: 'theaters',
-        component: TheatersManagementComponent,
+        loadComponent: () => import('./admin/components/theaters-management/theaters-management.component')
+          .then(c => c.TheatersManagementComponent),
         canActivate: [AdminOnlyGuard],
         title: 'Gestion des cinémas - Administration Tchitcha'
       },
       {
         path: 'movies',
-        component: MoviesManagementComponent,
+        loadComponent: () => import('./admin/components/movies-management/movies-management.component')
+          .then(c => c.MoviesManagementComponent),
         title: 'Gestion des films - Administration Tchitcha'
       },
       {
         path: 'bookings',
-        component: BookingsManagementComponent,
+        loadComponent: () => import('./admin/components/bookings-management/bookings-management.component')
+          .then(c => c.BookingsManagementComponent),
         title: 'Gestion des réservations - Administration Tchitcha'
       },
     ]
