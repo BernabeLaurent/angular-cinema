@@ -15,6 +15,8 @@
     display: flex;
     align-items: center;
     gap: 24px;
+    flex: 1;
+    overflow: hidden;
   }
 
   .logo-container {
@@ -115,6 +117,85 @@
 
   .user-menu-container {
     margin-right: 16px;
+  }
+}
+
+// Responsive styles for mobile
+@media (max-width: 768px) {
+  .transparent-toolbar {
+    padding: 0 16px;
+    height: 56px;
+
+    .left-section {
+      gap: 12px;
+
+      button:not(.logo-container) {
+        display: none;
+      }
+
+      .admin-menu-trigger {
+        display: none;
+      }
+    }
+
+    .logo-text {
+      font-size: 18px;
+      letter-spacing: 1px;
+    }
+
+    .logo {
+      height: 28px;
+    }
+
+    .user-menu-container {
+      margin-right: 8px;
+
+      .login-btn,
+      .register-btn {
+        padding: 8px 16px;
+        font-size: 0.9rem;
+      }
+
+      .register-btn {
+        padding: 8px 12px;
+      }
+    }
+
+    .user-menu {
+      min-width: 260px;
+      right: -8px;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .transparent-toolbar {
+    padding: 0 12px;
+
+    .logo-text {
+      font-size: 16px;
+      margin-left: 6px;
+    }
+
+    .logo {
+      height: 24px;
+    }
+
+    .user-menu-container {
+      .login-btn {
+        display: none;
+      }
+
+      .register-btn {
+        padding: 6px 10px;
+        font-size: 0.8rem;
+      }
+    }
+
+    .user-menu {
+      min-width: 240px;
+      right: -12px;
+    }
   }
 }
 

@@ -177,8 +177,82 @@
 
 @media (max-width: 768px) {
   .movie-card {
-    width: 100%;
-    max-width: 300px;
-    height: 560px;
+    width: 260px;
+    height: 520px;
+
+    .card-image-container {
+      height: 360px;
+    }
+
+    .card-content {
+      padding: 14px;
+
+      .movie-title {
+        font-size: 1.1rem;
+        -webkit-line-clamp: 2;
+      }
+
+      .movie-meta {
+        font-size: 0.85rem;
+      }
+
+      .release-date {
+        font-size: 0.8rem;
+      }
+    }
+
+    .card-actions {
+      padding: 14px;
+      gap: 6px;
+
+      .book-btn,
+      .details-btn {
+        font-size: 0.9rem;
+        padding: 8px 12px;
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .movie-card {
+    width: 240px;
+    height: 480px;
+
+    .card-image-container {
+      height: 320px;
+    }
+
+    .card-content {
+      padding: 12px;
+
+      .movie-title {
+        font-size: 1rem;
+        height: 2.4em;
+        -webkit-line-clamp: 2;
+      }
+
+      .movie-meta {
+        font-size: 0.8rem;
+        margin-bottom: 6px;
+      }
+
+      .release-date {
+        font-size: 0.75rem;
+      }
+    }
+
+    .card-actions {
+      padding: 12px;
+      flex-direction: column;
+      gap: 8px;
+
+      .book-btn,
+      .details-btn {
+        font-size: 0.85rem;
+        padding: 8px 16px;
+        width: 100%;
+      }
+    }
   }
 }

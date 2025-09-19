@@ -140,28 +140,92 @@
 @media (max-width: 768px) {
   .hero-section {
     padding: 0 24px;
-    height: 70vh;
-    min-height: 500px;
+    height: 60vh;
+    min-height: 450px;
+    margin-top: 56px; // Account for smaller navbar
 
     .hero-content {
       max-width: 100%;
 
       .movie-info {
         .movie-title {
-          font-size: 2.5rem;
+          font-size: 2.2rem;
+          line-height: 1.1;
         }
 
         .movie-subtitle {
-          font-size: 1.2rem;
+          font-size: 1.1rem;
+          margin-bottom: 20px;
+        }
+
+        .movie-meta {
+          flex-wrap: wrap;
+          gap: 8px;
+          font-size: 0.9rem;
+        }
+
+        .movie-description {
+          font-size: 1rem;
+          line-height: 1.5;
+          margin-bottom: 24px;
+          display: -webkit-box;
+          -webkit-line-clamp: 3;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
         }
 
         .action-buttons {
           flex-direction: column;
+          gap: 12px;
 
           .book-btn,
           .details-btn {
             width: 100%;
             justify-content: center;
+            padding: 12px 24px;
+            font-size: 0.95rem;
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-section {
+    padding: 0 16px;
+    height: 50vh;
+    min-height: 400px;
+
+    .hero-content {
+      .movie-info {
+        .movie-title {
+          font-size: 1.8rem;
+        }
+
+        .movie-subtitle {
+          font-size: 1rem;
+          margin-bottom: 16px;
+        }
+
+        .movie-meta {
+          font-size: 0.85rem;
+          margin-bottom: 16px;
+        }
+
+        .movie-description {
+          font-size: 0.9rem;
+          margin-bottom: 20px;
+          -webkit-line-clamp: 2;
+        }
+
+        .action-buttons {
+          gap: 10px;
+
+          .book-btn,
+          .details-btn {
+            padding: 10px 20px;
+            font-size: 0.9rem;
           }
         }
       }

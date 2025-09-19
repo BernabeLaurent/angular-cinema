@@ -158,6 +158,53 @@ body .cdk-overlay-container .cdk-overlay-pane.login-dialog-positioned {
   .cdk-overlay-pane.centered-dialog-container {
     width: 90vw !important;
     max-width: 400px !important;
+    top: 80px !important;
+  }
+
+  // Global font size adjustments
+  h1 {
+    font-size: 2.5rem;
+  }
+
+  h2 {
+    font-size: 2rem;
+  }
+
+  h3 {
+    font-size: 1.5rem;
+  }
+
+  body {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .cdk-overlay-pane.centered-dialog-container {
+    width: 95vw !important;
+    top: 70px !important;
+  }
+
+  // Smaller font sizes for very small screens
+  h1 {
+    font-size: 2rem;
+  }
+
+  h2 {
+    font-size: 1.75rem;
+  }
+
+  h3 {
+    font-size: 1.3rem;
+  }
+
+  body {
+    font-size: 0.85rem;
+  }
+
+  // Adjust padding for very small screens
+  * {
+    scroll-padding-top: 60px;
   }
 }
 
