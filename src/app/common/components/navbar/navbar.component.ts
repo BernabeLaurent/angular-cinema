@@ -12,9 +12,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { Overlay } from '@angular/cdk/overlay';
 import { Observable } from 'rxjs';
 
-import { LoginComponent } from '../../../auth/login/login.component';
-import { RegisterComponent } from '../../../auth/register/register.component';
-import { SearchModalComponent } from '../search-modal/search-modal.component';
+// Dynamic imports for heavy components - removed from initial bundle
 import { AuthService } from '../../../auth/auth.service';
 import { UserRoleService } from '../../../services/user-role.service';
 import { User } from '../../../auth/user.interface';
@@ -166,7 +164,8 @@ export class NavbarComponent implements OnDestroy {
   }
 
 
-  openSearchModal() {
+  async openSearchModal() {
+    const { SearchModalComponent } = await import('../search-modal/search-modal.component');
     this.dialog.open(SearchModalComponent, {
       width: '90vw',
       maxWidth: '900px',
@@ -175,7 +174,8 @@ export class NavbarComponent implements OnDestroy {
     });
   }
 
-  openLoginDialog() {
+  async openLoginDialog() {
+    const { LoginComponent } = await import('../../../auth/login/login.component');
     this.dialog.open(LoginComponent, {
       width: '400px',
       panelClass: 'login-dialog-positioned',
@@ -185,7 +185,8 @@ export class NavbarComponent implements OnDestroy {
     });
   }
 
-  openRegisterDialog() {
+  async openRegisterDialog() {
+    const { RegisterComponent } = await import('../../../auth/register/register.component');
     this.dialog.open(RegisterComponent, {
       width: '450px',
       maxHeight: '90vh',

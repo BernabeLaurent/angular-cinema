@@ -46,16 +46,7 @@
                   "with": "src/environments/environment.prod.ts"
                 }
               ],
-              "optimization": {
-                "scripts": true,
-                "styles": {
-                  "minify": true,
-                  "inlineCritical": true
-                },
-                "fonts": {
-                  "inline": true
-                }
-              },
+              "optimization": true,
               "buildOptimizer": true,
               "aot": true,
               "extractLicenses": true,

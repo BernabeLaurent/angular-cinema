@@ -1,6 +1,12 @@
 {
   "name": "angular-cinema",
   "version": "1.0.0",
+  "sideEffects": [
+    "**/*.scss",
+    "**/*.css",
+    "**/polyfills.ts",
+    "**/main.ts"
+  ],
   "scripts": {
     "ng": "ng",
     "start": "bash start-angular.sh",

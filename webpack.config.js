@@ -28,40 +28,73 @@ module.exports = (config, options) => {
       ...config.optimization,
       usedExports: true,
       sideEffects: false,
+      providedExports: true,
+      innerGraph: true,
+      concatenateModules: true,
+      mangleExports: 'size',
       splitChunks: {
         chunks: 'all',
-        maxSize: 400000, // 400KB max chunk size
+        maxSize: 350000, // Reduced from 400KB
+        minSize: 20000,
         cacheGroups: {
           vendor: {
             test: /[\\/]node_modules[\\/]/,
             name: 'vendors',
             priority: 10,
             chunks: 'all',
-            maxSize: 300000, // 300KB max vendor chunk
+            maxSize: 250000, // Reduced from 300KB
+            enforce: true,
           },
           material: {
             test: /[\\/]node_modules[\\/]@angular[\\/]material[\\/]/,
             name: 'angular-material',
             priority: 20,
             chunks: 'all',
-            maxSize: 200000, // 200KB max material chunk
+            maxSize: 150000, // Reduced from 200KB
+            enforce: true,
+          },
+          cdk: {
+            test: /[\\/]node_modules[\\/]@angular[\\/]cdk[\\/]/,
+            name: 'angular-cdk',
+            priority: 15,
+            chunks: 'all',
+            maxSize: 100000,
+            enforce: true,
           },
           common: {
             minChunks: 2,
             priority: -10,
             reuseExistingChunk: true,
-            maxSize: 150000, // 150KB max common chunk
+            maxSize: 100000, // Reduced from 150KB
           }
         }
       }
     };
 
-    // Add production plugins
+    // Add production plugins for better tree-shaking
     config.plugins.push(
       new webpack.DefinePlugin({
         'process.env.NODE_ENV': JSON.stringify('production'),
+        'ngDevMode': false,
+        'ngI18nClosureMode': false,
+      }),
+      new webpack.optimize.ModuleConcatenationPlugin(),
+      new webpack.IgnorePlugin({
+        resourceRegExp: /^\.\/locale$/,
+        contextRegExp: /moment$/,
       })
     );
+
+    // Enhanced tree-shaking for specific modules
+    config.resolve = {
+      ...config.resolve,
+      alias: {
+        ...config.resolve?.alias,
+        // Ensure we use ES modules where possible
+        'rxjs/operators': 'rxjs/operators',
+        'rxjs': 'rxjs',
+      }
+    };
 
     return config;
   }

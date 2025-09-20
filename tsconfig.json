@@ -18,7 +18,10 @@
     "target": "ES2022",
     "module": "ES2022",
     "lib": ["ES2022", "dom"],
-    "moduleDetection": "force"
+    "moduleDetection": "force",
+    "declaration": false,
+    "removeComments": true,
+    "emitDecoratorMetadata": false
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
@@ -27,6 +30,8 @@
     "strictTemplates": true,
     "fullTemplateTypeCheck": true,
     "strictMetadataEmit": true,
-    "enableResourceInlining": true
+    "enableResourceInlining": true,
+    "compilationMode": "full",
+    "optimizeFor": "size"
   }
 }
