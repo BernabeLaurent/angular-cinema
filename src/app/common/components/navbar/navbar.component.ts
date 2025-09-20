@@ -173,10 +173,12 @@ export class NavbarComponent implements OnDestroy {
   }
 
   logout() {
-    this.authService.logout();
     this.closeUserMenu();
-    this.router.navigate(['/']).then(() => {
-      window.location.reload(); // Refresh to update navbar state
+    this.authService.logout();
+    // Redirection immédiate vers l'accueil
+    this.router.navigate(['/'], { replaceUrl: true }).then(() => {
+      // Recharger la page pour s'assurer que tous les états sont nettoyés
+      window.location.reload();
     });
   }
 
