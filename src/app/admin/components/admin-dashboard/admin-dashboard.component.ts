@@ -4,7 +4,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { Observable, of, forkJoin } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
@@ -111,7 +111,8 @@ export class AdminDashboardComponent implements OnInit {
 
   constructor(
     private adminService: AdminService,
-    private userRoleService: UserRoleService
+    private userRoleService: UserRoleService,
+    private router: Router
   ) {
     this.currentUser$ = this.userRoleService.getCurrentUser();
   }
@@ -178,5 +179,17 @@ export class AdminDashboardComponent implements OnInit {
 
   trackActivity(index: number, activity: any): any {
     return activity.detail + activity.time;
+  }
+
+  navigateToUsers() {
+    this.router.navigate(['/admin/users']);
+  }
+
+  navigateToTheaters() {
+    this.router.navigate(['/admin/theaters']);
+  }
+
+  navigateToBookings() {
+    this.router.navigate(['/admin/bookings']);
   }
 }
