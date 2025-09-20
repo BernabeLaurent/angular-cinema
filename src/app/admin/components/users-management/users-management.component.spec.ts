@@ -67,14 +67,18 @@ describe('UsersManagementComponent', () => {
     ]);
     const authServiceSpy = jasmine.createSpyObj('AuthService', ['forceInitFromToken']);
 
-    const mockDialogRef = {
-      afterClosed: jasmine.createSpy('afterClosed').and.returnValue(of(null)),
+    // Mock par défaut pour DialogRef
+    const defaultDialogRef = {
+      afterClosed: () => of(null),
       close: jasmine.createSpy('close')
     };
+
     const dialogSpy = jasmine.createSpyObj('MatDialog', ['open', 'getDialogById', 'closeAll'], {
       openDialogs: []
     });
-    dialogSpy.open.and.returnValue(mockDialogRef);
+
+    // Mock par défaut qui peut être remplacé dans les tests individuels
+    dialogSpy.open.and.returnValue(defaultDialogRef);
 
     const snackBarSpy = jasmine.createSpyObj('MatSnackBar', ['open']);
     const dateFormatServiceSpy = jasmine.createSpyObj('DateFormatService', ['formatDate']);
@@ -102,6 +106,9 @@ describe('UsersManagementComponent', () => {
     mockSnackBar = TestBed.inject(MatSnackBar) as jasmine.SpyObj<MatSnackBar>;
     mockDateFormatService = TestBed.inject(DateFormatService) as jasmine.SpyObj<DateFormatService>;
     mockChangeDetectorRef = TestBed.inject(ChangeDetectorRef) as jasmine.SpyObj<ChangeDetectorRef>;
+
+    // Reset des spies avant chaque test
+    mockSnackBar.open.calls.reset();
 
     mockAdminService.getAllUsers.and.returnValue(of(mockUsers));
     mockDateFormatService.formatDate.and.returnValue('01/01/2024');
@@ -374,29 +381,25 @@ describe('UsersManagementComponent', () => {
     expect(component.applyFilter).toHaveBeenCalled();
   });
 
-  it('should show success message', fakeAsync(() => {
+  it('should show success message', () => {
     const message = 'Test success';
-    spyOn(component as any, 'showSuccess').and.callThrough();
 
     component['showSuccess'](message);
-    tick();
 
     expect(mockSnackBar.open).toHaveBeenCalledWith(message, 'Fermer', {
       duration: 3000,
       panelClass: ['success-snackbar']
     });
-  }));
+  });
 
-  it('should show error message', fakeAsync(() => {
+  it('should show error message', () => {
     const message = 'Test error';
-    spyOn(component as any, 'showError').and.callThrough();
 
     component['showError'](message);
-    tick();
 
     expect(mockSnackBar.open).toHaveBeenCalledWith(message, 'Fermer', {
       duration: 5000,
       panelClass: ['error-snackbar']
     });
-  }));
+  });
 });
