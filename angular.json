@@ -48,8 +48,13 @@
               ],
               "optimization": {
                 "scripts": true,
-                "styles": true,
-                "fonts": true
+                "styles": {
+                  "minify": true,
+                  "inlineCritical": true
+                },
+                "fonts": {
+                  "inline": true
+                }
               },
               "buildOptimizer": true,
               "aot": true,
@@ -58,19 +63,27 @@
               "namedChunks": false,
               "vendorChunk": true,
               "commonChunk": false,
+              "preserveSymlinks": false,
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "800kB",
-                  "maximumError": "1.5MB"
+                  "maximumWarning": "600kB",
+                  "maximumError": "1MB"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "6kB",
-                  "maximumError": "12kB"
+                  "maximumWarning": "4kB",
+                  "maximumError": "8kB"
+                },
+                {
+                  "type": "bundle",
+                  "name": "vendor",
+                  "maximumWarning": "400kB",
+                  "maximumError": "600kB"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "crossOrigin": "anonymous"
             },
             "development": {
               "optimization": false,
