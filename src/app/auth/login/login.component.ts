@@ -62,7 +62,6 @@ export class LoginComponent implements OnInit, OnDestroy, AfterViewInit {
     // Récupérer returnUrl depuis les query parameters ou les données du dialog
     this.returnUrl = this.dialogData?.returnUrl ||
                      this.route.snapshot.queryParams['returnUrl'] || '/';
-    console.log('Login component - returnUrl:', this.returnUrl);
 
     // Gestion de la touche Escape pour fermer le dialog
     if (this.isDialog) {
@@ -106,7 +105,6 @@ export class LoginComponent implements OnInit, OnDestroy, AfterViewInit {
           // Redirection selon le contexte
           if (this.returnUrl && this.returnUrl !== '/') {
             // Si on a un returnUrl, y aller directement
-            console.log('Redirecting to returnUrl:', this.returnUrl);
             this.router.navigateByUrl(this.returnUrl);
           } else {
             // Sinon, redirection intelligente selon le rôle

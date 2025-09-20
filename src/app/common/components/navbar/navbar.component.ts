@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef, OnDestroy, HostListener } from '@angular/core';
+import { Component, ViewChild, ElementRef, OnDestroy, HostListener, ChangeDetectorRef, NgZone, ApplicationRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -6,7 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatMenuModule } from '@angular/material/menu';
-import { Subscription, fromEvent } from 'rxjs';
+import { Subscription, fromEvent, BehaviorSubject } from 'rxjs';
 
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { Overlay } from '@angular/cdk/overlay';
@@ -39,6 +39,15 @@ import { RoleUser } from '../../../users/enums/roles-users.enum';
 export class NavbarComponent implements OnDestroy {
   isUserMenuOpen = false;
   isMobileMenuOpen = false;
+
+  // BehaviorSubject pour gérer l'état du menu mobile
+  private mobileMenuState$ = new BehaviorSubject<boolean>(false);
+  isMobileMenuOpen$ = this.mobileMenuState$.asObservable();
+
+  // Getter pour forcer la réévaluation
+  get mobileMenuOpen() {
+    return this.isMobileMenuOpen;
+  }
   
   // Observables pour la réactivité
   isLoggedIn$: Observable<boolean>;
@@ -53,11 +62,14 @@ export class NavbarComponent implements OnDestroy {
   private keydownSubscription: Subscription = new Subscription();
 
   constructor(
-    private dialog: MatDialog, 
+    private dialog: MatDialog,
     private overlay: Overlay,
     private router: Router,
     private authService: AuthService,
-    private userRoleService: UserRoleService
+    private userRoleService: UserRoleService,
+    private cdr: ChangeDetectorRef,
+    private ngZone: NgZone,
+    private appRef: ApplicationRef
   ) {
     this.isLoggedIn$ = this.userRoleService.isLoggedIn();
     this.currentUser$ = this.userRoleService.getCurrentUser();
@@ -130,16 +142,29 @@ export class NavbarComponent implements OnDestroy {
   }
 
   toggleMobileMenu() {
-    this.isMobileMenuOpen = !this.isMobileMenuOpen;
-    // Fermer le menu utilisateur si ouvert
-    if (this.isMobileMenuOpen) {
-      this.closeUserMenu();
-    }
+    const currentState = this.mobileMenuState$.value;
+    const newState = !currentState;
+
+    // Utiliser setTimeout pour garantir la détection de changement
+    setTimeout(() => {
+      this.isMobileMenuOpen = newState;
+      this.mobileMenuState$.next(newState);
+
+      // Fermer le menu utilisateur si ouvert
+      if (newState) {
+        this.closeUserMenu();
+      }
+
+      // Forcer la détection de changement
+      this.cdr.detectChanges();
+    }, 0);
   }
 
   closeMobileMenu() {
     this.isMobileMenuOpen = false;
+    this.mobileMenuState$.next(false);
   }
+
 
   openSearchModal() {
     this.dialog.open(SearchModalComponent, {

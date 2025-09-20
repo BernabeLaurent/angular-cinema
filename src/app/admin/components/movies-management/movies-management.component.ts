@@ -125,12 +125,10 @@ export class MoviesManagementComponent implements OnInit {
   }
 
   loadMovies(): void {
-    console.log('Loading movies from API...');
     this.loading = true;
     
     this.adminService.getAllMovies().subscribe({
       next: (movies) => {
-        console.log('Movies loaded successfully:', movies);
         // Trier les films : ceux avec séances en premier
         this.movies = movies.sort((a, b) => {
           if (a.availableSessions > 0 && b.availableSessions === 0) return -1;
@@ -141,7 +139,6 @@ export class MoviesManagementComponent implements OnInit {
         this.loading = false;
       },
       error: (error) => {
-        console.error('Error loading movies:', error);
         // Fallback en cas d'erreur API
         this.simulateMovies();
         this.loading = false;
@@ -151,15 +148,12 @@ export class MoviesManagementComponent implements OnInit {
   }
 
   loadSessions(): void {
-    console.log('Loading sessions from API...');
     
     this.adminService.getAllSessions().subscribe({
       next: (sessions) => {
-        console.log('Sessions loaded successfully:', sessions);
         this.sessions = sessions;
       },
       error: (error) => {
-        console.error('Error loading sessions:', error);
         this.sessions = [];
       }
     });
@@ -172,13 +166,11 @@ export class MoviesManagementComponent implements OnInit {
     // L'API sessions-cinemas retourne les sessions avec les informations complètes des cinémas
     this.http.get<{ data: SessionCinema[]; apiVersion: string }>(`${environment.apiUrl}/sessions-cinemas`).subscribe({
       next: (response) => {
-        console.log('Sessions cinema loaded successfully:', response.data);
         this.sessionsCinema = response.data;
         // Extraire les cinémas uniques des sessions
         this.extractTheatersFromSessions();
       },
       error: (error) => {
-        console.error('Error loading sessions cinema:', error);
         this.sessionsCinema = [];
       }
     });
@@ -188,11 +180,9 @@ export class MoviesManagementComponent implements OnInit {
     // On charge les cinémas depuis l'API
     this.adminService.getTheaters().subscribe({
       next: (theaters) => {
-        console.log('Theaters loaded successfully:', theaters);
         this.theaters = theaters;
       },
       error: (error) => {
-        console.error('Error loading theaters:', error);
         // En cas d'erreur, on utilise les cinémas extraits des sessions
         this.theaters = [];
       }
@@ -270,7 +260,6 @@ export class MoviesManagementComponent implements OnInit {
   }
 
   createSession(movieId: number, sessionData: any): void {
-    console.log('Creating session for movie:', movieId, sessionData);
 
     // Filtrer les données pour ne garder que les champs acceptés par l'API
     const filteredData: any = {};
@@ -295,12 +284,9 @@ export class MoviesManagementComponent implements OnInit {
     // Ajouter l'ID du film (nécessaire)
     filteredData.movieId = movieId;
 
-    console.log('Filtered data for creation:', filteredData);
-    console.log('Original data from form:', sessionData);
 
     this.adminService.createSession(filteredData).subscribe({
       next: (response) => {
-        console.log('Session created successfully:', response);
         this.showSuccess('Session créée avec succès');
 
         // Recharger les sessions ET les films pour mettre à jour les compteurs
@@ -308,7 +294,6 @@ export class MoviesManagementComponent implements OnInit {
         this.loadMovies();
       },
       error: (error) => {
-        console.error('Error creating session:', error);
         this.showError('Erreur lors de la création de la session');
       }
     });
@@ -378,13 +363,11 @@ export class MoviesManagementComponent implements OnInit {
       return;
     }
 
-    console.log('Searching movies with term:', this.searchTerm);
     this.loading = true;
 
     // Appel API de recherche avec le terme exact
     this.adminService.searchMovies(this.searchTerm.trim()).subscribe({
       next: (movies) => {
-        console.log('Search results:', movies);
         
         // Note: On n'affiche pas de message d'erreur si aucun film n'est trouvé
         // car c'est un cas normal de recherche
@@ -399,7 +382,6 @@ export class MoviesManagementComponent implements OnInit {
         this.loading = false;
       },
       error: (error) => {
-        console.error('Error searching movies:', error);
         this.movies = [];
         this.filteredMovies = [];
         this.loading = false;

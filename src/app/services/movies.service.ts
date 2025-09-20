@@ -60,7 +60,6 @@ export class MoviesService {
       backendUrl = `${this.apiUrl}/uploads/${path}`;
     }
 
-    console.log('🖼️ Image URL generated:', { originalPath: path, finalUrl: backendUrl });
     return backendUrl;
   }
 
@@ -69,10 +68,7 @@ export class MoviesService {
   }
 
   getBackdropUrl(backdropPath?: string): string {
-    console.log('🎯 MoviesService.getBackdropUrl input:', backdropPath);
-    const result = this.getImageUrl(backdropPath || '');
-    console.log('🎯 MoviesService.getBackdropUrl output:', result);
-    return result;
+    return this.getImageUrl(backdropPath || '');
   }
 
   getProfileUrl(profilePath?: string): string {

@@ -86,18 +86,8 @@ export const routes: Routes = [
   
   {
     path: 'movies/:id',
-    loadComponent: () => {
-      console.log('🔄 Loading MovieDetailsComponent...');
-      return import('./movies/movie-details/movie-details.component')
-        .then(c => {
-          console.log('✅ MovieDetailsComponent loaded:', c);
-          return c.MovieDetailsComponent;
-        })
-        .catch(err => {
-          console.error('❌ Failed to load MovieDetailsComponent:', err);
-          throw err;
-        });
-    },
+    loadComponent: () => import('./movies/movie-details/movie-details.component')
+      .then(c => c.MovieDetailsComponent),
     title: 'Détails du film - Tchitcha'
   },
   

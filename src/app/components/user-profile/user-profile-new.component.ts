@@ -607,7 +607,6 @@ export class UserProfileNewComponent implements OnInit {
     // Essayer d'abord avec l'utilisateur courant depuis AuthService
     const currentUser = this.authService.getCurrentUser();
     if (currentUser) {
-      console.log('Utilisateur courant trouvé:', currentUser);
       this.currentUser = currentUser;
       this.populateProfileForm(currentUser);
     }
@@ -615,12 +614,8 @@ export class UserProfileNewComponent implements OnInit {
     // Puis charger les données fraîches depuis l'API
     this.userProfileService.getCurrentUserProfile().subscribe({
       next: (response: any) => {
-        console.log('Réponse API complète:', response);
-
         // Extraire les données utilisateur de la propriété 'data'
         const userData = response.data || response;
-        console.log('Données utilisateur extraites:', userData);
-
         this.currentUser = userData;
         this.populateProfileForm(userData);
       },
@@ -632,18 +627,6 @@ export class UserProfileNewComponent implements OnInit {
   }
 
   private populateProfileForm(user: User) {
-    console.log('populateProfileForm appelé avec:', user);
-    console.log('Propriétés de l\'utilisateur:');
-    console.log('firstName:', user.firstName);
-    console.log('lastName:', user.lastName);
-    console.log('email:', user.email);
-    console.log('phoneNumber:', user.phoneNumber);
-    console.log('address:', user.address);
-    console.log('city:', user.city);
-    console.log('zipCode:', user.zipCode);
-    console.log('codeCountry:', user.codeCountry);
-    console.log('hasDisability:', user.hasDisability);
-
     if (!user.firstName && !user.lastName && !user.email) {
       console.error('L\'objet utilisateur semble vide ou invalide');
       return;
@@ -662,8 +645,6 @@ export class UserProfileNewComponent implements OnInit {
 
     // Définir l'email séparément car le champ est désactivé
     this.profileForm.get('email')?.setValue(user.email || '');
-
-    console.log('État du formulaire après remplissage:', this.profileForm.value);
   }
 
   updateProfile() {

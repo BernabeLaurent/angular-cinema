@@ -47,7 +47,6 @@ export class MoviesSectionComponent implements OnInit {
       allSessions: this.adminService.getAllSessions()
     }).subscribe({
       next: ({ theaters, allSessions }) => {
-        console.log('Sessions récupérées:', allSessions);
         
         // Films avec séances actuelles (À l'affiche)
         const moviesWithSessions = this.getMoviesWithCurrentSessions(allSessions);
@@ -71,33 +70,19 @@ export class MoviesSectionComponent implements OnInit {
     const now = new Date();
     const moviesMap = new Map();
     
-    console.log('=== DEBUG FILMS À L\'AFFICHE ===');
-    console.log('Date actuelle:', now.toISOString());
-    console.log('Date actuelle locale:', now.toLocaleString('fr-FR'));
-    console.log('Traitement des sessions:', sessions.length);
     
     sessions.forEach((session, index) => {
-      console.log(`\n--- Session ${index + 1} ---`);
-      console.log('Session complète:', session);
       
       if (session.movie && session.startTime) {
         const sessionDate = new Date(session.startTime);
         const timeDiff = sessionDate.getTime() - now.getTime();
         const hoursDiff = timeDiff / (1000 * 60 * 60);
         
-        console.log(`Film: "${session.movie.title}"`);
-        console.log(`StartTime brut: ${session.startTime}`);
-        console.log(`Date parsée: ${sessionDate.toISOString()}`);
-        console.log(`Date locale: ${sessionDate.toLocaleString('fr-FR')}`);
-        console.log(`Différence en heures: ${hoursDiff.toFixed(2)}`);
-        console.log(`Est future? ${sessionDate > now}`);
         
         // Considérer les films "à l'affiche" s'ils ont des séances dans les 6 derniers mois ou futures
         const sixMonthsAgo = new Date(now.getTime() - (6 * 30 * 24 * 60 * 60 * 1000));
         const isRecentOrFuture = sessionDate > sixMonthsAgo;
         
-        console.log(`6 mois en arrière: ${sixMonthsAgo.toISOString()}`);
-        console.log(`Récente ou future? ${isRecentOrFuture}`);
         
         if (isRecentOrFuture) {
           const movieId = session.movie.id;
@@ -106,37 +91,20 @@ export class MoviesSectionComponent implements OnInit {
               ...session.movie,
               sessionCount: 0
             });
-            console.log(`✅ AJOUT du film: ${session.movie.title}`);
-          } else {
-            console.log(`➕ Session supplémentaire pour: ${session.movie.title}`);
           }
           moviesMap.get(movieId).sessionCount++;
         } else {
-          console.log(`❌ Session ignorée (plus de 6 mois): ${session.movie.title}`);
         }
       } else {
-        console.log('❌ Session invalide (pas de film ou startTime)');
       }
     });
     
     const result = Array.from(moviesMap.values());
-    console.log('\n=== RÉSULTAT FINAL ===');
-    console.log('Films à l\'affiche trouvés:', result.length);
-    result.forEach(movie => {
-      console.log(`- ${movie.title} (${movie.sessionCount} séances)`);
-    });
-    console.log('========================\n');
     return result;
   }
 
   private convertToMovieCardFormat(movies: any[]): Movie[] {
     return movies.map(movie => {
-      console.log('🎬 Converting movie to card format:', movie.title || movie.originalTitle);
-      console.log('📄 Raw movie data:', movie);
-      console.log('🖼️ Poster fields found:', { 
-        posterPath: movie.posterPath, 
-        poster: movie.poster 
-      });
       
       const result = {
         id: movie.id,
@@ -148,7 +116,6 @@ export class MoviesSectionComponent implements OnInit {
         releaseDate: this.formatReleaseDate(movie.releaseDate)
       };
       
-      console.log('✨ Final movie card:', result);
       return result;
     });
   }
@@ -157,7 +124,6 @@ export class MoviesSectionComponent implements OnInit {
     // Charger les films à venir depuis notre base de données
     this.adminService.getAllMovies().subscribe({
       next: (allMovies) => {
-        console.log('Tous les films de la DB:', allMovies);
         
         // Films qui n'ont pas de séances actuelles (films à venir)
         const upcomingMoviesFromDB = allMovies.filter(movie => 
@@ -167,14 +133,11 @@ export class MoviesSectionComponent implements OnInit {
         if (upcomingMoviesFromDB.length > 0) {
           // Charger les 6 premiers films (page 1)
           this.comingSoonMovies = this.convertToMovieCardFormat(upcomingMoviesFromDB.slice(0, 6));
-          console.log('Films prochainement trouvés dans la DB:', this.comingSoonMovies);
         } else {
-          console.log('Aucun film à venir trouvé dans la DB');
           this.comingSoonMovies = [];
         }
       },
       error: (error) => {
-        console.error('Erreur chargement films DB:', error);
         this.comingSoonMovies = [];
       }
     });
@@ -199,10 +162,8 @@ export class MoviesSectionComponent implements OnInit {
   }
 
   private getMoviePosterUrl(posterPath?: string): string {
-    console.log('🖼️ Processing poster for path:', posterPath);
     
     if (!posterPath) {
-      console.log('❌ No posterPath, using placeholder');
       const svgContent = `<svg width="300" height="450" xmlns="http://www.w3.org/2000/svg">
         <rect width="100%" height="100%" fill="#333"/>
         <text x="150" y="225" text-anchor="middle" fill="#888" font-family="Arial, sans-serif" font-size="16">
@@ -214,7 +175,6 @@ export class MoviesSectionComponent implements OnInit {
     
     // Utiliser le service movies pour générer l'URL correcte
     const posterUrl = this.moviesService.getPosterUrl(posterPath);
-    console.log('🔗 Generated poster URL:', posterUrl);
     return posterUrl;
   }
 
@@ -234,12 +194,10 @@ export class MoviesSectionComponent implements OnInit {
     this.loadingMoreMovies = true;
     this.upcomingMoviesPage++;
     
-    console.log(`Chargement des films de la DB page ${this.upcomingMoviesPage}...`);
     
     // Charger plus de films depuis la base de données
     this.adminService.getAllMovies().subscribe({
       next: (allMovies) => {
-        console.log('Films DB reçus pour pagination:', allMovies.length);
         
         // Filtrer les films qui n'ont pas de séances (films à venir)
         const upcomingMoviesFromDB = allMovies.filter(movie => 
@@ -254,14 +212,12 @@ export class MoviesSectionComponent implements OnInit {
           const convertedMovies = this.convertToMovieCardFormat(newMovies);
           // Ajouter les nouveaux films à la liste existante
           this.comingSoonMovies = [...this.comingSoonMovies, ...convertedMovies];
-          console.log(`${convertedMovies.length} nouveaux films DB ajoutés`);
           
           // Auto-scroll vers les nouveaux films après un court délai
           setTimeout(() => {
             this.scrollToNewMovies('coming-soon');
           }, 100);
         } else {
-          console.log('Plus de films disponibles dans la DB');
         }
         
         this.loadingMoreMovies = false;

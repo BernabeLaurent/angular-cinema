@@ -53,10 +53,10 @@
   <span class="spacer"></span>
 
   <!-- Overlay pour fermer le menu mobile -->
-  <div class="mobile-menu-overlay" *ngIf="isMobileMenuOpen" (click)="closeMobileMenu()"></div>
+  <div class="mobile-menu-overlay" *ngIf="mobileMenuOpen" (click)="closeMobileMenu()"></div>
 
   <!-- Menu mobile -->
-  <nav class="mobile-menu" *ngIf="isMobileMenuOpen" role="navigation" aria-label="Menu mobile">
+  <nav class="mobile-menu" *ngIf="mobileMenuOpen" role="navigation" aria-label="Menu mobile">
     <div class="mobile-menu-content">
       <button mat-button routerLink="/movies" (click)="closeMobileMenu()">
         <mat-icon aria-hidden="true">movie</mat-icon>
@@ -167,8 +167,8 @@
   <!-- Ligne mobile pour les boutons hamburger et recherche -->
   <div class="mobile-controls">
     <!-- Menu burger pour mobile -->
-    <button mat-icon-button class="mobile-menu-button" (click)="toggleMobileMenu()" [attr.aria-label]="isMobileMenuOpen ? 'Fermer le menu' : 'Ouvrir le menu'">
-      <mat-icon aria-hidden="true">{{ isMobileMenuOpen ? 'close' : 'menu' }}</mat-icon>
+    <button mat-icon-button class="mobile-menu-button" (click)="toggleMobileMenu()" [attr.aria-label]="mobileMenuOpen ? 'Fermer le menu' : 'Ouvrir le menu'">
+      <mat-icon aria-hidden="true">{{ mobileMenuOpen ? 'close' : 'menu' }}</mat-icon>
     </button>
 
     <!-- Bouton recherche mobile (toujours visible) -->

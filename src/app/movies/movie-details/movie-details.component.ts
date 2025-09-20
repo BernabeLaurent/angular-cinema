@@ -412,17 +412,14 @@ export class MovieDetailsComponent implements OnInit {
 
   showActorDetails(actor: any) {
     // TODO: Implémenter la modale de détails de l'acteur
-    console.log('Détails de l\'acteur:', actor);
   }
 
   showFullCast() {
     // TODO: Implémenter la modale avec tout le casting
-    console.log('Afficher tout le casting');
   }
 
   writeReview() {
     // TODO: Implémenter la modale d'écriture d'avis
-    console.log('Écrire un avis');
   }
 
   retry() {

@@ -41,10 +41,8 @@ export class HeroSectionComponent implements OnInit {
       allSessions: this.adminService.getAllSessions()
     }).subscribe({
       next: ({ theaters, allSessions }) => {
-        console.log('🎬 Recherche film featured...', allSessions);
 
         const currentMovies = this.getMoviesWithCurrentSessions(allSessions);
-        console.log('Films à l\'affiche:', currentMovies);
 
         if (currentMovies.length > 0) {
           // Prendre un film aléatoire parmi ceux à l'affiche
@@ -67,16 +65,8 @@ export class HeroSectionComponent implements OnInit {
             hasBackdrop: !!selectedMovie.backdrop_path
           };
 
-          console.log('🖼️ Image backdrop sélectionnée:', {
-            backdrop_path: selectedMovie.backdrop_path,
-            poster_path: selectedMovie.poster_path,
-            finalUrl: backdropUrl,
-            hasBackdrop: this.featuredMovie.hasBackdrop
-          });
 
-          console.log('🎯 Film sélectionné pour hero:', this.featuredMovie);
         } else {
-          console.log('❌ Aucun film à l\'affiche trouvé');
           this.featuredMovie = null;
         }
 
@@ -132,17 +122,11 @@ export class HeroSectionComponent implements OnInit {
   }
 
   private getMovieBackdropUrl(movie: any): string {
-    console.log('🔍 DEBUG getMovieBackdropUrl - Film:', movie.title);
-    console.log('🔍 movie.backdrop_path:', movie.backdrop_path);
-    console.log('🔍 movie.backdropPath:', movie.backdropPath);
-    console.log('🔍 movie.poster_path:', movie.poster_path);
-    console.log('🔍 movie.posterPath:', movie.posterPath);
 
     // Prioriser backdrop_path pour l'arrière-plan hero (avec les deux formats possibles)
     const backdropPath = movie.backdrop_path || movie.backdropPath;
     if (backdropPath) {
       const backdropUrl = this.moviesService.getBackdropUrl(backdropPath);
-      console.log('✅ Utilisation backdrop_path:', backdropUrl);
       return backdropUrl;
     }
 
@@ -150,38 +134,28 @@ export class HeroSectionComponent implements OnInit {
     const posterPath = movie.poster_path || movie.posterPath;
     if (posterPath) {
       const posterUrl = this.moviesService.getPosterUrl(posterPath);
-      console.log('⚠️ Fallback sur poster_path:', posterUrl);
       return posterUrl;
     }
 
     // Fallback final sur image placeholder
-    console.log('❌ Aucune image disponible, utilisation placeholder');
     return 'assets/images/placeholder-movie.svg';
   }
 
   onBookTicket() {
-    console.log('🎫 Réserver des places pour:', this.featuredMovie?.title);
-
     if (this.featuredMovie?.movieId) {
-      console.log('Navigation vers réservation pour film ID:', this.featuredMovie.movieId);
       // Naviguer vers la page de réservation générale (où l'utilisateur peut choisir le film/séance)
       this.router.navigate(['/booking']);
     } else {
-      console.warn('❌ Pas d\'ID de film disponible pour la réservation');
       // Fallback vers la page de réservation générale
       this.router.navigate(['/booking']);
     }
   }
 
   onViewDetails() {
-    console.log('📄 Voir détails pour:', this.featuredMovie?.title);
-
     if (this.featuredMovie?.movieId) {
-      console.log('Navigation vers détails pour film ID:', this.featuredMovie.movieId);
       // Naviguer vers les détails du film spécifique
       this.router.navigate(['/movies', this.featuredMovie.movieId]);
     } else {
-      console.warn('❌ Pas d\'ID de film disponible pour les détails');
       // Fallback vers la liste des films
       this.router.navigate(['/movies']);
     }

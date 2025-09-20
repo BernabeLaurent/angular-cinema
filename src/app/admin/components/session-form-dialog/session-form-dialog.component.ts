@@ -105,17 +105,11 @@ export class SessionFormDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('SessionFormDialogComponent ngOnInit');
-    console.log('isEditMode:', this.isEditMode);
-    console.log('data.session:', this.data.session);
-    console.log('data:', this.data);
     
     this.loadTheaters();
     if (this.isEditMode && this.data.session) {
-      console.log('About to populate form with session data');
       this.populateForm(this.data.session);
     } else {
-      console.log('Setting default values');
       this.setDefaultValues();
     }
   }
@@ -134,22 +128,18 @@ export class SessionFormDialogComponent implements OnInit {
   }
 
   private loadTheaters(): void {
-    console.log('Loading theaters...');
     this.adminService.getTheaters().subscribe({
       next: (theaters) => {
-        console.log('Theaters loaded:', theaters);
         this.theaters = theaters;
         
         // Si on est en mode édition et qu'on a les théâtres, relancer le préremplissage
         if (this.isEditMode && this.data.session && this.theaters.length > 0) {
-          console.log('Re-populating form after theaters loaded');
           setTimeout(() => {
             this.populateForm(this.data.session);
           }, 100);
         }
       },
       error: (error) => {
-        console.error('Error loading theaters:', error);
       }
     });
   }
@@ -169,47 +159,34 @@ export class SessionFormDialogComponent implements OnInit {
   }
 
   private populateForm(session: any): void {
-    console.log('=== POPULATE FORM START ===');
-    console.log('Session data:', session);
-    console.log('Available theaters:', this.theaters);
-    console.log('Form before population:', this.sessionForm.value);
     
     // Corriger le format de l'heure si nécessaire
     let startTime = session.startTime;
-    console.log('Original startTime from session:', startTime, typeof startTime);
     
     if (startTime) {
       // Si startTime est déjà au bon format (HH:MM), l'utiliser tel quel
       if (typeof startTime === 'string' && startTime.includes(':')) {
-        console.log('startTime already in HH:MM format:', startTime);
       } 
       // Si c'est un format sans deux points (ex: "0100")
       else if (typeof startTime === 'string' && startTime.length === 4 && !startTime.includes(':')) {
         startTime = startTime.substring(0, 2) + ':' + startTime.substring(2);
-        console.log('Converted startTime to HH:MM format:', startTime);
       }
       // Si startTime est vide, essayer d'extraire depuis une date
       else if (!startTime && session.date) {
         const sessionDate = new Date(session.date);
         startTime = sessionDate.toTimeString().slice(0, 5);
-        console.log('Extracted startTime from date:', startTime);
       }
     }
     
-    console.log('Final startTime to use:', startTime);
     
     // Vérifier et mapper la qualité
-    console.log('Original quality from session:', session.quality);
-    console.log('Available qualities:', this.qualities.map(q => q.value));
     
     let mappedQuality = session.quality;
     // Vérifier si la qualité existe dans les options disponibles
     const qualityExists = this.qualities.find(q => q.value === session.quality);
     if (!qualityExists) {
-      console.log('Quality not found in options, using default HD');
       mappedQuality = 'HD';
     } else {
-      console.log('Quality found in options:', mappedQuality);
     }
     
     // D'abord définir tous les champs sauf theaterId et roomId
@@ -222,44 +199,32 @@ export class SessionFormDialogComponent implements OnInit {
       totalSeats: session.totalSeats || 150
     };
     
-    console.log('Setting form data:', formData);
     this.sessionForm.patchValue(formData);
-    console.log('Form after basic fields:', this.sessionForm.value);
     
     // Ensuite gérer le théâtre et la salle
     if (session.theaterId) {
-      console.log('Setting theater ID:', session.theaterId);
       this.selectedTheaterId = session.theaterId;
       this.sessionForm.patchValue({
         theaterId: session.theaterId
       });
-      console.log('Form after theater ID:', this.sessionForm.value);
       
       // Charger les salles du théâtre
       this.loadingRooms = true;
-      console.log('Loading rooms for theater:', session.theaterId);
       this.adminService.getTheaterRooms(session.theaterId).subscribe({
         next: (rooms) => {
-          console.log('Rooms loaded:', rooms);
           this.theaterRooms = rooms;
           this.loadingRooms = false;
           
           // Maintenant définir la salle
-          console.log('Setting room ID:', session.roomId);
           this.sessionForm.patchValue({
             roomId: session.roomId
           });
-          console.log('Final form value:', this.sessionForm.value);
-          console.log('=== POPULATE FORM END ===');
         },
         error: (error) => {
-          console.error('Error loading theater rooms for edit:', error);
           this.loadingRooms = false;
         }
       });
     } else {
-      console.log('No theater ID provided');
-      console.log('=== POPULATE FORM END (no theater) ===');
     }
   }
 
@@ -280,7 +245,6 @@ export class SessionFormDialogComponent implements OnInit {
           this.loadingRooms = false;
         },
         error: (error) => {
-          console.error('Error loading theater rooms:', error);
           this.loadingRooms = false;
         }
       });
@@ -307,7 +271,6 @@ export class SessionFormDialogComponent implements OnInit {
     // Recalcule l'heure de fin quand l'heure de début change
     const endTime = this.calculateEndTime();
     if (endTime) {
-      console.log(`Session: ${this.sessionForm.get('startTime')?.value} - ${endTime}`);
     }
   }
 

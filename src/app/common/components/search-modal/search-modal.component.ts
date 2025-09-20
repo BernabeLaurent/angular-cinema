@@ -112,7 +112,6 @@ export class SearchModalComponent implements OnInit, OnDestroy, AfterViewInit {
                   this.availableMovies = movies.map(movieWrapper => movieWrapper.data || movieWrapper);
                   this.filteredMovies = this.availableMovies;
                   this.isLoading = false;
-                  console.log('Films disponibles pour recherche:', this.availableMovies.length);
                 },
                 error: (error) => {
                   console.error('Erreur lors du chargement des films:', error);
@@ -131,9 +130,6 @@ export class SearchModalComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onSearchChange() {
-    console.log('Recherche:', this.searchQuery);
-    console.log('Films disponibles:', this.availableMovies.length);
-    
     if (!this.searchQuery.trim()) {
       this.filteredMovies = this.availableMovies;
       return;
@@ -145,8 +141,6 @@ export class SearchModalComponent implements OnInit, OnDestroy, AfterViewInit {
       movie.originalTitle?.toLowerCase().includes(query) ||
       movie.description?.toLowerCase().includes(query)
     );
-    
-    console.log('Films filtrés:', this.filteredMovies.length);
   }
 
   selectMovie(movie: Movie) {

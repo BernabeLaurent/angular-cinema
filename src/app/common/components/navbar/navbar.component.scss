@@ -173,15 +173,17 @@
 }
 
 .mobile-menu {
-  position: absolute;
-  top: calc(100% + 64px); /* 64px = hauteur navbar + ligne mobile */
+  position: fixed;
+  top: 120px; /* Hauteur navbar (56px) + mobile-controls (64px) = 120px */
   left: 0;
   right: 0;
-  z-index: 998;
+  z-index: 999;
   background: white;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   border-radius: 0 0 12px 12px;
   overflow: hidden;
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
 
   .mobile-menu-content {
     padding: 16px 0;
@@ -233,8 +235,8 @@
   }
 }
 
-// Responsive styles for mobile
-@media (max-width: 768px) {
+// Responsive styles for mobile and tablet
+@media (max-width: 1024px) {
   .transparent-toolbar {
     padding: 0 12px;
     height: 56px;
