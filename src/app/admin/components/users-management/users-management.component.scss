@@ -1,10 +1,10 @@
 .users-management-container {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
   padding: 24px;
   
   .header-card {
-    margin-bottom: 24px;
+    margin-bottom: 32px;
     
     mat-card-header {
       padding-bottom: 16px;
@@ -34,7 +34,7 @@
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      gap: 24px;
+      gap: 32px;
       flex-wrap: wrap;
       
       .filters {
@@ -72,8 +72,9 @@
       }
     }
   }
-  
+
   .table-card {
+    margin-top: 32px !important;
     .table-container {
       overflow-x: auto;
       

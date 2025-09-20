@@ -1,28 +1,23 @@
 <div class="bookings-management-container">
-  <div class="header">
-    <h1>
-      <mat-icon>book_online</mat-icon>
-      Gestion des Réservations
-    </h1>
-    <p class="subtitle">Gérez toutes les réservations des clients</p>
-  </div>
-
-  <!-- Filtres -->
-  <mat-card class="filters-card">
+  <mat-card class="header-card">
     <mat-card-header>
       <mat-card-title>
-        <mat-icon>filter_list</mat-icon>
-        Filtres
+        <mat-icon>book_online</mat-icon>
+        Gestion des Réservations
       </mat-card-title>
+      <mat-card-subtitle>
+        Gérez toutes les réservations des clients
+      </mat-card-subtitle>
     </mat-card-header>
+
     <mat-card-content>
-      <div class="filters-container">
-        <div class="filter-row">
+      <div class="toolbar">
+        <div class="filters">
           <mat-form-field appearance="outline" class="search-field">
             <mat-label>Rechercher</mat-label>
-            <input matInput 
-                   [(ngModel)]="searchTerm" 
-                   (ngModelChange)="applyFilters()" 
+            <input matInput
+                   [(ngModel)]="searchTerm"
+                   (ngModelChange)="applyFilters()"
                    placeholder="ID, nom, prénom, email...">
             <mat-icon matSuffix>search</mat-icon>
           </mat-form-field>
@@ -45,12 +40,14 @@
             </mat-select>
           </mat-form-field>
 
-          <button mat-stroked-button (click)="clearFilters()" class="clear-filters-btn">
+          <button mat-button (click)="clearFilters()">
             <mat-icon>clear</mat-icon>
             Effacer
           </button>
+        </div>
 
-          <button mat-raised-button color="primary" (click)="loadBookings()" class="refresh-btn">
+        <div class="actions">
+          <button mat-raised-button color="primary" (click)="loadBookings()">
             <mat-icon>refresh</mat-icon>
             Actualiser
           </button>

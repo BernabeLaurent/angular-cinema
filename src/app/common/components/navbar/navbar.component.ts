@@ -116,7 +116,7 @@ export class NavbarComponent implements OnDestroy {
   toggleUserMenu() {
     this.isUserMenuOpen = !this.isUserMenuOpen;
     // Update aria-expanded attribute
-    if (this.userMenuButton) {
+    if (this.userMenuButton?.nativeElement) {
       this.userMenuButton.nativeElement.setAttribute('aria-expanded', this.isUserMenuOpen.toString());
     }
   }
@@ -124,7 +124,7 @@ export class NavbarComponent implements OnDestroy {
   closeUserMenu() {
     this.isUserMenuOpen = false;
     // Update aria-expanded attribute
-    if (this.userMenuButton) {
+    if (this.userMenuButton?.nativeElement) {
       this.userMenuButton.nativeElement.setAttribute('aria-expanded', 'false');
     }
   }

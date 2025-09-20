@@ -427,3 +427,63 @@ textarea:focus-visible,
   align-items: flex-start !important;
   position: relative !important;
 }
+
+/* ========================================= */
+/* NAVBAR CONTENT OFFSET CLASSES           */
+/* ========================================= */
+
+/* Classe principale pour décaler le contenu sous la navbar fixe */
+.main-content {
+  padding-top: 64px; /* Hauteur navbar desktop */
+  min-height: calc(100vh - 64px);
+  width: 100%;
+  position: relative;
+}
+
+/* Version alternative pour les pages avec padding personnalisé */
+.navbar-offset {
+  margin-top: 64px;
+}
+
+/* Responsive - Mobile */
+@media (max-width: 768px) {
+  .main-content {
+    padding-top: 120px; /* Navbar (56px) + ligne mobile (64px) */
+    min-height: calc(100vh - 120px);
+  }
+
+  .navbar-offset {
+    margin-top: 120px;
+  }
+}
+
+/* Très petits écrans */
+@media (max-width: 480px) {
+  .main-content {
+    padding-top: 120px;
+    min-height: calc(100vh - 120px);
+  }
+
+  .navbar-offset {
+    margin-top: 120px;
+  }
+}
+
+/* Classes utilitaires pour des cas spéciaux */
+.full-height-with-navbar {
+  height: calc(100vh - 64px);
+  margin-top: 64px;
+}
+
+@media (max-width: 768px) {
+  .full-height-with-navbar {
+    height: calc(100vh - 120px);
+    margin-top: 120px;
+  }
+}
+
+/* Pour les contenus qui ont déjà leur propre gestion d'espacement */
+.no-navbar-offset {
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+}

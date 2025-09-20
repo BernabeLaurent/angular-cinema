@@ -10,6 +10,14 @@
   }
 
   // Exceptions pour les éléments qui doivent garder leur couleur
+  .header-card mat-card-title {
+    color: #FF6B35 !important;
+  }
+
+  .header-card mat-card-subtitle {
+    color: rgba(0, 0, 0, 0.6) !important;
+  }
+
   .price {
     color: #2e7d32 !important;
   }
@@ -45,76 +53,77 @@
     }
   }
 
-  .header {
-    margin-bottom: 24px;
-    
-    h1 {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin: 0 0 8px 0;
-      font-size: 2rem;
-      font-weight: 500;
-      color: #333;
-      
-      mat-icon {
-        font-size: 2rem;
-        width: 2rem;
-        height: 2rem;
-      }
-    }
-    
-    .subtitle {
-      margin: 0;
-      color: #666;
-      font-size: 1rem;
-    }
-  }
+  .header-card {
+    margin-bottom: 32px !important;
 
-  .filters-card {
-    margin-bottom: 24px;
-    
     mat-card-header {
-      margin-bottom: 16px;
-      
+      padding-bottom: 16px;
+
       mat-card-title {
         display: flex;
         align-items: center;
-        gap: 8px;
-        font-size: 1.2rem;
-        
+        gap: 12px;
+        font-size: 1.8rem;
+        color: #FF6B35 !important;
+
         mat-icon {
-          font-size: 1.2rem;
-          width: 1.2rem;
-          height: 1.2rem;
+          font-size: 28px;
+          width: 28px;
+          height: 28px;
+          color: #FF6B35 !important;
         }
       }
+
+      mat-card-subtitle {
+        margin-left: 40px;
+        font-size: 1rem;
+        color: rgba(0, 0, 0, 0.6) !important;
+      }
     }
-    
-    .filters-container {
-      .filter-row {
+
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 32px;
+      flex-wrap: wrap;
+
+      .filters {
         display: flex;
         gap: 16px;
         align-items: center;
         flex-wrap: wrap;
-        
+
         mat-form-field {
           min-width: 200px;
-          
-          &.search-field {
-            flex: 1;
-            min-width: 300px;
-          }
         }
-        
-        .clear-filters-btn,
-        .refresh-btn {
-          height: 56px;
-          margin-top: 8px;
+
+        button {
+          height: 40px;
+        }
+      }
+
+      .actions {
+        display: flex;
+        gap: 12px;
+
+        button {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+
+          &.mat-mdc-raised-button.mat-primary {
+            background-color: #FF6B35;
+
+            &:hover {
+              background-color: #e55a2b;
+            }
+          }
         }
       }
     }
   }
+
 
   .bookings-table-card {
     .table-container {
