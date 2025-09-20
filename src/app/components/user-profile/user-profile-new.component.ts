@@ -48,31 +48,6 @@ import { DateFormatService } from '../../services/date-format.service';
   ],
   template: `
     <div class="profile-container" *ngIf="currentUser">
-      <!-- Header du profil -->
-      <mat-card class="profile-header">
-        <mat-card-content>
-          <div class="profile-info">
-            <div class="avatar-section">
-              <div class="user-avatar">
-                {{ userProfileService.getInitials(currentUser) }}
-              </div>
-              <button mat-button class="change-avatar-btn">
-                <mat-icon>photo_camera</mat-icon>
-                Changer la photo
-              </button>
-            </div>
-            <div class="user-details">
-              <h1>{{ userProfileService.getFullName(currentUser) }}</h1>
-              <p class="user-email">{{ currentUser.email }}</p>
-              <mat-chip class="role-chip">{{ getRoleDisplayName(currentUser.roleUser || currentUser.role!) }}</mat-chip>
-              <p class="member-since" *ngIf="currentUser.createDate">
-                Membre depuis {{ formatDate(currentUser.createDate) }}
-              </p>
-            </div>
-          </div>
-        </mat-card-content>
-      </mat-card>
-
       <!-- Onglets du profil -->
       <mat-tab-group class="profile-tabs" [(selectedIndex)]="selectedTabIndex">
         <!-- Onglet Informations personnelles -->
@@ -81,7 +56,7 @@ import { DateFormatService } from '../../services/date-format.service';
             <mat-card>
               <mat-card-header>
                 <mat-card-title>Mes informations</mat-card-title>
-                <mat-card-subtitle>Gérez vos informations personnelles et préférences</mat-card-subtitle>
+                <mat-card-subtitle>Gérez vos informations personnelles</mat-card-subtitle>
               </mat-card-header>
               <mat-card-content>
                 <form [formGroup]="profileForm" (ngSubmit)="updateProfile()">
@@ -160,7 +135,7 @@ import { DateFormatService } from '../../services/date-format.service';
             </mat-card>
 
             <!-- Section changement de mot de passe -->
-            <mat-card class="password-card">
+            <mat-card class="password-card" *ngIf="false">
               <mat-card-header>
                 <mat-card-title>Sécurité</mat-card-title>
                 <mat-card-subtitle>Changez votre mot de passe</mat-card-subtitle>
@@ -312,61 +287,6 @@ import { DateFormatService } from '../../services/date-format.service';
           </div>
         </mat-tab>
 
-        <!-- Onglet Préférences -->
-        <mat-tab label="Préférences">
-          <div class="tab-content">
-            <mat-card>
-              <mat-card-header>
-                <mat-card-title>Mes préférences</mat-card-title>
-                <mat-card-subtitle>Personnalisez votre expérience cinéma</mat-card-subtitle>
-              </mat-card-header>
-              <mat-card-content>
-                <div class="preferences-section">
-                  <h3>Notifications</h3>
-                  <mat-checkbox>Recevoir les notifications par email</mat-checkbox>
-                  <mat-checkbox>Recevoir les offres promotionnelles</mat-checkbox>
-                  <mat-checkbox>Recevoir les rappels de séances</mat-checkbox>
-                </div>
-
-                <mat-divider></mat-divider>
-
-                <div class="preferences-section">
-                  <h3>Cinéma favori</h3>
-                  <mat-form-field appearance="outline">
-                    <mat-label>Sélectionnez votre cinéma favori</mat-label>
-                    <mat-select>
-                      <mat-option value="none">Aucun cinéma favori</mat-option>
-                    </mat-select>
-                  </mat-form-field>
-                </div>
-
-                <mat-card-actions>
-                  <button mat-raised-button color="primary">
-                    <mat-icon>save</mat-icon>
-                    Sauvegarder les préférences
-                  </button>
-                </mat-card-actions>
-              </mat-card-content>
-            </mat-card>
-
-            <!-- Section danger -->
-            <mat-card class="danger-zone">
-              <mat-card-header>
-                <mat-card-title>Zone de danger</mat-card-title>
-                <mat-card-subtitle>Actions irréversibles sur votre compte</mat-card-subtitle>
-              </mat-card-header>
-              <mat-card-content>
-                <button mat-stroked-button color="warn" (click)="confirmDeleteAccount()">
-                  <mat-icon>delete_forever</mat-icon>
-                  Supprimer mon compte
-                </button>
-                <p class="danger-text">
-                  Cette action est irréversible. Toutes vos données seront définitivement supprimées.
-                </p>
-              </mat-card-content>
-            </mat-card>
-          </div>
-        </mat-tab>
       </mat-tab-group>
     </div>
 
@@ -377,70 +297,11 @@ import { DateFormatService } from '../../services/date-format.service';
   `,
   styles: [`
     .profile-container {
-      max-width: 1200px;
+      max-width: 1400px;
       margin: 0 auto;
-      padding: 20px;
+      padding: 24px;
     }
 
-    .profile-header {
-      margin-bottom: 20px;
-      background: linear-gradient(135deg, #1a1a1a, #333);
-      color: white;
-    }
-
-    .profile-info {
-      display: flex;
-      gap: 30px;
-      align-items: center;
-    }
-
-    .avatar-section {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 15px;
-    }
-
-    .user-avatar {
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
-      background: #d32f2f;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 48px;
-      font-weight: bold;
-      color: white;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.3);
-    }
-
-    .change-avatar-btn {
-      color: rgba(255,255,255,0.8);
-    }
-
-    .user-details h1 {
-      margin: 0 0 10px 0;
-      font-size: 2rem;
-    }
-
-    .user-email {
-      margin: 0 0 15px 0;
-      opacity: 0.8;
-      font-size: 1.1rem;
-    }
-
-    .role-chip {
-      background: #d32f2f;
-      color: white;
-      margin-bottom: 10px;
-    }
-
-    .member-since {
-      margin: 0;
-      opacity: 0.7;
-      font-size: 0.9rem;
-    }
 
     .profile-tabs {
       background: white;
@@ -449,7 +310,41 @@ import { DateFormatService } from '../../services/date-format.service';
     }
 
     .tab-content {
-      padding: 20px;
+      padding: 24px;
+    }
+
+    /* Espacement entre cartes comme dans admin */
+    mat-card {
+      margin-bottom: 32px !important;
+      border-radius: 12px !important;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+    }
+
+    mat-card:last-child {
+      margin-bottom: 0 !important;
+    }
+
+    /* Uniformisation avec les pages admin */
+    mat-card-title {
+      color: #FF6B35 !important;
+      font-size: 1.8rem !important;
+      font-weight: 600 !important;
+    }
+
+    mat-card-subtitle {
+      color: rgba(0, 0, 0, 0.6) !important;
+      font-size: 1rem !important;
+    }
+
+    /* Email hint en rouge */
+    .full-width mat-hint {
+      color: #d32f2f !important;
+    }
+
+    /* Améliorer la lisibilité des labels */
+    mat-label {
+      color: rgba(0, 0, 0, 0.8) !important;
+      font-weight: 500 !important;
     }
 
     .form-grid {
@@ -523,12 +418,13 @@ import { DateFormatService } from '../../services/date-format.service';
     }
 
     .movie-link {
-      color: inherit;
+      color: #FF6B35 !important;
       text-decoration: none;
+      font-weight: 600;
     }
 
     .movie-link:hover {
-      color: #d32f2f;
+      color: #e55a2b !important;
       text-decoration: underline;
     }
 
@@ -545,16 +441,22 @@ import { DateFormatService } from '../../services/date-format.service';
       gap: 10px;
       margin-bottom: 8px;
       font-size: 14px;
+      color: rgba(0, 0, 0, 0.87) !important;
+      font-weight: 500;
     }
 
     .info-row mat-icon {
-      color: #666;
+      color: #FF6B35 !important;
       font-size: 18px;
+    }
+
+    .info-row span {
+      color: rgba(0, 0, 0, 0.87) !important;
     }
 
     .price-row .price {
       font-weight: bold;
-      color: #d32f2f;
+      color: #2e7d32 !important;
       font-size: 16px;
     }
 
@@ -577,30 +479,18 @@ import { DateFormatService } from '../../services/date-format.service';
       color: #c62828;
     }
 
-    .preferences-section {
-      margin: 20px 0;
+    /* Améliorer la lisibilité des titres et sous-titres des réservations */
+    .booking-item mat-card-title {
+      color: rgba(0, 0, 0, 0.87) !important;
+      font-size: 1.1rem !important;
+      font-weight: 600 !important;
     }
 
-    .preferences-section h3 {
-      margin: 0 0 15px 0;
-      color: #333;
+    .booking-item mat-card-subtitle {
+      color: rgba(0, 0, 0, 0.6) !important;
+      font-size: 0.9rem !important;
     }
 
-    .preferences-section mat-checkbox {
-      display: block;
-      margin-bottom: 10px;
-    }
-
-    .danger-zone {
-      margin-top: 20px;
-      border: 2px solid #f44336;
-    }
-
-    .danger-text {
-      margin-top: 10px;
-      color: #666;
-      font-size: 14px;
-    }
 
     .loading, .no-bookings {
       text-align: center;
@@ -670,11 +560,10 @@ export class UserProfileNewComponent implements OnInit {
     private dialog: MatDialog,
     private router: Router,
     private dateFormatService: DateFormatService
-  ) {
-    this.initializeForms();
-  }
+  ) {}
 
   ngOnInit() {
+    this.initializeForms();
     this.loadUserProfile();
     this.loadUserBookings();
   }
@@ -715,10 +604,25 @@ export class UserProfileNewComponent implements OnInit {
   }
 
   loadUserProfile() {
+    // Essayer d'abord avec l'utilisateur courant depuis AuthService
+    const currentUser = this.authService.getCurrentUser();
+    if (currentUser) {
+      console.log('Utilisateur courant trouvé:', currentUser);
+      this.currentUser = currentUser;
+      this.populateProfileForm(currentUser);
+    }
+
+    // Puis charger les données fraîches depuis l'API
     this.userProfileService.getCurrentUserProfile().subscribe({
-      next: (user) => {
-        this.currentUser = user;
-        this.populateProfileForm(user);
+      next: (response: any) => {
+        console.log('Réponse API complète:', response);
+
+        // Extraire les données utilisateur de la propriété 'data'
+        const userData = response.data || response;
+        console.log('Données utilisateur extraites:', userData);
+
+        this.currentUser = userData;
+        this.populateProfileForm(userData);
       },
       error: (error) => {
         console.error('Erreur lors du chargement du profil:', error);
@@ -728,10 +632,26 @@ export class UserProfileNewComponent implements OnInit {
   }
 
   private populateProfileForm(user: User) {
+    console.log('populateProfileForm appelé avec:', user);
+    console.log('Propriétés de l\'utilisateur:');
+    console.log('firstName:', user.firstName);
+    console.log('lastName:', user.lastName);
+    console.log('email:', user.email);
+    console.log('phoneNumber:', user.phoneNumber);
+    console.log('address:', user.address);
+    console.log('city:', user.city);
+    console.log('zipCode:', user.zipCode);
+    console.log('codeCountry:', user.codeCountry);
+    console.log('hasDisability:', user.hasDisability);
+
+    if (!user.firstName && !user.lastName && !user.email) {
+      console.error('L\'objet utilisateur semble vide ou invalide');
+      return;
+    }
+
     this.profileForm.patchValue({
       firstName: user.firstName || '',
       lastName: user.lastName || '',
-      email: user.email,
       phoneNumber: user.phoneNumber || '',
       address: user.address || '',
       city: user.city || '',
@@ -739,39 +659,15 @@ export class UserProfileNewComponent implements OnInit {
       codeCountry: user.codeCountry || '',
       hasDisability: user.hasDisability || false
     });
+
+    // Définir l'email séparément car le champ est désactivé
+    this.profileForm.get('email')?.setValue(user.email || '');
+
+    console.log('État du formulaire après remplissage:', this.profileForm.value);
   }
 
   updateProfile() {
-    if (this.profileForm.invalid) return;
-
-    this.isUpdatingProfile = true;
-    const formData = this.profileForm.getRawValue();
-    const updateData: UpdateUserProfileDto = {
-      firstName: formData.firstName,
-      lastName: formData.lastName,
-      phoneNumber: formData.phoneNumber,
-      address: formData.address,
-      city: formData.city,
-      zipCode: formData.zipCode,
-      codeCountry: formData.codeCountry,
-      hasDisability: formData.hasDisability
-    };
-
-    this.userProfileService.updateProfile(updateData).subscribe({
-      next: (updatedUser) => {
-        this.currentUser = updatedUser;
-        this.isUpdatingProfile = false;
-        this.snackBar.open('Profil mis à jour avec succès!', 'Fermer', {
-          duration: 3000,
-          panelClass: ['success-snackbar']
-        });
-      },
-      error: (error) => {
-        console.error('Erreur lors de la mise à jour:', error);
-        this.isUpdatingProfile = false;
-        this.snackBar.open('Erreur lors de la mise à jour du profil', 'Fermer', { duration: 3000 });
-      }
-    });
+    alert('Fonctionnalité pas encore disponible');
   }
 
   resetProfileForm() {
@@ -811,8 +707,10 @@ export class UserProfileNewComponent implements OnInit {
   loadUserBookings() {
     this.loadingBookings = true;
     this.userProfileService.getUserBookingsHistory().subscribe({
-      next: (bookings) => {
-        this.userBookings = bookings.sort((a, b) =>
+      next: (response: any) => {
+        // Gérer le cas où la réponse peut être un objet avec une propriété data
+        const bookings = Array.isArray(response) ? response : (response?.data || []);
+        this.userBookings = bookings.sort((a: any, b: any) =>
           new Date(b.createDate).getTime() - new Date(a.createDate).getTime()
         );
         this.loadingBookings = false;
@@ -882,8 +780,4 @@ export class UserProfileNewComponent implements OnInit {
     });
   }
 
-  confirmDeleteAccount() {
-    // TODO: Implémenter la confirmation de suppression de compte
-    console.log('Confirmation de suppression de compte');
-  }
 }
