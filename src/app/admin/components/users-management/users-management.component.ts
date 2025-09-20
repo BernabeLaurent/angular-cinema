@@ -65,7 +65,7 @@ export class UsersManagementComponent implements OnInit {
   ngOnInit(): void {
     // Force l'initialisation de l'utilisateur depuis le token si nécessaire
     this.authService.forceInitFromToken();
-    
+
     // Petit délai pour laisser le temps au service de s'initialiser
     setTimeout(() => {
       this.loadUsers();
@@ -73,14 +73,12 @@ export class UsersManagementComponent implements OnInit {
   }
 
   loadUsers(): void {
-    console.log('Starting to load users...');
     this.loading = true;
     this.users$ = of([]);
     this.cdr.detectChanges();
-    
+
     this.adminService.getAllUsers().subscribe({
       next: (users) => {
-        console.log('Users loaded successfully:', users.length, users);
         this.allUsers = users;
         this.applyFilter(); // Apply current filters after loading
         this.loading = false;
@@ -195,31 +193,24 @@ export class UsersManagementComponent implements OnInit {
 
   applyFilter(): void {
     let filteredUsers = [...this.allUsers];
-    
+
     // Filtrer par terme de recherche (email)
     if (this.searchTerm.trim()) {
       const searchTerm = this.searchTerm.toLowerCase();
-      filteredUsers = filteredUsers.filter(user => 
+      filteredUsers = filteredUsers.filter(user =>
         user.email?.toLowerCase().includes(searchTerm) ||
         user.firstName?.toLowerCase().includes(searchTerm) ||
         user.lastName?.toLowerCase().includes(searchTerm)
       );
     }
-    
+
     // Filtrer par rôle
     if (this.selectedRole) {
-      filteredUsers = filteredUsers.filter(user => 
+      filteredUsers = filteredUsers.filter(user =>
         user.roleUser === this.selectedRole
       );
     }
-    
-    console.log('Applied filters:', { 
-      searchTerm: this.searchTerm, 
-      selectedRole: this.selectedRole, 
-      totalUsers: this.allUsers.length, 
-      filteredCount: filteredUsers.length 
-    });
-    
+
     this.users$ = of(filteredUsers);
     this.cdr.detectChanges();
   }

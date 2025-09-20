@@ -162,13 +162,11 @@ export class AdminService {
    */
   getAllUsers(): Observable<User[]> {
     const token = this.authService.getToken();
-    console.log('Making API call to get users with token:', token ? 'Token present' : 'No token');
-    
-    return this.http.get<{ data: User[]; apiVersion: string }>(`${this.baseUrl}/users`, { 
-      headers: this.getAuthHeaders() 
+
+    return this.http.get<{ data: User[]; apiVersion: string }>(`${this.baseUrl}/users`, {
+      headers: this.getAuthHeaders()
     }).pipe(
       map(response => {
-        console.log('API response received:', response);
         return response.data;
       }),
       catchError((error: any) => {
@@ -182,8 +180,8 @@ export class AdminService {
    * Récupère un utilisateur par son ID
    */
   getUserById(id: number): Observable<User> {
-    return this.http.get<User>(`${this.baseUrl}/users/${id}`, { 
-      headers: this.getAuthHeaders() 
+    return this.http.get<User>(`${this.baseUrl}/users/${id}`, {
+      headers: this.getAuthHeaders()
     });
   }
 
@@ -191,8 +189,8 @@ export class AdminService {
    * Crée un nouvel utilisateur
    */
   createUser(userData: CreateUserDto): Observable<User> {
-    return this.http.post<User>(`${this.baseUrl}/users`, userData, { 
-      headers: this.getAuthHeaders() 
+    return this.http.post<User>(`${this.baseUrl}/users`, userData, {
+      headers: this.getAuthHeaders()
     });
   }
 
@@ -200,8 +198,8 @@ export class AdminService {
    * Met à jour un utilisateur
    */
   updateUser(id: number, userData: Partial<CreateUserDto>): Observable<User> {
-    return this.http.patch<User>(`${this.baseUrl}/users/${id}`, userData, { 
-      headers: this.getAuthHeaders() 
+    return this.http.patch<User>(`${this.baseUrl}/users/${id}`, userData, {
+      headers: this.getAuthHeaders()
     });
   }
 
@@ -209,8 +207,8 @@ export class AdminService {
    * Supprime un utilisateur (ADMIN uniquement)
    */
   deleteUser(id: number): Observable<any> {
-    return this.http.delete(`${this.baseUrl}/users/${id}`, { 
-      headers: this.getAuthHeaders() 
+    return this.http.delete(`${this.baseUrl}/users/${id}`, {
+      headers: this.getAuthHeaders()
     });
   }
 
@@ -229,16 +227,15 @@ export class AdminService {
   getTheaters(): Observable<Theater[]> {
     return this.http.get<any>(`${this.baseUrl}/theaters`).pipe(
       map(response => {
-        console.log('Réponse brute API theaters:', response);
         let theaters: Theater[] = [];
-        
+
         // Si la réponse a un format avec 'data', on l'extrait
         if (response && typeof response === 'object' && 'data' in response) {
           theaters = response.data;
         } else if (Array.isArray(response)) {
           theaters = response;
         }
-        
+
         // Temporaire : ajouter un second cinéma pour test si il n'y en a qu'un
         if (theaters.length === 1) {
           theaters.push({
@@ -256,7 +253,7 @@ export class AdminService {
             moviesTheaters: []
           });
         }
-        
+
         return theaters;
       }),
       catchError((error: any) => {
@@ -277,8 +274,8 @@ export class AdminService {
    * Crée un nouveau cinéma (ADMIN uniquement)
    */
   createTheater(theaterData: CreateTheaterDto): Observable<Theater> {
-    return this.http.post<Theater>(`${this.baseUrl}/theaters`, theaterData, { 
-      headers: this.getAuthHeaders() 
+    return this.http.post<Theater>(`${this.baseUrl}/theaters`, theaterData, {
+      headers: this.getAuthHeaders()
     });
   }
 
@@ -286,8 +283,8 @@ export class AdminService {
    * Met à jour un cinéma (ADMIN uniquement)
    */
   updateTheater(id: number, theaterData: UpdateTheaterDto): Observable<Theater> {
-    return this.http.patch<Theater>(`${this.baseUrl}/theaters/${id}`, theaterData, { 
-      headers: this.getAuthHeaders() 
+    return this.http.patch<Theater>(`${this.baseUrl}/theaters/${id}`, theaterData, {
+      headers: this.getAuthHeaders()
     });
   }
 
@@ -296,8 +293,8 @@ export class AdminService {
    * Note: L'API utilise un query parameter au lieu d'un path parameter
    */
   deleteTheater(id: number): Observable<any> {
-    return this.http.delete(`${this.baseUrl}/theaters?id=${id}`, { 
-      headers: this.getAuthHeaders() 
+    return this.http.delete(`${this.baseUrl}/theaters?id=${id}`, {
+      headers: this.getAuthHeaders()
     });
   }
 
@@ -307,8 +304,8 @@ export class AdminService {
    * Récupère toutes les réservations (ADMIN uniquement)
    */
   getAllBookings(): Observable<Booking[]> {
-    return this.http.get<{ data: Booking[]; apiVersion: string }>(`${this.baseUrl}/bookings`, { 
-      headers: this.getAuthHeaders() 
+    return this.http.get<{ data: Booking[]; apiVersion: string }>(`${this.baseUrl}/bookings`, {
+      headers: this.getAuthHeaders()
     }).pipe(
       map(response => response.data || []),
       catchError((error: any) => {
@@ -426,8 +423,8 @@ export class AdminService {
    * Récupère une réservation par son ID avec ses détails
    */
   getBookingById(id: number): Observable<Booking> {
-    return this.http.get<{ data: Booking; apiVersion: string }>(`${this.baseUrl}/bookings/${id}`, { 
-      headers: this.getAuthHeaders() 
+    return this.http.get<{ data: Booking; apiVersion: string }>(`${this.baseUrl}/bookings/${id}`, {
+      headers: this.getAuthHeaders()
     }).pipe(
       map(response => response.data),
       catchError((error: any) => {
@@ -441,8 +438,8 @@ export class AdminService {
    * Met à jour le statut d'une réservation (ADMIN uniquement)
    */
   updateBookingStatus(id: number, status: string): Observable<any> {
-    return this.http.patch(`${this.baseUrl}/bookings/${id}/status`, { status }, { 
-      headers: this.getAuthHeaders() 
+    return this.http.patch(`${this.baseUrl}/bookings/${id}/status`, { status }, {
+      headers: this.getAuthHeaders()
     });
   }
 
@@ -450,8 +447,8 @@ export class AdminService {
    * Met à jour le statut d'un booking detail (ADMIN uniquement)
    */
   updateBookingDetailStatus(bookingDetailId: number, status: string): Observable<any> {
-    return this.http.patch(`${this.baseUrl}/booking-details/${bookingDetailId}/status`, { status }, { 
-      headers: this.getAuthHeaders() 
+    return this.http.patch(`${this.baseUrl}/booking-details/${bookingDetailId}/status`, { status }, {
+      headers: this.getAuthHeaders()
     });
   }
 
@@ -528,8 +525,8 @@ export class AdminService {
    * Valide une réservation (ADMIN uniquement)
    */
   validateBooking(id: number): Observable<any> {
-    return this.http.patch(`${this.baseUrl}/bookings/${id}/validateBooking`, {}, { 
-      headers: this.getAuthHeaders() 
+    return this.http.patch(`${this.baseUrl}/bookings/${id}/validateBooking`, {}, {
+      headers: this.getAuthHeaders()
     });
   }
 
@@ -537,8 +534,8 @@ export class AdminService {
    * Valide un ticket avec token (ADMIN uniquement)
    */
   validateBookingWithToken(token: string): Observable<any> {
-    return this.http.get(`${this.baseUrl}/bookings/validate-booking-detail?token=${token}`, { 
-      headers: this.getAuthHeaders() 
+    return this.http.get(`${this.baseUrl}/bookings/validate-booking-detail?token=${token}`, {
+      headers: this.getAuthHeaders()
     });
   }
 
@@ -546,8 +543,8 @@ export class AdminService {
    * Récupère les réservations d'un utilisateur
    */
   getUserBookings(userId: number): Observable<Booking[]> {
-    return this.http.get<Booking[]>(`${this.baseUrl}/bookings/user/${userId}`, { 
-      headers: this.getAuthHeaders() 
+    return this.http.get<Booking[]>(`${this.baseUrl}/bookings/user/${userId}`, {
+      headers: this.getAuthHeaders()
     });
   }
 
@@ -567,10 +564,9 @@ export class AdminService {
       )
     }).pipe(
       map(({ sessions, moviesWithSessions }) => {
-        console.log('Raw API responses:', { sessions, moviesWithSessions });
-        
+
         const moviesData = moviesWithSessions.data || [];
-        
+
         // Si on a des films avec séances, on les utilise
         if (moviesData.length > 0) {
           return moviesData.map(item => ({
@@ -583,10 +579,10 @@ export class AdminService {
             theaters: item.theaters
           }));
         }
-        
+
         // Sinon, on extrait les films des sessions existantes
         const moviesFromSessions = new Map();
-        
+
         sessions.forEach((session: any) => {
           if (session.movie) {
             const movieId = session.movie.id;
@@ -600,7 +596,7 @@ export class AdminService {
             moviesFromSessions.get(movieId).availableSessions++;
           }
         });
-        
+
         return Array.from(moviesFromSessions.values());
       }),
       catchError((error: any) => {
@@ -623,10 +619,8 @@ export class AdminService {
   searchMovies(searchTerm: string): Observable<any[]> {
     return this.http.get<{ data: any[]; apiVersion: string }>(`${this.baseUrl}/movies/search?name=${encodeURIComponent(searchTerm)}&adminSearch=true`).pipe(
       map(response => {
-        console.log('Search API response:', response);
-        
         const moviesData = response.data || [];
-        
+
         // Si on a des résultats de recherche avec séances, on les utilise
         if (moviesData.length > 0) {
           return moviesData.map(item => ({
@@ -639,7 +633,7 @@ export class AdminService {
             theaters: item.theaters
           }));
         }
-        
+
         // Si pas de résultats, retourner un tableau vide
         return [];
       }),
@@ -655,8 +649,8 @@ export class AdminService {
    * Recherche des films externes (ADMIN uniquement)
    */
   searchExternalMovies(query: string): Observable<any> {
-    return this.http.get(`${this.baseUrl}/movies/external/search?q=${query}`, { 
-      headers: this.getAuthHeaders() 
+    return this.http.get(`${this.baseUrl}/movies/external/search?q=${query}`, {
+      headers: this.getAuthHeaders()
     });
   }
 
@@ -664,8 +658,8 @@ export class AdminService {
    * Récupère les détails d'un film externe (ADMIN uniquement)
    */
   getExternalMovieDetails(movieId: string): Observable<any> {
-    return this.http.get(`${this.baseUrl}/movies/external/${movieId}`, { 
-      headers: this.getAuthHeaders() 
+    return this.http.get(`${this.baseUrl}/movies/external/${movieId}`, {
+      headers: this.getAuthHeaders()
     });
   }
 
@@ -673,8 +667,8 @@ export class AdminService {
    * Récupère le casting d'un film externe (ADMIN uniquement)
    */
   getExternalMovieCast(movieId: string): Observable<any> {
-    return this.http.get(`${this.baseUrl}/movies/external/getCast/${movieId}`, { 
-      headers: this.getAuthHeaders() 
+    return this.http.get(`${this.baseUrl}/movies/external/getCast/${movieId}`, {
+      headers: this.getAuthHeaders()
     });
   }
 
@@ -682,8 +676,8 @@ export class AdminService {
    * Récupère les prochaines sorties (ADMIN uniquement)
    */
   getUpcomingMovies(): Observable<any> {
-    return this.http.get(`${this.baseUrl}/movies/external/search/upcoming`, { 
-      headers: this.getAuthHeaders() 
+    return this.http.get(`${this.baseUrl}/movies/external/search/upcoming`, {
+      headers: this.getAuthHeaders()
     });
   }
 
@@ -691,8 +685,8 @@ export class AdminService {
    * Met à jour un film (ADMIN uniquement)
    */
   updateMovie(movieId: number, movieData: any): Observable<any> {
-    return this.http.patch(`${this.baseUrl}/movies/${movieId}`, movieData, { 
-      headers: this.getAuthHeaders() 
+    return this.http.patch(`${this.baseUrl}/movies/${movieId}`, movieData, {
+      headers: this.getAuthHeaders()
     });
   }
 
@@ -700,8 +694,8 @@ export class AdminService {
    * Valide une review (ADMIN uniquement)
    */
   validateReview(reviewId: number): Observable<any> {
-    return this.http.patch(`${this.baseUrl}/movies/reviews/${reviewId}/validate`, {}, { 
-      headers: this.getAuthHeaders() 
+    return this.http.patch(`${this.baseUrl}/movies/reviews/${reviewId}/validate`, {}, {
+      headers: this.getAuthHeaders()
     });
   }
 
@@ -737,8 +731,8 @@ export class AdminService {
    * Crée une nouvelle session (ADMIN uniquement)
    */
   createSession(sessionData: any): Observable<any> {
-    return this.http.post(`${this.baseUrl}/sessions-cinemas/create`, sessionData, { 
-      headers: this.getAuthHeaders() 
+    return this.http.post(`${this.baseUrl}/sessions-cinemas/create`, sessionData, {
+      headers: this.getAuthHeaders()
     }).pipe(
       catchError((error: any) => {
         console.error('API error in createSession:', error);
@@ -751,8 +745,8 @@ export class AdminService {
    * Met à jour une session (ADMIN uniquement)
    */
   updateSession(sessionId: number, sessionData: any): Observable<any> {
-    return this.http.patch(`${this.baseUrl}/sessions-cinemas/${sessionId}`, sessionData, { 
-      headers: this.getAuthHeaders() 
+    return this.http.patch(`${this.baseUrl}/sessions-cinemas/${sessionId}`, sessionData, {
+      headers: this.getAuthHeaders()
     }).pipe(
       catchError((error: any) => {
         console.error('API error in updateSession:', error);
@@ -765,8 +759,8 @@ export class AdminService {
    * Supprime une session (ADMIN uniquement)
    */
   deleteSession(sessionId: number): Observable<any> {
-    return this.http.delete(`${this.baseUrl}/sessions-cinemas/${sessionId}`, { 
-      headers: this.getAuthHeaders() 
+    return this.http.delete(`${this.baseUrl}/sessions-cinemas/${sessionId}`, {
+      headers: this.getAuthHeaders()
     }).pipe(
       catchError((error: any) => {
         console.error('API error in deleteSession:', error);
@@ -844,8 +838,8 @@ export class AdminService {
    */
   getGeneralStats(): Observable<any> {
     // Peut être implémenté plus tard si l'API propose un endpoint de stats
-    return this.http.get(`${this.baseUrl}/admin/stats`, { 
-      headers: this.getAuthHeaders() 
+    return this.http.get(`${this.baseUrl}/admin/stats`, {
+      headers: this.getAuthHeaders()
     });
   }
 }

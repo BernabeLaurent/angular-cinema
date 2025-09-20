@@ -88,20 +88,16 @@ export class SessionsManagementDialogComponent implements OnInit {
     // Solution: Utiliser l'API de recherche de films qui contient toutes les sessions
     this.adminService.searchMovies(this.data.movie.title).subscribe({
       next: (searchResults) => {
-        console.log('Movie search results:', searchResults);
         
         // Trouver le film correspondant
         const movieData = searchResults.find(movie => movie.id === this.data.movie.id);
         if (!movieData || !movieData.sessionsCinemas) {
-          console.log('No movie data or sessions found in search results');
           this.sessions = [];
           this.loading = false;
           return;
         }
 
         const movieSessions = movieData.sessionsCinemas;
-        console.log('Sessions loaded for movie:', this.data.movie.id, movieSessions);
-        console.log('Sessions count:', movieSessions.length);
         
         if (movieSessions.length === 0) {
           this.sessions = [];
@@ -116,7 +112,6 @@ export class SessionsManagementDialogComponent implements OnInit {
         }));
         
         this.loading = false;
-        console.log('Sessions loaded and displayed:', this.sessions);
       },
       error: (error) => {
         console.error('Error loading sessions from search:', error);
@@ -163,7 +158,6 @@ export class SessionsManagementDialogComponent implements OnInit {
   private enrichSessionWithTheaterDetails(session: SessionCinema) {
     return this.adminService.getTheaterRoomById(session.movieTheaterId).pipe(
       switchMap(movieTheater => {
-        console.log('MovieTheater data:', movieTheater);
         // Récupérer les détails du cinéma
         return forkJoin({
           session: of(session),
@@ -175,7 +169,6 @@ export class SessionsManagementDialogComponent implements OnInit {
               return this.adminService.getTheaters().pipe(
                 map(theaters => {
                   if (theaters.length > 0) {
-                    console.log(`Using first available theater: ${theaters[0].name}`);
                     return theaters[0];
                   }
                   return {
@@ -263,23 +256,16 @@ export class SessionsManagementDialogComponent implements OnInit {
   editSession(session: SessionCinema): void {
     // Transformer la session au format attendu par le formulaire
     const sessionDate = new Date(session.startTime);
-    console.log('Session edit - Original session.startTime:', session.startTime);
-    console.log('Session edit - sessionDate created:', sessionDate);
-    console.log('Session edit - sessionDate.toTimeString():', sessionDate.toTimeString());
-    console.log('Session edit - extracted time:', sessionDate.toTimeString().slice(0, 5));
     
     // Utiliser les données enrichies du théâtre, ou fallback vers le théâtre existant
     let theaterId = session.movieTheater?.theater?.id || 2; // Utiliser le théâtre réel, pas le theaterId du movieTheater
     
     // Pour le roomId, nous devons d'abord récupérer les salles du théâtre
     // et trouver une correspondance appropriée
-    console.log('Theater mapping - Original theaterId:', session.movieTheater?.theaterId, 
-                'Using theaterId:', theaterId, 'movieTheaterId:', session.movieTheaterId);
     
     // Récupérer les salles du théâtre pour trouver la bonne correspondance
     this.adminService.getTheaterRooms(theaterId).subscribe({
       next: (rooms) => {
-        console.log('Available rooms for theater', theaterId, ':', rooms);
         
         // Essayer de trouver une salle qui correspond au movieTheaterId
         let roomId = rooms.find(room => room.id === session.movieTheaterId)?.id;
@@ -287,7 +273,6 @@ export class SessionsManagementDialogComponent implements OnInit {
         // Si pas de correspondance, utiliser la première salle disponible
         if (!roomId && rooms.length > 0) {
           roomId = rooms[0].id;
-          console.log('No matching room found, using first available room:', roomId);
         }
         
         // Récupérer les informations de la salle pour le prix et le nb de places
@@ -304,8 +289,6 @@ export class SessionsManagementDialogComponent implements OnInit {
           totalSeats: selectedRoom?.numberSeats || 150
         };
 
-        console.log('Editing session with data:', sessionForEdit);
-        console.log('Original session:', session);
 
         const dialogRef = this.dialog.open(SessionFormDialogComponent, {
           width: '700px',
@@ -340,7 +323,6 @@ export class SessionsManagementDialogComponent implements OnInit {
           totalSeats: session.movieTheater?.numberSeats || 150
         };
 
-        console.log('Using fallback session data:', sessionForEdit);
 
         const dialogRef = this.dialog.open(SessionFormDialogComponent, {
           width: '700px',
@@ -406,8 +388,6 @@ export class SessionsManagementDialogComponent implements OnInit {
     // Ajouter l'ID du film (nécessaire)
     filteredData.movieId = this.data.movie.id;
     
-    console.log('Filtered data for update:', filteredData);
-    console.log('Original data from form:', sessionData);
     
     this.adminService.updateSession(sessionId, filteredData).subscribe({
       next: () => {
@@ -445,8 +425,6 @@ export class SessionsManagementDialogComponent implements OnInit {
     // Ajouter l'ID du film (nécessaire)
     filteredData.movieId = this.data.movie.id;
     
-    console.log('Filtered data for creation:', filteredData);
-    console.log('Original data from form:', sessionData);
     
     this.adminService.createSession(filteredData).subscribe({
       next: () => {

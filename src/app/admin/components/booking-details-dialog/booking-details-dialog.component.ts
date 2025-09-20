@@ -72,105 +72,71 @@ export class BookingDetailsDialogComponent implements OnInit {
   }
 
   loadBookingDetails(): void {
-    console.log('Loading booking details for ID:', this.data.bookingId);
     this.loading = true;
 
     // Charger d'abord les détails du booking
     this.adminService.getBookingById(this.data.bookingId).subscribe({
       next: (booking) => {
-        console.log('=== BOOKING LOADED ===');
-        console.log('Booking details loaded successfully:', booking);
-        console.log('Booking keys:', Object.keys(booking));
-        console.log('booking.reservedSeats exist?:', 'reservedSeats' in booking);
 
         this.booking = booking;
         this.originalStatus = booking.status;
 
         // Convertir les reservedSeats en BookingDetail pour l'affichage
-        console.log('Booking has reservedSeats:', booking.reservedSeats);
-        console.log('Type of reservedSeats:', typeof booking.reservedSeats);
-        console.log('Is array:', Array.isArray(booking.reservedSeats));
-        console.log('Length:', booking.reservedSeats?.length);
 
         // Forcer la vérification des reservedSeats même si TypeScript ne les reconnaît pas
         const reservedSeats = (booking as any).reservedSeats;
-        console.log('Reserved seats (any cast):', reservedSeats);
-        console.log('Reserved seats length:', reservedSeats?.length);
 
         // Log détaillé de chaque siège réservé
         if (reservedSeats && Array.isArray(reservedSeats)) {
-          console.log('Reserved seats details:');
           reservedSeats.forEach((seat: any, index: number) => {
-            console.log(`Seat ${index}:`, seat);
           });
         }
 
         if (reservedSeats && Array.isArray(reservedSeats) && reservedSeats.length > 0) {
-          console.log('Converting reservedSeats to BookingDetails');
           const bookingDetails = this.convertReservedSeatsToBookingDetails(reservedSeats, booking);
-          console.log('Converted booking details:', bookingDetails);
           this.dataSource.data = bookingDetails;
           this.cdr.detectChanges();
           this.loading = false;
         } else {
-          console.log('No reservedSeats found or empty array');
-          console.log('Trying to get booking details via alternative API endpoint');
 
           // Essayer l'endpoint alternatif pour récupérer les détails
           this.adminService.getBookingDetails(this.data.bookingId).subscribe({
             next: (bookingDetails) => {
-              console.log('Booking details from alternative endpoint (extracted):', bookingDetails);
 
               if (bookingDetails && Array.isArray(bookingDetails) && bookingDetails.length > 0) {
-                console.log('Processing booking details from alternative endpoint:', bookingDetails);
 
                 // L'endpoint retourne un array contenant l'objet Booking complet
                 const bookingObject = bookingDetails[0];
-                console.log('First item in array:', bookingObject);
-                console.log('First item keys:', Object.keys(bookingObject));
 
                 // Vérifier si cet objet a des reservedSeats
                 if (bookingObject.reservedSeats && Array.isArray(bookingObject.reservedSeats)) {
-                  console.log('Found reservedSeats in booking object:', bookingObject.reservedSeats);
-                  console.log('Number of reserved seats:', bookingObject.reservedSeats.length);
 
                   // Convertir les reservedSeats en BookingDetails
                   const convertedBookingDetails = this.convertReservedSeatsToBookingDetails(
                     bookingObject.reservedSeats,
                     bookingObject
                   );
-                  console.log('Converted booking details:', convertedBookingDetails);
 
                   convertedBookingDetails.forEach((detail, index) => {
-                    console.log(`Converted BookingDetail ${index}: ID=${detail.id}, SeatNumber=${detail.seatNumber}, Status=${detail.status}`);
                   });
 
                   this.dataSource.data = convertedBookingDetails;
                 } else if (bookingObject.bookingDetails && Array.isArray(bookingObject.bookingDetails)) {
-                  console.log('Found bookingDetails in booking object:', bookingObject.bookingDetails);
                   this.dataSource.data = bookingObject.bookingDetails;
                 } else {
-                  console.log('No reservedSeats or bookingDetails found in booking object');
                   // Fallback vers la génération
                   const generatedSeats = this.generateBookingDetailsFromReservation(bookingObject);
                   this.dataSource.data = generatedSeats;
                 }
               } else {
-                console.log('No booking details from alternative endpoint either');
-                console.log('Final attempt: checking booking object properties');
 
                 // Vérifier toutes les propriétés du booking pour trouver les sièges
-                console.log('All booking properties:', Object.keys(this.booking));
-                console.log('Booking numberSeats:', (this.booking as any).numberSeats);
-                console.log('Booking bookingDetails:', (this.booking as any).bookingDetails);
 
                 // Utiliser bookingDetails s'ils existent
                 if ((this.booking as any).bookingDetails && Array.isArray((this.booking as any).bookingDetails)) {
-                  console.log('Found bookingDetails in booking object');
                   this.dataSource.data = (this.booking as any).bookingDetails;
                 } else {
                   // En dernier recours, générer à partir des informations disponibles
-                  console.log('Generating seats from available booking information');
                   const generatedSeats = this.generateBookingDetailsFromReservation(this.booking);
                   this.dataSource.data = generatedSeats;
                 }
@@ -180,7 +146,6 @@ export class BookingDetailsDialogComponent implements OnInit {
             },
             error: (error) => {
               console.error('Alternative API endpoint failed:', error);
-              console.log('Using fallback seat generation');
               const generatedSeats = this.generateBookingDetailsFromReservation(this.booking);
               this.dataSource.data = generatedSeats;
               this.cdr.detectChanges();
@@ -197,20 +162,17 @@ export class BookingDetailsDialogComponent implements OnInit {
 
         // Instead of creating test data, let's see if the error actually contains valid data
         if (error.error && error.error.data) {
-          console.log('Found data in error response:', error.error.data);
           this.booking = error.error.data;
           this.originalStatus = this.booking.status;
 
           const reservedSeats = (this.booking as any).reservedSeats;
           if (reservedSeats && Array.isArray(reservedSeats) && reservedSeats.length > 0) {
-            console.log('Using reservedSeats from error response');
             const bookingDetails = this.convertReservedSeatsToBookingDetails(reservedSeats, this.booking);
             this.dataSource.data = bookingDetails;
           }
           this.cdr.detectChanges();
         } else {
           // Only create test data if there's truly no data available
-          console.log('No data found in error response, showing error message');
           this.showError(`Erreur ${error.status}: ${error.message || 'Impossible de charger la réservation'}`);
         }
 
@@ -296,49 +258,29 @@ export class BookingDetailsDialogComponent implements OnInit {
     if (this.booking.bookingDetails && this.booking.bookingDetails.length > 0) {
       this.dataSource.data = this.booking.bookingDetails;
       this.cdr.detectChanges(); // Forcer la détection des changements
-      console.log('DataSource updated with booking details:', this.booking.bookingDetails);
-      console.log('DataSource.data after update:', this.dataSource.data);
     } else {
-      console.log('No booking details found');
     }
     
-    console.log('Test booking data created:', this.booking);
-    console.log('Booking object exists:', !!this.booking);
-    console.log('Loading status:', this.loading);
-    console.log('DataSource data:', this.dataSource.data);
-    console.log('DataSource length:', this.dataSource.data.length);
   }
 
 
 
   validateBookingDetail(bookingDetail: BookingDetail): void {
     if (confirm(`Êtes-vous sûr de vouloir valider le siège ${bookingDetail.seatNumber} ?`)) {
-      console.log('=== VALIDATION STARTING ===');
-      console.log('Validating booking detail:', bookingDetail);
-      console.log('BookingDetail keys:', Object.keys(bookingDetail));
-      console.log('BookingDetail ID type:', typeof bookingDetail.id);
-      console.log('Full booking object:', this.booking);
-      console.log('Reserved seats in booking:', this.booking?.reservedSeats);
-      console.log('DataSource current data:', this.dataSource.data);
-      console.log('DataSource data length:', this.dataSource.data.length);
 
       // Let's trace where this bookingDetail came from
       const foundInDataSource = this.dataSource.data.find(item => item.id === bookingDetail.id);
-      console.log('BookingDetail found in dataSource:', foundInDataSource);
 
       // Check if this ID exists in the original reservedSeats
       if (this.booking?.reservedSeats) {
         const foundInReservedSeats = this.booking.reservedSeats.find(seat => seat.id === bookingDetail.id);
-        console.log('Matching reserved seat found:', foundInReservedSeats);
       }
 
       // Pour les données de votre API, utiliser directement l'ID du bookingDetail
       // qui correspond à l'ID du reservedSeat
-      console.log(`Validating with booking detail ID: ${bookingDetail.id}`);
 
       this.adminService.validateBookingDetailDirect(bookingDetail.id).subscribe({
         next: (response) => {
-          console.log('Booking detail validation successful:', response);
           this.showSuccess(`Siège ${bookingDetail.seatNumber} validé`);
           this.loadBookingDetails();
         },

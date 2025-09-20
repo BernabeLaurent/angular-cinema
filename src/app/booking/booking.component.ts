@@ -65,9 +65,9 @@ import { MovieWithSessions, Theater, SessionCinema } from '../models/session.mod
           <div class="movie-layout">
             <!-- Poster du film avec overlay comme la homepage -->
             <div class="movie-poster-container">
-              <img 
-                class="movie-poster-image" 
-                [src]="getMoviePosterUrl(movieData.movie.posterPath || movieData.movie.poster)" 
+              <img
+                class="movie-poster-image"
+                [src]="getMoviePosterUrl(movieData.movie.posterPath || movieData.movie.poster)"
                 [alt]="movieData.movie.title"
                 (error)="onImageError($event)">
               <div class="poster-overlay">
@@ -77,7 +77,7 @@ import { MovieWithSessions, Theater, SessionCinema } from '../models/session.mod
                 </div>
               </div>
             </div>
-            
+
             <!-- Contenu du film -->
             <div class="movie-info">
               <div class="movie-header">
@@ -96,19 +96,19 @@ import { MovieWithSessions, Theater, SessionCinema } from '../models/session.mod
                   </span>
                 </div>
               </div>
-              
+
               <div class="movie-content">
                 <p class="movie-description">{{ movieData.movie.description }}</p>
-                
+
                 <!-- Sessions par théâtre -->
                 <div *ngFor="let theaterData of movieData.theaters" class="theater-sessions">
                   <h4 class="theater-name">{{ theaterData.theater.name }}</h4>
-                  
+
                   <!-- Sessions par date -->
                   <div *ngFor="let sessionsByDate of theaterData.sessions" class="sessions-by-date">
                     <h5 class="session-date">{{ formatDate(sessionsByDate.date) }}</h5>
                     <div class="sessions-grid">
-                      <div 
+                      <div
                         *ngFor="let session of sessionsByDate.sessions"
                         class="session-card"
                         [class.session-full]="session.availableSeats !== undefined && session.availableSeats === 0">
@@ -126,8 +126,8 @@ import { MovieWithSessions, Theater, SessionCinema } from '../models/session.mod
                         <div class="session-price" *ngIf="session.price">
                           {{ session.price }}€
                         </div>
-                        <button 
-                          mat-raised-button 
+                        <button
+                          mat-raised-button
                           class="book-session-btn"
                           [disabled]="session.availableSeats !== undefined && session.availableSeats === 0"
                           (click)="selectSession(session)">
@@ -393,12 +393,12 @@ import { MovieWithSessions, Theater, SessionCinema } from '../models/session.mod
       .sessions-grid {
         grid-template-columns: 1fr;
       }
-      
+
       .movie-layout {
         flex-direction: column;
         gap: 16px;
       }
-      
+
       .movie-poster-image {
         width: 120px;
         height: 180px;
@@ -748,9 +748,8 @@ export class BookingComponent implements OnInit {
   loadTheaters() {
     this.adminService.getTheaters().subscribe({
       next: (theaters: Theater[]) => {
-        console.log('Cinémas chargés:', theaters);
         this.theaters = theaters;
-        
+
         // Sélectionner automatiquement le premier cinéma
         if (theaters && theaters.length > 0) {
           this.selectedTheaterId = theaters[0].id;
@@ -775,11 +774,10 @@ export class BookingComponent implements OnInit {
     if (!this.selectedTheaterId) return;
 
     this.loading = true;
-    
+
     // Pour l'instant, on charge toutes les sessions et on les regroupe par film
     this.sessionsService.getSessionsByWeek(this.selectedTheaterId).subscribe({
       next: (sessions) => {
-        console.log('Sessions reçues pour le cinéma', this.selectedTheaterId, ':', sessions);
         this.groupSessionsByMovie(sessions);
         this.loading = false;
       },
@@ -813,7 +811,7 @@ export class BookingComponent implements OnInit {
 
       const movieData = movieMap.get(movieId)!;
       let theaterData = movieData.theaters.find(t => t.theater.id === session.movieTheater!.theater!.id);
-      
+
       if (!theaterData) {
         theaterData = {
           theater: session.movieTheater.theater,
@@ -824,7 +822,7 @@ export class BookingComponent implements OnInit {
 
       const sessionDate = new Date(session.startTime).toDateString();
       let dateGroup = theaterData.sessions.find(s => s.date === sessionDate);
-      
+
       if (!dateGroup) {
         dateGroup = {
           date: sessionDate,
@@ -840,8 +838,7 @@ export class BookingComponent implements OnInit {
   }
 
   selectSession(session: SessionCinema) {
-    console.log('Session sélectionnée:', session);
-    
+
     // Vérifier si l'utilisateur est connecté
     if (!this.authService.isLoggedIn()) {
       // Si pas connecté, rediriger vers la connexion avec returnUrl
@@ -849,7 +846,7 @@ export class BookingComponent implements OnInit {
       this.router.navigate(['/login'], { queryParams: { returnUrl } });
       return;
     }
-    
+
     // Si connecté, naviguer vers la sélection des sièges
     this.router.navigate(['/booking/session', session.id]);
   }

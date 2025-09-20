@@ -45,20 +45,16 @@ export class MovieCardComponent {
   onImageError(event: any) {
     // Éviter les erreurs multiples ou après un chargement réussi
     if (this.imageState === 'loaded' || this.imageState === 'error') {
-      console.log(`🔄 Ignoring error event for ${this.movie.title} (state: ${this.imageState})`);
       return;
     }
-    
+
     this.imageState = 'error';
-    console.error('❌ Image failed to load for:', this.movie.title);
-    console.error('Failed URL:', event.target.src);
-    
+
     // Ne pas remplacer si c'est déjà un placeholder SVG
     if (event.target.src.startsWith('data:image/svg+xml')) {
-      console.log('🔄 Already using placeholder, skipping replacement');
       return;
     }
-    
+
     // Attendre un peu avant de remplacer pour éviter les conflits
     setTimeout(() => {
       if (this.imageState === 'error') {
@@ -75,7 +71,5 @@ export class MovieCardComponent {
 
   onImageLoad(event: any) {
     this.imageState = 'loaded';
-    console.log('✅ Image loaded successfully for:', this.movie.title);
-    console.log('Loaded URL:', event.target.src);
   }
 }

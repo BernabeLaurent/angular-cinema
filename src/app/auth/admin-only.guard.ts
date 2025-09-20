@@ -13,19 +13,12 @@ export class AdminOnlyGuard implements CanActivate {
     const hasAdminRole = this.auth.hasRole('ADMIN');
     const currentUser = this.auth.getCurrentUser();
 
-    console.log('AdminOnlyGuard check:', {
-      isLoggedIn,
-      hasAdminRole,
-      currentUser,
-      userRole: currentUser?.role
-    });
 
     // Permettre l'accès UNIQUEMENT aux ADMIN
     if (isLoggedIn && hasAdminRole) {
       return true;
     }
 
-    console.log('AdminOnly access denied - redirecting to admin dashboard');
     // Rediriger vers le dashboard admin si c'est un WORKER qui essaie d'accéder
     if (isLoggedIn && this.auth.hasRole('WORKER')) {
       this.router.navigate(['/admin/dashboard']);

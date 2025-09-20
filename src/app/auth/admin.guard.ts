@@ -14,19 +14,11 @@ export class AdminGuard implements CanActivate {
     const hasWorkerRole = this.auth.hasRole('WORKER');
     const currentUser = this.auth.getCurrentUser();
 
-    console.log('AdminGuard check:', {
-      isLoggedIn,
-      hasAdminRole,
-      hasWorkerRole,
-      currentUser,
-      token: this.auth.getToken() ? 'Present' : 'Missing'
-    });
 
     // Permettre l'accès aux ADMIN et WORKER
     if (isLoggedIn && (hasAdminRole || hasWorkerRole)) {
       return true;
     }
-    console.log('Access denied, redirecting to home');
     this.router.navigate(['/']);
     return false;
   }

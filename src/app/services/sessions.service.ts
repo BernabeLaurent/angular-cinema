@@ -27,28 +27,26 @@ export class SessionsService {
     if (theaterId) params.push(`theaterId=${theaterId}`);
     if (startDate) params.push(`startDate=${startDate}`);
     if (params.length) url += `?${params.join('&')}`;
-    
+
     return this.http.get<any>(url).pipe(
       map((response: any) => {
-        console.log('Réponse brute API sessions:', response);
         let sessions: SessionCinema[] = [];
-        
+
         // Si la réponse a un format avec 'data', on l'extrait
         if (response && typeof response === 'object' && 'data' in response) {
           sessions = response.data;
         } else if (Array.isArray(response)) {
           sessions = response;
         }
-        
+
         // CORRECTIF : Filtrer manuellement par theaterId car l'API ne le fait pas correctement
         if (theaterId && sessions.length > 0) {
-          sessions = sessions.filter(session => 
+          sessions = sessions.filter(session =>
             session.movieTheater?.theater?.id === theaterId ||
             session.movieTheater?.theaterId === theaterId
           );
-          console.log(`Sessions filtrées pour le cinéma ${theaterId}:`, sessions);
         }
-        
+
         return sessions;
       }),
       catchError((error: any) => {
@@ -65,24 +63,14 @@ export class SessionsService {
   getSessionBookingInfo(sessionId: number): Observable<SessionBookingInfo> {
     return this.http.get<any>(`${this.apiUrl}/sessions-cinemas/${sessionId}`).pipe(
       map((response: any) => {
-        console.log('Session booking info response:', response);
         const session = response.data || response;
-        
+
         // Transformer la session en SessionBookingInfo
         // Récupérer le nombre de sièges depuis movieTheater.numberSeats
         const totalSeats = session.movieTheater?.numberSeats || session.totalSeats || 100;
         const numAvailableSeats = session.availableSeats || (totalSeats - 15); // Par défaut 85% des places disponibles
         const occupiedSeats = session.occupiedSeats || [];
-        
-        console.log('🎫 Session booking info:', {
-          sessionId: session.id,
-          movieTheaterSeats: session.movieTheater?.numberSeats,
-          calculatedTotalSeats: totalSeats,
-          availableSeats: numAvailableSeats,
-          occupiedSeats: occupiedSeats.length,
-          theaterInfo: session.movieTheater
-        });
-        
+
         // Générer la liste des sièges disponibles (tous les sièges moins les occupés)
         const availableSeats: number[] = [];
         for (let i = 1; i <= totalSeats; i++) {
@@ -90,7 +78,7 @@ export class SessionsService {
             availableSeats.push(i);
           }
         }
-        
+
         const bookingInfo: SessionBookingInfo = {
           sessionCinema: session,
           totalSeats: totalSeats,
@@ -98,7 +86,7 @@ export class SessionsService {
           occupiedSeats: occupiedSeats,
           pricePerSeat: session.price || 12.50 // Prix par défaut
         };
-        
+
         return bookingInfo;
       }),
       catchError((error: any) => {
@@ -115,7 +103,6 @@ export class SessionsService {
   getUserBookings(userId: number): Observable<Booking[]> {
     return this.http.get<any>(`${this.apiUrl}/bookings/user/${userId}`).pipe(
       map((response: any) => {
-        console.log('User bookings response:', response);
         let bookings: Booking[] = [];
 
         // Si la réponse a un format avec 'data', on l'extrait

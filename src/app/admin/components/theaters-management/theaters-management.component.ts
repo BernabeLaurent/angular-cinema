@@ -64,12 +64,10 @@ export class TheatersManagementComponent implements OnInit {
   }
 
   loadTheaters(): void {
-    console.log('Loading theaters from API...');
     this.loading = true;
     
     this.adminService.getTheaters().subscribe({
       next: (theaters) => {
-        console.log('Theaters loaded successfully:', theaters.length, theaters);
         this.theaters = theaters;
         this.filteredTheaters = [...theaters];
         this.loading = false;
@@ -80,7 +78,6 @@ export class TheatersManagementComponent implements OnInit {
         this.theaters = [];
         this.filteredTheaters = [];
         // Si l'API échoue, fallback vers les données simulées
-        console.log('Falling back to simulated data...');
         this.simulateTheaters();
       }
     });
@@ -203,7 +200,6 @@ export class TheatersManagementComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         // Pas besoin de recharger, les salles sont gérées dans leur propre dialog
-        console.log('Theater rooms dialog closed', result);
       }
     });
   }

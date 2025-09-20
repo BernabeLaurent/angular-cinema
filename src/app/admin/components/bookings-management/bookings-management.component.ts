@@ -77,12 +77,10 @@ export class BookingsManagementComponent implements OnInit {
   }
 
   loadBookings(): void {
-    console.log('Loading bookings from API...');
     this.loading = true;
     
     this.adminService.getAllBookings().subscribe({
       next: (bookings) => {
-        console.log('Bookings loaded successfully:', bookings);
 
 
         // Trier par date de commande (plus récentes en premier)
@@ -107,7 +105,6 @@ export class BookingsManagementComponent implements OnInit {
   loadTheaters(): void {
     this.adminService.getTheaters().subscribe({
       next: (theaters) => {
-        console.log('Theaters loaded successfully:', theaters);
         this.theaters = [
           { id: '', name: 'Tous les cinémas' },
           ...theaters
@@ -141,26 +138,24 @@ export class BookingsManagementComponent implements OnInit {
 
     // Filtre par cinéma
     if (this.selectedTheater) {
-      console.log('Filtering by theater ID:', this.selectedTheater);
       filtered = filtered.filter(booking => {
+        const movieTheater = booking.sessionCinema?.movieTheater;
+        if (!movieTheater) return false;
+
         // Vérifier si la réservation a une session avec un cinéma
-        if (booking.sessionCinema?.movieTheater?.theater?.id) {
-          const theaterMatch = booking.sessionCinema.movieTheater.theater.id.toString() === this.selectedTheater.toString();
-          console.log(`Booking ${booking.id}: theater ID ${booking.sessionCinema.movieTheater.theater.id}, matches: ${theaterMatch}`);
+        if (movieTheater.theater?.id) {
+          const theaterMatch = movieTheater.theater.id.toString() === this.selectedTheater.toString();
           return theaterMatch;
         }
 
         // Fallback: vérifier via theaterId si theater n'est pas disponible
-        if (booking.sessionCinema?.movieTheater?.theaterId) {
-          const theaterMatch = booking.sessionCinema.movieTheater.theaterId.toString() === this.selectedTheater.toString();
-          console.log(`Booking ${booking.id}: theaterId ${booking.sessionCinema.movieTheater.theaterId}, matches: ${theaterMatch}`);
+        if (movieTheater.theaterId) {
+          const theaterMatch = movieTheater.theaterId.toString() === this.selectedTheater.toString();
           return theaterMatch;
         }
 
-        console.log(`Booking ${booking.id}: no theater information found`);
         return false; // Exclure les réservations sans information de cinéma
       });
-      console.log(`Filtered ${filtered.length} bookings for theater ${this.selectedTheater}`);
     }
 
     this.filteredBookings = filtered;
