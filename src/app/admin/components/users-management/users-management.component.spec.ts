@@ -67,22 +67,31 @@ describe('UsersManagementComponent', () => {
     ]);
     const authServiceSpy = jasmine.createSpyObj('AuthService', ['forceInitFromToken']);
 
-    // Mock par défaut pour DialogRef
-    const defaultDialogRef = {
-      afterClosed: () => of(null),
-      close: jasmine.createSpy('close')
-    };
-
-    const dialogSpy = jasmine.createSpyObj('MatDialog', ['open', 'getDialogById', 'closeAll'], {
-      openDialogs: []
-    });
-
-    // Mock par défaut qui peut être remplacé dans les tests individuels
-    dialogSpy.open.and.returnValue(defaultDialogRef);
-
     const snackBarSpy = jasmine.createSpyObj('MatSnackBar', ['open']);
     const dateFormatServiceSpy = jasmine.createSpyObj('DateFormatService', ['formatDate']);
     const cdrSpy = jasmine.createSpyObj('ChangeDetectorRef', ['detectChanges']);
+
+    // Mock class pour MatDialog au lieu d'un spy
+    class MatDialogMock {
+      openDialogs: any[] = [];
+
+      open() {
+        return {
+          afterClosed: () => of(null),
+          close: jasmine.createSpy('close')
+        };
+      }
+
+      getDialogById() {
+        return null;
+      }
+
+      closeAll() {
+        return {};
+      }
+    }
+
+    const dialogMock = new MatDialogMock();
 
     await TestBed.configureTestingModule({
       imports: [UsersManagementComponent, NoopAnimationsModule],
@@ -91,7 +100,7 @@ describe('UsersManagementComponent', () => {
         provideHttpClientTesting(),
         { provide: AdminService, useValue: adminServiceSpy },
         { provide: AuthService, useValue: authServiceSpy },
-        { provide: MatDialog, useValue: dialogSpy },
+        { provide: MatDialog, useValue: dialogMock },
         { provide: MatSnackBar, useValue: snackBarSpy },
         { provide: DateFormatService, useValue: dateFormatServiceSpy },
         { provide: ChangeDetectorRef, useValue: cdrSpy }
@@ -102,16 +111,20 @@ describe('UsersManagementComponent', () => {
     component = fixture.componentInstance;
     mockAdminService = TestBed.inject(AdminService) as jasmine.SpyObj<AdminService>;
     mockAuthService = TestBed.inject(AuthService) as jasmine.SpyObj<AuthService>;
-    mockDialog = TestBed.inject(MatDialog) as jasmine.SpyObj<MatDialog>;
+    mockDialog = TestBed.inject(MatDialog) as any;
     mockSnackBar = TestBed.inject(MatSnackBar) as jasmine.SpyObj<MatSnackBar>;
     mockDateFormatService = TestBed.inject(DateFormatService) as jasmine.SpyObj<DateFormatService>;
     mockChangeDetectorRef = TestBed.inject(ChangeDetectorRef) as jasmine.SpyObj<ChangeDetectorRef>;
 
-    // Reset des spies avant chaque test
-    mockSnackBar.open.calls.reset();
-
     mockAdminService.getAllUsers.and.returnValue(of(mockUsers));
     mockDateFormatService.formatDate.and.returnValue('01/01/2024');
+  });
+
+  beforeEach(() => {
+    // Reset tous les spies avant chaque test
+    mockSnackBar.open.calls.reset();
+    mockAdminService.createUser.calls.reset();
+    mockAdminService.updateUser.calls.reset();
   });
 
   it('should create', () => {
@@ -158,9 +171,9 @@ describe('UsersManagementComponent', () => {
   });
 
   it('should open create user dialog', () => {
-    const dialogRefSpy = jasmine.createSpyObj('MatDialogRef', ['afterClosed']);
+    const dialogRefSpy = jasmine.createSpyObj('MatDialogRef', ['afterClosed', 'close']);
     dialogRefSpy.afterClosed.and.returnValue(of(mockCreateUserDto));
-    mockDialog.open.and.returnValue(dialogRefSpy);
+    spyOn(mockDialog, 'open').and.returnValue(dialogRefSpy);
     spyOn(component, 'createUser');
 
     component.openCreateUserDialog();
@@ -173,9 +186,9 @@ describe('UsersManagementComponent', () => {
   });
 
   it('should not create user if dialog is cancelled', () => {
-    const dialogRefSpy = jasmine.createSpyObj('MatDialogRef', ['afterClosed']);
+    const dialogRefSpy = jasmine.createSpyObj('MatDialogRef', ['afterClosed', 'close']);
     dialogRefSpy.afterClosed.and.returnValue(of(null));
-    mockDialog.open.and.returnValue(dialogRefSpy);
+    spyOn(mockDialog, 'open').and.returnValue(dialogRefSpy);
     spyOn(component, 'createUser');
 
     component.openCreateUserDialog();
@@ -185,9 +198,9 @@ describe('UsersManagementComponent', () => {
 
   it('should open edit user dialog', () => {
     const userToEdit = mockUsers[0];
-    const dialogRefSpy = jasmine.createSpyObj('MatDialogRef', ['afterClosed']);
+    const dialogRefSpy = jasmine.createSpyObj('MatDialogRef', ['afterClosed', 'close']);
     dialogRefSpy.afterClosed.and.returnValue(of(mockCreateUserDto));
-    mockDialog.open.and.returnValue(dialogRefSpy);
+    spyOn(mockDialog, 'open').and.returnValue(dialogRefSpy);
     spyOn(component, 'updateUser');
 
     component.openEditUserDialog(userToEdit);
@@ -382,22 +395,30 @@ describe('UsersManagementComponent', () => {
   });
 
   it('should show success message', () => {
-    const message = 'Test success';
+    const mockNewUser: User = {
+      id: 4,
+      firstName: mockCreateUserDto.firstName,
+      lastName: mockCreateUserDto.lastName,
+      email: mockCreateUserDto.email,
+      roleUser: mockCreateUserDto.roleUser
+    };
+    mockAdminService.createUser.and.returnValue(of(mockNewUser));
+    spyOn(component, 'loadUsers');
 
-    component['showSuccess'](message);
+    component.createUser(mockCreateUserDto);
 
-    expect(mockSnackBar.open).toHaveBeenCalledWith(message, 'Fermer', {
+    expect(mockSnackBar.open).toHaveBeenCalledWith('Utilisateur créé avec succès', 'Fermer', {
       duration: 3000,
       panelClass: ['success-snackbar']
     });
   });
 
   it('should show error message', () => {
-    const message = 'Test error';
+    mockAdminService.createUser.and.returnValue(throwError('Create error'));
 
-    component['showError'](message);
+    component.createUser(mockCreateUserDto);
 
-    expect(mockSnackBar.open).toHaveBeenCalledWith(message, 'Fermer', {
+    expect(mockSnackBar.open).toHaveBeenCalledWith('Erreur lors de la création de l\'utilisateur', 'Fermer', {
       duration: 5000,
       panelClass: ['error-snackbar']
     });

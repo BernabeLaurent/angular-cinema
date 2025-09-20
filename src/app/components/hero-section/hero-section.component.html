@@ -11,17 +11,15 @@
 </div>
 
 <!-- Hero section - only display if we have a featured movie -->
-<div *ngIf="!loading && featuredMovie" class="hero-section"
-     [style.background-image]="'url(' + featuredMovie.backgroundImage + ')'">
-  <!-- Image LCP invisible pour priorité de chargement -->
+<div *ngIf="!loading && featuredMovie" class="hero-section">
+  <!-- Image LCP optimisée - visible et prioritaire -->
   <img
-    ngSrc="{{featuredMovie.backgroundImage}}"
-    alt="{{ featuredMovie.title }}"
-    width="1920"
-    height="1080"
-    style="display: none;"
+    [ngSrc]="featuredMovie.backgroundImage"
+    [alt]="featuredMovie.title"
+    fill
+    priority
     fetchpriority="high"
-    loading="eager"
+    class="hero-background-image"
   />
 
   <div class="hero-overlay"></div>
