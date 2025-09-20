@@ -1,11 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {CommonModule, NgOptimizedImage} from '@angular/common';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { Router } from '@angular/router';
-import { AdminService } from '../../services/admin.service';
-import { MoviesService } from '../../services/movies.service';
-import { forkJoin } from 'rxjs';
+import {MatButtonModule} from '@angular/material/button';
+import {MatIconModule} from '@angular/material/icon';
+import {Router} from '@angular/router';
+import {AdminService} from '../../services/admin.service';
+import {MoviesService} from '../../services/movies.service';
+import {forkJoin} from 'rxjs';
 
 @Component({
   selector: 'app-hero-section',
@@ -14,7 +14,7 @@ import { forkJoin } from 'rxjs';
     CommonModule,
     MatButtonModule,
     MatIconModule,
-    NgOptimizedImage
+    NgOptimizedImage,
   ],
   templateUrl: './hero-section.component.html',
   styleUrls: ['./hero-section.component.scss']
@@ -27,7 +27,8 @@ export class HeroSectionComponent implements OnInit {
     private adminService: AdminService,
     private moviesService: MoviesService,
     private router: Router
-  ) {}
+  ) {
+  }
 
   ngOnInit() {
     this.loadFeaturedMovie();
@@ -41,7 +42,7 @@ export class HeroSectionComponent implements OnInit {
       theaters: this.adminService.getTheaters(),
       allSessions: this.adminService.getAllSessions()
     }).subscribe({
-      next: ({ theaters, allSessions }) => {
+      next: ({theaters, allSessions}) => {
 
         const currentMovies = this.getMoviesWithCurrentSessions(allSessions);
 
