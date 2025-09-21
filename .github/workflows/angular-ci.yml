@@ -18,10 +18,11 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '22'
+          cache: 'npm'
 
       # 3. 📦 Installer les dépendances
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       # 4. 🧪 Lancer les tests Angular
       - name: Run tests
