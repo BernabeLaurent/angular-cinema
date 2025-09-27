@@ -41,3 +41,8 @@ testem.log
 .DS_Store
 Thumbs.db
 .env
+
+# Playwright E2E Tests (Fichiers temporaires à supprimer)
+/test-results/
+/playwright-report/
+/playwright/.cache/
