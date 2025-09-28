@@ -163,4 +163,26 @@ export class AuthService {
       })
     );
   }
+
+  forgotPassword(email: string): Observable<any> {
+    return this.http.post<{ message: string }>(
+      `${this.apiUrl}/auth/forgot-password`,
+      { email }
+    ).pipe(
+      catchError(err => {
+        return throwError(() => err);
+      })
+    );
+  }
+
+  resetPassword(token: string, newPassword: string): Observable<any> {
+    return this.http.post<{ message: string }>(
+      `${this.apiUrl}/auth/reset-password`,
+      { token, newPassword }
+    ).pipe(
+      catchError(err => {
+        return throwError(() => err);
+      })
+    );
+  }
 }

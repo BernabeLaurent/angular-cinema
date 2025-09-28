@@ -7,8 +7,9 @@
   /* Centrage du dialog quand utilisé dans un dialog Material */
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   min-height: auto;
+  padding-top: 80px; /* Décalage pour éviter la navbar */
 }
 
 .auth-card {
@@ -19,15 +20,34 @@
   border-radius: 8px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   background: white;
+  overflow: hidden; /* Assure que les coins arrondis sont respectés */
+  color: #333 !important; /* Force la couleur sombre sur le fond blanc */
+
+  p, span, div, mat-label, mat-hint, mat-error, .description {
+    color: inherit !important; /* Force les textes à hériter de la couleur */
+  }
+
+  button.mat-mdc-raised-button.mat-primary {
+    color: white !important; /* Force le texte blanc pour les boutons primaires */
+
+    .mdc-button__label {
+      color: white !important;
+    }
+  }
 
   .dialog-header {
     background: linear-gradient(135deg, #FF6B35, #e55a2b);
-    color: white;
+    color: white !important;
     padding: 24px 28px 20px 28px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 0;
+    border-radius: 8px 8px 0 0; /* Coins arrondis uniquement en haut */
+
+    * {
+      color: white !important; /* Force le blanc dans le header */
+    }
 
     mat-card-title {
       font-size: 1.4rem;
@@ -36,9 +56,9 @@
     }
 
     .close-button {
-      color: white;
+      color: white !important;
       margin: 0;
-      
+
       &:hover {
         background-color: rgba(255, 255, 255, 0.1);
       }
@@ -47,6 +67,11 @@
 
   mat-card-content {
     padding: 32px 28px !important;
+    color: #333 !important; /* Force la couleur du texte pour tout le contenu */
+
+    p, .description {
+      color: #666 !important;
+    }
 
     form {
       display: flex;
@@ -81,6 +106,124 @@
         font-size: 14px;
         border-left: 4px solid #c62828;
         margin: 8px 0;
+      }
+
+      .auth-links {
+        text-align: center;
+        margin-top: 16px;
+
+        .forgot-password-link {
+          color: #FF6B35 !important;
+          font-size: 14px;
+          font-weight: 500;
+          text-transform: none;
+          padding: 8px 16px;
+          min-width: auto;
+          height: auto;
+
+          &:hover {
+            background-color: rgba(255, 107, 53, 0.04);
+            color: #e55a2b !important;
+          }
+
+          &.mat-mdc-button {
+            --mdc-text-button-label-text-color: #FF6B35;
+          }
+
+          .mdc-button__label {
+            color: #FF6B35 !important;
+          }
+        }
+      }
+
+      .description {
+        color: #666 !important;
+        font-size: 14px;
+        margin-bottom: 20px;
+        line-height: 1.5;
+      }
+
+      .button-group {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-top: 16px;
+
+        .secondary-button {
+          color: #666 !important;
+
+          &:hover {
+            background-color: rgba(0, 0, 0, 0.04);
+          }
+
+          .mdc-button__label {
+            color: #666 !important;
+          }
+        }
+      }
+
+      .success-message, .error-message {
+        text-align: center;
+        padding: 20px 0;
+        background-color: rgba(76, 175, 80, 0.1);
+        border-radius: 6px;
+        margin: 16px 0;
+
+        .success-icon {
+          color: #4CAF50;
+          font-size: 48px;
+          margin-bottom: 16px;
+        }
+
+        .error-icon {
+          color: #f44336;
+          font-size: 48px;
+          margin-bottom: 16px;
+        }
+
+        p {
+          margin: 0;
+          color: #2E7D32 !important;
+          font-size: 16px;
+          line-height: 1.5;
+          font-weight: 500;
+        }
+
+        .redirect-info {
+          font-size: 14px;
+          color: #388E3C !important;
+          font-style: italic;
+        }
+      }
+
+      .error-message {
+        background-color: rgba(244, 67, 54, 0.1);
+
+        p {
+          color: #C62828 !important;
+        }
+
+        .redirect-info {
+          color: #D32F2F !important;
+        }
+      }
+
+      .button-group-bottom {
+        margin-top: 20px;
+        padding-top: 16px;
+        border-top: 1px solid #f0f0f0;
+
+        .secondary-button {
+          color: #666 !important;
+
+          &:hover {
+            background-color: rgba(0, 0, 0, 0.04);
+          }
+
+          .mdc-button__label {
+            color: #666 !important;
+          }
+        }
       }
 
       .actions {
@@ -123,6 +266,7 @@
 @media (max-width: 768px) {
   .auth-container {
     padding: 16px;
+    padding-top: 100px; /* Plus d'espace sur mobile pour la navbar */
     min-height: 100vh;
   }
 

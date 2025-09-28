@@ -29,6 +29,12 @@
         <button mat-raised-button color="primary" class="full-width" type="submit" [disabled]="loginForm.invalid">
           Se connecter
         </button>
+
+        <div class="auth-links">
+          <button type="button" mat-button class="forgot-password-link" (click)="goToForgotPassword()">
+            Mot de passe oublié ?
+          </button>
+        </div>
       </form>
     </mat-card-content>
   </mat-card>

@@ -137,4 +137,14 @@ export class LoginComponent implements OnInit, OnDestroy, AfterViewInit {
       this.router.navigate(['/']);
     }
   }
+
+  goToForgotPassword(): void {
+    // Si on est dans un dialog, le fermer d'abord
+    if (this.dialogRef) {
+      this.dialogRef.close();
+    }
+
+    // Naviguer vers la page forgot-password
+    this.router.navigate(['/forgot-password']);
+  }
 }

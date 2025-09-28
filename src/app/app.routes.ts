@@ -75,6 +75,30 @@ export const routes: Routes = [
       .then(c => c.LoginComponent),
     title: 'Connexion - Tchitcha'
   },
+  {
+    path: 'forgot-password',
+    loadComponent: () => import('./auth/forgot-password/forgot-password.component')
+      .then(c => c.ForgotPasswordComponent),
+    title: 'Mot de passe oublié - Tchitcha'
+  },
+  {
+    path: 'reset-password',
+    loadComponent: () => import('./auth/reset-password/reset-password.component')
+      .then(c => c.ResetPasswordComponent),
+    title: 'Réinitialiser le mot de passe - Tchitcha'
+  },
+  {
+    path: 'auth/reset-password',
+    loadComponent: () => import('./auth/reset-password/reset-password.component')
+      .then(c => c.ResetPasswordComponent),
+    title: 'Réinitialiser le mot de passe - Tchitcha'
+  },
+  {
+    path: 'auth/forgot-password',
+    loadComponent: () => import('./auth/forgot-password/forgot-password.component')
+      .then(c => c.ForgotPasswordComponent),
+    title: 'Mot de passe oublié - Tchitcha'
+  },
 
   // Routes publiques
   {
